@@ -8,7 +8,7 @@
 
 **The Ultimate Multi-Layer Escaped JSON Editor - Parse, Edit, and Rebuild Complex Nested JSON with Ease! 🎯**
 
-[Live Demo](https://your-username.github.io/super-json) | [Report Bug](https://github.com/your-username/super-json/issues) | [Request Feature](https://github.com/your-username/super-json/issues)
+[Live Demo](https://hrhrng.github.io/super-json) | [Report Bug](https://github.com/hrhrng/super-json/issues) | [Request Feature](https://github.com/hrhrng/super-json/issues)
 
 </div>
 
@@ -49,12 +49,12 @@ Ever struggled with deeply nested, escaped JSON strings? Like this nightmare:
 ## 🎮 Quick Start
 
 ### Online Version (Recommended)
-Just open [https://your-username.github.io/super-json](https://your-username.github.io/super-json) - No installation needed! 🎉
+Just open [https://hrhrng.github.io/super-json](https://hrhrng.github.io/super-json) - No installation needed! 🎉
 
 ### Local Setup
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/super-json.git
+git clone https://github.com/hrhrng/super-json.git
 
 # Navigate to the directory
 cd super-json
@@ -153,7 +153,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 If this tool saved you time, please consider giving it a star! ⭐
 
-**[Star This Repo](https://github.com/your-username/super-json)**
+**[Star This Repo](https://github.com/hrhrng/super-json)**
 
 Made with ❤️ by developers who hate escaped JSON as much as you do!
 

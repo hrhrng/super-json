@@ -776,8 +776,11 @@
         }
         
         function switchToDocument(docId) {
+            console.time('switchToDocument');
+            
             // 如果是同一个文档，不需要切换
             if (currentDocId === docId) {
+                console.timeEnd('switchToDocument');
                 return;
             }
             
@@ -794,22 +797,18 @@
             currentDocId = docId;
             const doc = documents.find(d => d.id === docId);
             if (doc) {
-                // 使用 setValue 的静默模式避免触发不必要的事件
+                // 直接设置内容，不触发事件
                 if (editors.input) {
-                    const model = editors.input.getModel();
-                    if (model) {
-                        // 暂时禁用自动保存
-                        const originalContent = doc.content || '';
-                        model.setValue(originalContent);
-                    }
+                    editors.input.setValue(doc.content || '');
                 }
                 
-                // 恢复解析的层级
+                // 恢复解析的层级 - 这里可能是性能瓶颈
                 parsedLayers = doc.parsedLayers || [];
                 if (parsedLayers.length > 0) {
+                    console.time('generateEditTabs');
                     generateEditTabs();
+                    console.timeEnd('generateEditTabs');
                 } else {
-                    // 清空层级编辑器
                     clearLayerEditors();
                 }
                 
@@ -822,8 +821,12 @@
             // 只更新标签UI，不重新渲染整个标签栏
             updateTabStyles();
             
-            // 保存到localStorage（已经有防抖）
-            saveDocumentsToStorage();
+            // 异步保存，不阻塞UI
+            requestAnimationFrame(() => {
+                saveDocumentsToStorage();
+            });
+            
+            console.timeEnd('switchToDocument');
         }
         
         // 新增：只更新标签样式，不重新创建DOM
@@ -842,108 +845,156 @@
         }
         
         function closeDocument(docId) {
+            console.time('closeDocument');
             const index = documents.findIndex(d => d.id === docId);
-            if (index !== -1) {
-                documents.splice(index, 1);
-                
-                // 如果关闭的是当前文档，切换到其他文档
-                if (docId === currentDocId) {
-                    if (documents.length > 0) {
-                        // 切换到下一个或上一个文档
-                        const newDoc = documents[Math.min(index, documents.length - 1)];
-                        switchToDocument(newDoc.id);
-                    } else {
-                        // 没有文档了，创建一个新的
-                        addNewDocument();
+            if (index === -1) return;
+            
+            documents.splice(index, 1);
+            
+            // 如果关闭的是当前文档，切换到其他文档
+            if (docId === currentDocId) {
+                if (documents.length > 0) {
+                    // 切换到下一个或上一个文档
+                    const newDoc = documents[Math.min(index, documents.length - 1)];
+                    currentDocId = newDoc.id; // 先设置ID避免重复切换
+                    
+                    // 直接更新内容，不走完整的切换流程
+                    if (editors.input) {
+                        editors.input.setValue(newDoc.content || '');
                     }
+                    parsedLayers = newDoc.parsedLayers || [];
+                    if (parsedLayers.length > 0) {
+                        generateEditTabs();
+                    } else {
+                        clearLayerEditors();
+                    }
+                    if (editors.output) {
+                        editors.output.setValue('');
+                    }
+                } else {
+                    // 没有文档了，创建一个新的
+                    addNewDocument();
+                    console.timeEnd('closeDocument');
+                    return;
                 }
-                
-                saveDocumentsToStorage();
             }
+            
+            renderMainTabs();
+            saveDocumentsToStorage();
+            console.timeEnd('closeDocument');
         }
         
         
+        // 优化：缓存标签DOM元素
+        const tabsCache = new Map();
+        
         function renderMainTabs() {
             const tabsList = document.getElementById('mainTabsList');
-            tabsList.innerHTML = '';
             
-            documents.forEach(doc => {
-                const tab = document.createElement('div');
-                tab.className = 'main-tab' + (doc.id === currentDocId ? ' active' : '');
+            // 只在真正需要时才重建
+            const existingTabs = tabsList.querySelectorAll('.main-tab');
+            const needsFullRebuild = existingTabs.length !== documents.length;
+            
+            if (needsFullRebuild) {
+                tabsList.innerHTML = '';
+                tabsCache.clear();
                 
-                const title = document.createElement('span');
-                title.className = 'main-tab-title';
-                title.textContent = doc.title;
+                documents.forEach(doc => {
+                    const tab = createTabElement(doc);
+                    tabsCache.set(doc.id, tab);
+                    tabsList.appendChild(tab);
+                });
+            } else {
+                // 只更新必要的部分
+                documents.forEach((doc, index) => {
+                    const tab = existingTabs[index];
+                    if (tab) {
+                        tab.className = 'main-tab' + (doc.id === currentDocId ? ' active' : '');
+                        const title = tab.querySelector('.main-tab-title');
+                        if (title && title.textContent !== doc.title) {
+                            title.textContent = doc.title;
+                        }
+                    }
+                });
+            }
+        }
+        
+        function createTabElement(doc) {
+            const tab = document.createElement('div');
+            tab.className = 'main-tab' + (doc.id === currentDocId ? ' active' : '');
+            tab.dataset.docId = doc.id;
+            
+            const title = document.createElement('span');
+            title.className = 'main-tab-title';
+            title.textContent = doc.title;
+            
+            // 立即响应单击切换
+            title.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (doc.id !== currentDocId) {
+                    switchToDocument(doc.id);
+                }
+            });
+            
+            // 双击编辑
+            title.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
                 
-                // 立即响应单击切换
-                title.addEventListener('click', (e) => {
+                // 创建输入框
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = doc.title;
+                input.style.width = '100px';
+                input.style.background = '#1e1e1e';
+                input.style.border = '1px solid #007acc';
+                input.style.color = 'white';
+                input.style.padding = '2px 4px';
+                input.style.fontSize = '13px';
+                input.style.outline = 'none';
+                
+                // 完成编辑
+                const finishEdit = () => {
+                    const newTitle = input.value.trim();
+                    if (newTitle) {
+                        doc.title = newTitle;
+                        saveDocumentsToStorage();
+                    }
+                    renderMainTabs();
+                };
+                
+                // 监听事件
+                input.addEventListener('blur', finishEdit);
+                input.addEventListener('keydown', (e) => {
                     e.stopPropagation();
-                    if (doc.id !== currentDocId) {
-                        switchToDocument(doc.id);
+                    if (e.key === 'Enter') {
+                        finishEdit();
+                    } else if (e.key === 'Escape') {
+                        renderMainTabs();
                     }
                 });
                 
-                // 双击编辑
-                title.addEventListener('dblclick', (e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                        
-                        // 创建输入框
-                        const input = document.createElement('input');
-                        input.type = 'text';
-                        input.value = doc.title;
-                        input.style.width = '100px';
-                        input.style.background = '#1e1e1e';
-                        input.style.border = '1px solid #007acc';
-                        input.style.color = 'white';
-                        input.style.padding = '2px 4px';
-                        input.style.fontSize = '13px';
-                        input.style.outline = 'none';
-                        
-                        // 完成编辑
-                        const finishEdit = () => {
-                            const newTitle = input.value.trim();
-                            if (newTitle) {
-                                doc.title = newTitle;
-                                saveDocumentsToStorage();
-                            }
-                            renderMainTabs();
-                        };
-                        
-                        // 监听事件
-                        input.addEventListener('blur', finishEdit);
-                        input.addEventListener('keydown', (e) => {
-                            e.stopPropagation();
-                            if (e.key === 'Enter') {
-                                finishEdit();
-                            } else if (e.key === 'Escape') {
-                                renderMainTabs();
-                            }
-                        });
-                        
-                        // 替换内容
-                        title.textContent = '';
-                        title.appendChild(input);
-                        
-                        // 聚焦并选中
-                        setTimeout(() => {
-                            input.focus();
-                            input.select();
-                        }, 10);
-                });
+                // 替换内容
+                title.textContent = '';
+                title.appendChild(input);
                 
-                const closeBtn = document.createElement('span');
-                closeBtn.className = 'main-tab-close';
-                closeBtn.innerHTML = '×';
-                closeBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    closeDocument(doc.id);
-                };
-                
-                tab.appendChild(title);
-                tab.appendChild(closeBtn);
-                tabsList.appendChild(tab);
+                // 立即聚焦
+                input.focus();
+                input.select();
             });
+            
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'main-tab-close';
+            closeBtn.innerHTML = '×';
+            closeBtn.onclick = (e) => {
+                e.stopPropagation();
+                closeDocument(doc.id);
+            };
+            
+            tab.appendChild(title);
+            tab.appendChild(closeBtn);
+            
+            return tab;
         }
         
         function clearLayerEditors() {
@@ -1182,15 +1233,13 @@
                 contentsContainer.appendChild(content);
             });
             
-            // 确保DOM渲染完成后再创建第一个编辑器
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    // 只创建第一个编辑器（当前激活的标签）
-                    if (parsedLayers.length > 0) {
-                        createLayerEditor(0);
-                    }
+            // 立即创建第一个编辑器，不等待
+            if (parsedLayers.length > 0) {
+                // 使用微任务确保DOM已更新
+                Promise.resolve().then(() => {
+                    createLayerEditor(0);
                 });
-            });
+            }
         }
         
         // 创建单个层级编辑器

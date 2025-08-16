@@ -327,38 +327,6 @@
             }
         }
         
-        .layer-info {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            padding: 10px 15px;
-            border-radius: 4px;
-            font-size: 12px;
-            display: none;
-            z-index: 100;
-        }
-        
-        .layer-info.active {
-            display: block;
-        }
-        
-        .layer-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 5px 0;
-        }
-        
-        .layer-depth {
-            background: #007acc;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 11px;
-            min-width: 40px;
-            text-align: center;
-        }
         
         .config-panel {
             position: fixed;
@@ -451,15 +419,104 @@
             position: absolute;
             right: 0;
             top: 0;
-            width: 4px;
+            width: 6px;
             height: 100%;
             background: transparent;
             cursor: col-resize;
+            transition: background 0.2s;
+            z-index: 10;
         }
         
         .resizer:hover {
             background: #007acc;
         }
+        
+        .resizer:active {
+            background: #1177bb;
+        }
+        
+        /* 主标签栏样式 */
+        .main-tabs {
+            display: flex;
+            align-items: center;
+            background: #252526;
+            border-bottom: 1px solid #3e3e42;
+            min-height: 35px;
+            overflow-x: auto;
+        }
+        
+        .main-tabs-list {
+            display: flex;
+            flex: 1;
+            overflow-x: auto;
+        }
+        
+        .main-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            color: #969696;
+            cursor: pointer;
+            border-right: 1px solid #3e3e42;
+            font-size: 13px;
+            white-space: nowrap;
+            transition: all 0.2s;
+            min-width: 120px;
+            max-width: 200px;
+        }
+        
+        .main-tab:hover {
+            background: #2d2d30;
+            color: #cccccc;
+        }
+        
+        .main-tab.active {
+            background: #1e1e1e;
+            color: white;
+            border-bottom: 2px solid #007acc;
+        }
+        
+        .main-tab-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+        }
+        
+        .main-tab-close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            transition: all 0.2s;
+            opacity: 0.5;
+        }
+        
+        .main-tab-close:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .main-tab-add {
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            color: #969696;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .main-tab-add:hover {
+            background: #2d2d30;
+            color: white;
+        }
+        
     </style>
 </head>
 <body>
@@ -467,8 +524,7 @@
         <div class="header">
             <div class="header-left">
                 <div class="logo">
-                    <h1>🔧 通用多层转义JSON编辑器</h1>
-                    <span class="version">v2.0 Pro</span>
+                    <h1>Super JSON Editor</h1>
                 </div>
             </div>
             <div class="toolbar">
@@ -481,6 +537,16 @@
                     <span>生成输出</span>
                 </button>
             </div>
+        </div>
+        
+        <!-- 主标签栏 -->
+        <div class="main-tabs">
+            <div class="main-tabs-list" id="mainTabsList">
+                <!-- 动态生成的主标签 -->
+            </div>
+            <button class="main-tab-add" onclick="addNewDocument()" title="新建文档">
+                <span>+</span>
+            </button>
         </div>
         
         <div class="main-content">
@@ -505,9 +571,6 @@
             
             <!-- 编辑面板 -->
             <div class="panel" id="editPanel">
-                <div class="tabs" id="editTabs">
-                    <!-- 动态生成的标签页 -->
-                </div>
                 <div class="panel-header">
                     <div class="panel-title">
                         <span class="status-indicator" id="editStatus"></span>
@@ -515,13 +578,13 @@
                         <span class="json-path" id="currentPath">未解析</span>
                     </div>
                 </div>
-                <div id="editTabContents" style="flex: 1; position: relative;">
+                <div class="tabs" id="editTabs">
+                    <!-- 动态生成的标签页 -->
+                </div>
+                <div id="editTabContents" style="flex: 1; position: relative; background: #1e1e1e;">
                     <!-- 动态生成的标签页内容 -->
                 </div>
-                <div class="layer-info" id="layerInfo">
-                    <h4 style="margin-bottom: 10px; color: #cccccc;">层级结构</h4>
-                    <div id="layerStructure"></div>
-                </div>
+                <div class="resizer"></div>
             </div>
             
             <!-- 输出面板 -->
@@ -531,6 +594,9 @@
                         <span class="status-indicator" id="outputStatus"></span>
                         <span>输出 JSON</span>
                     </div>
+                    <button onclick="applyOutputToInput()" class="secondary" style="padding: 4px 10px; font-size: 12px;">
+                        ↩️ 应用到输入
+                    </button>
                 </div>
                 <div class="editor-container" id="outputEditor">
                     <div class="welcome-screen">
@@ -579,6 +645,11 @@
             autoSync: true
         };
         
+        // 文档管理
+        let documents = [];
+        let currentDocId = null;
+        let documentIdCounter = 0;
+        
         // 防抖函数
         function debounce(func, wait) {
             let timeout;
@@ -624,8 +695,11 @@
                 if (typeof data === 'string') {
                     try {
                         const parsed = JSON.parse(data);
-                        currentLayer.hasEscapedJSON = true;
-                        this.detectLayers(parsed, depth + 1, [...path, '[parsed]'], '[parsed]');
+                        // 只有当解析结果是对象或数组时才作为新层级
+                        if (typeof parsed === 'object' && parsed !== null) {
+                            currentLayer.hasEscapedJSON = true;
+                            this.detectLayers(parsed, depth + 1, [...path, '[parsed]'], '[parsed]');
+                        }
                     } catch (e) {
                         // 不是有效的JSON字符串
                     }
@@ -635,10 +709,13 @@
                         if (typeof data[key] === 'string') {
                             try {
                                 const parsed = JSON.parse(data[key]);
-                                // 这是一个转义的JSON字段
-                                currentLayer.escapedFields.push(key);
-                                // 递归解析，传递字段名作为parentField
-                                this.detectLayers(parsed, depth + 1, [...path, key], key);
+                                // 只有当解析结果是对象或数组时才作为新层级
+                                if (typeof parsed === 'object' && parsed !== null) {
+                                    // 这是一个转义的JSON字段
+                                    currentLayer.escapedFields.push(key);
+                                    // 递归解析，传递字段名作为parentField
+                                    this.detectLayers(parsed, depth + 1, [...path, key], key);
+                                }
                             } catch (e) {
                                 // 不是有效的JSON字符串，忽略
                             }
@@ -669,6 +746,243 @@
                 }
                 
                 return editedLayers[0].data;
+            }
+        }
+        
+        // 文档管理函数
+        function createDocument(title = null, content = '') {
+            const id = `doc_${documentIdCounter++}`;
+            const doc = {
+                id: id,
+                title: title || `文档 ${documentIdCounter}`,
+                content: content,
+                parsedLayers: [],
+                createdAt: Date.now()
+            };
+            documents.push(doc);
+            saveDocumentsToStorage();
+            return doc;
+        }
+        
+        function addNewDocument() {
+            const doc = createDocument();
+            renderMainTabs();
+            switchToDocument(doc.id);
+        }
+        
+        function switchToDocument(docId) {
+            // 保存当前文档状态
+            if (currentDocId) {
+                const currentDoc = documents.find(d => d.id === currentDocId);
+                if (currentDoc && editors.input) {
+                    currentDoc.content = editors.input.getValue();
+                    currentDoc.parsedLayers = parsedLayers;
+                }
+            }
+            
+            // 切换到新文档
+            currentDocId = docId;
+            const doc = documents.find(d => d.id === docId);
+            if (doc) {
+                // 更新编辑器内容
+                if (editors.input) {
+                    editors.input.setValue(doc.content || '');
+                }
+                
+                // 恢复解析的层级
+                parsedLayers = doc.parsedLayers || [];
+                if (parsedLayers.length > 0) {
+                    generateEditTabs();
+                } else {
+                    // 清空层级编辑器
+                    clearLayerEditors();
+                }
+                
+                // 清空输出
+                if (editors.output) {
+                    editors.output.setValue('');
+                }
+            }
+            
+            renderMainTabs();
+            saveDocumentsToStorage();
+        }
+        
+        function closeDocument(docId) {
+            const index = documents.findIndex(d => d.id === docId);
+            if (index !== -1) {
+                documents.splice(index, 1);
+                
+                // 如果关闭的是当前文档，切换到其他文档
+                if (docId === currentDocId) {
+                    if (documents.length > 0) {
+                        // 切换到下一个或上一个文档
+                        const newDoc = documents[Math.min(index, documents.length - 1)];
+                        switchToDocument(newDoc.id);
+                    } else {
+                        // 没有文档了，创建一个新的
+                        addNewDocument();
+                    }
+                }
+                
+                saveDocumentsToStorage();
+            }
+        }
+        
+        
+        function renderMainTabs() {
+            const tabsList = document.getElementById('mainTabsList');
+            tabsList.innerHTML = '';
+            
+            documents.forEach(doc => {
+                const tab = document.createElement('div');
+                tab.className = 'main-tab' + (doc.id === currentDocId ? ' active' : '');
+                
+                const title = document.createElement('span');
+                title.className = 'main-tab-title';
+                title.textContent = doc.title;
+                
+                // 使用单独的点击计数器来检测双击
+                let clickCount = 0;
+                let clickTimer = null;
+                
+                title.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    clickCount++;
+                    
+                    if (clickCount === 1) {
+                        // 第一次点击，启动计时器
+                        clickTimer = setTimeout(() => {
+                            // 单击 - 切换文档
+                            switchToDocument(doc.id);
+                            clickCount = 0;
+                        }, 300);
+                    } else if (clickCount === 2) {
+                        // 双击 - 编辑标题
+                        clearTimeout(clickTimer);
+                        clickCount = 0;
+                        
+                        // 创建输入框
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = doc.title;
+                        input.style.width = '100px';
+                        input.style.background = '#1e1e1e';
+                        input.style.border = '1px solid #007acc';
+                        input.style.color = 'white';
+                        input.style.padding = '2px 4px';
+                        input.style.fontSize = '13px';
+                        input.style.outline = 'none';
+                        
+                        // 完成编辑
+                        const finishEdit = () => {
+                            const newTitle = input.value.trim();
+                            if (newTitle) {
+                                doc.title = newTitle;
+                                saveDocumentsToStorage();
+                            }
+                            renderMainTabs();
+                        };
+                        
+                        // 监听事件
+                        input.addEventListener('blur', finishEdit);
+                        input.addEventListener('keydown', (e) => {
+                            e.stopPropagation();
+                            if (e.key === 'Enter') {
+                                finishEdit();
+                            } else if (e.key === 'Escape') {
+                                renderMainTabs();
+                            }
+                        });
+                        
+                        // 替换内容
+                        title.textContent = '';
+                        title.appendChild(input);
+                        
+                        // 聚焦并选中
+                        setTimeout(() => {
+                            input.focus();
+                            input.select();
+                        }, 10);
+                    }
+                });
+                
+                const closeBtn = document.createElement('span');
+                closeBtn.className = 'main-tab-close';
+                closeBtn.innerHTML = '×';
+                closeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    closeDocument(doc.id);
+                };
+                
+                tab.appendChild(title);
+                tab.appendChild(closeBtn);
+                tabsList.appendChild(tab);
+            });
+        }
+        
+        function clearLayerEditors() {
+            // 清理层级编辑器
+            Object.keys(editors).forEach(key => {
+                if (key.startsWith('layer')) {
+                    if (editors[key] && editors[key].dispose) {
+                        editors[key].dispose();
+                    }
+                    delete editors[key];
+                }
+            });
+            
+            document.getElementById('editTabs').innerHTML = '';
+            document.getElementById('editTabContents').innerHTML = '';
+            document.getElementById('currentPath').textContent = '未解析';
+            document.getElementById('layerCount').textContent = '层级: 0';
+        }
+        
+        // localStorage 操作
+        function saveDocumentsToStorage() {
+            try {
+                const dataToSave = {
+                    documents: documents.map(doc => ({
+                        id: doc.id,
+                        title: doc.title,
+                        content: doc.content,
+                        createdAt: doc.createdAt
+                    })),
+                    currentDocId: currentDocId
+                };
+                localStorage.setItem('superJsonDocuments', JSON.stringify(dataToSave));
+            } catch (e) {
+                console.error('Failed to save documents:', e);
+            }
+        }
+        
+        function loadDocumentsFromStorage() {
+            try {
+                const saved = localStorage.getItem('superJsonDocuments');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    documents = data.documents || [];
+                    
+                    // 恢复文档ID计数器
+                    if (documents.length > 0) {
+                        const maxId = Math.max(...documents.map(d => parseInt(d.id.split('_')[1] || 0)));
+                        documentIdCounter = maxId + 1;
+                    }
+                    
+                    // 恢复当前文档
+                    if (data.currentDocId && documents.find(d => d.id === data.currentDocId)) {
+                        currentDocId = data.currentDocId;
+                    } else if (documents.length > 0) {
+                        currentDocId = documents[0].id;
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load documents:', e);
+            }
+            
+            // 如果没有文档，创建一个默认的
+            if (documents.length === 0) {
+                addNewDocument();
             }
         }
         
@@ -712,6 +1026,18 @@
             editors.input.onDidChangeModelContent(() => {
                 validateJSON('input');
             });
+            
+            // 加载保存的文档
+            loadDocumentsFromStorage();
+            renderMainTabs();
+            
+            // 加载当前文档内容
+            if (currentDocId) {
+                const doc = documents.find(d => d.id === currentDocId);
+                if (doc) {
+                    editors.input.setValue(doc.content || '');
+                }
+            }
         });
         
         // 智能分析JSON
@@ -729,6 +1055,15 @@
                 const analyzer = new JSONLayerAnalyzer(config.maxDepth);
                 const initialData = JSON.parse(input);
                 parsedLayers = analyzer.analyze(initialData);
+                
+                // 保存解析结果到当前文档
+                if (currentDocId) {
+                    const doc = documents.find(d => d.id === currentDocId);
+                    if (doc) {
+                        doc.parsedLayers = parsedLayers;
+                        saveDocumentsToStorage();
+                    }
+                }
                 
                 // 生成编辑标签页
                 generateEditTabs();
@@ -764,6 +1099,11 @@
             tabsContainer.innerHTML = '';
             contentsContainer.innerHTML = '';
             
+            // 如果没有层级，直接返回
+            if (parsedLayers.length === 0) {
+                return;
+            }
+            
             parsedLayers.forEach((layer, index) => {
                 // 创建标签
                 const tab = document.createElement('button');
@@ -788,51 +1128,76 @@
                 contentsContainer.appendChild(content);
             });
             
-            // 确保DOM已经渲染后再创建编辑器
+            // 确保DOM渲染完成后再创建第一个编辑器
             requestAnimationFrame(() => {
-                parsedLayers.forEach((layer, index) => {
-                    const editorElement = document.getElementById(`editor${index}`);
-                    if (editorElement && !editors[`layer${index}`]) {
-                        try {
-                            editors[`layer${index}`] = monaco.editor.create(editorElement, {
-                                value: JSON.stringify(layer.data, null, 2),
-                                language: 'json',
-                                theme: 'vs-dark',
-                                automaticLayout: true,
-                                minimap: { enabled: false },
-                                fontSize: config.fontSize,
-                                wordWrap: 'on',
-                                formatOnPaste: true,
-                                formatOnType: true,
-                                scrollBeyondLastLine: false,
-                                lineNumbers: config.showLineNumbers ? 'on' : 'off'
-                            });
-                            
-                            // 添加编辑监听器以实现双向同步
-                            editors[`layer${index}`].onDidChangeModelContent(debounce(() => {
-                                handleLayerEdit(index);
-                            }, 500));
-                        } catch (e) {
-                            console.error('Failed to create editor for layer', index, e);
-                        }
+                requestAnimationFrame(() => {
+                    // 只创建第一个编辑器（当前激活的标签）
+                    if (parsedLayers.length > 0) {
+                        createLayerEditor(0);
                     }
                 });
             });
+        }
+        
+        // 创建单个层级编辑器
+        function createLayerEditor(index) {
+            if (!parsedLayers[index] || editors[`layer${index}`]) return;
+            
+            const editorElement = document.getElementById(`editor${index}`);
+            if (editorElement) {
+                try {
+                    const jsonString = JSON.stringify(parsedLayers[index].data, null, 2);
+                    
+                    const editor = monaco.editor.create(editorElement, {
+                        value: '',
+                        language: 'json',
+                        theme: 'vs-dark',
+                        automaticLayout: true,
+                        minimap: { enabled: false },
+                        fontSize: config.fontSize,
+                        wordWrap: 'on',
+                        scrollBeyondLastLine: false,
+                        lineNumbers: config.showLineNumbers ? 'on' : 'off',
+                        folding: true,
+                        formatOnPaste: true,
+                        formatOnType: true
+                    });
+                    
+                    editors[`layer${index}`] = editor;
+                    
+                    // Set value after creation, like output editor does
+                    editor.setValue(jsonString);
+                    
+                    // 添加编辑监听器以实现双向同步
+                    editor.onDidChangeModelContent(debounce(() => {
+                        handleLayerEdit(index);
+                    }, 500));
+                } catch (e) {
+                    console.error('Failed to create editor for layer', index, e);
+                }
+            }
         }
         
         // 切换标签页
         function switchTab(index) {
             currentTab = index;
             
-            // 更新标签样式
+            // 先更新标签样式和内容显示
             document.querySelectorAll('.tab').forEach((tab, i) => {
                 tab.classList.toggle('active', i === index);
             });
             
-            // 更新内容显示
             document.querySelectorAll('.tab-content').forEach((content, i) => {
                 content.classList.toggle('active', i === index);
             });
+            
+            // 然后确保该标签的编辑器已创建（在标签可见后创建）
+            if (!editors[`layer${index}`]) {
+                // 使用 requestAnimationFrame 确保 DOM 更新完成
+                requestAnimationFrame(() => {
+                    createLayerEditor(index);
+                });
+            }
             
             // 更新路径显示
             document.getElementById('currentPath').textContent = parsedLayers[index].path;
@@ -1104,9 +1469,29 @@
         // 生成输出
         function generateOutput() {
             try {
-                // 直接使用输入编辑器的内容
-                const inputContent = editors.input.getValue();
-                const result = JSON.parse(inputContent);
+                let result;
+                
+                // 如果有解析的层级，从编辑后的层级重建
+                if (parsedLayers && parsedLayers.length > 0) {
+                    // 先更新所有层级的数据从编辑器
+                    parsedLayers.forEach((layer, index) => {
+                        const editor = editors[`layer${index}`];
+                        if (editor) {
+                            try {
+                                layer.data = JSON.parse(editor.getValue());
+                            } catch (e) {
+                                console.error(`Failed to parse layer ${index}:`, e);
+                            }
+                        }
+                    });
+                    
+                    // 使用 rebuildFromLayers 函数重建完整的JSON
+                    result = rebuildFromLayers(parsedLayers);
+                } else {
+                    // 如果没有解析层级，直接使用输入编辑器的内容
+                    const inputContent = editors.input.getValue();
+                    result = JSON.parse(inputContent);
+                }
                 
                 const outputString = JSON.stringify(result, null, 2);
                 editors.output.setValue(outputString);
@@ -1118,27 +1503,52 @@
             }
         }
         
+        // 将输出应用到输入
+        function applyOutputToInput() {
+            const outputValue = editors.output.getValue();
+            if (!outputValue || !outputValue.trim()) {
+                showNotification('输出为空，无法应用到输入', 'error');
+                return;
+            }
+            
+            try {
+                // 验证输出是有效的JSON
+                JSON.parse(outputValue);
+                
+                // 设置到输入编辑器
+                editors.input.setValue(outputValue);
+                
+                // 清空当前的解析层级和编辑器
+                parsedLayers = [];
+                
+                // 清理旧的编辑器
+                Object.keys(editors).forEach(key => {
+                    if (key.startsWith('layer')) {
+                        if (editors[key] && editors[key].dispose) {
+                            editors[key].dispose();
+                        }
+                        delete editors[key];
+                    }
+                });
+                
+                document.getElementById('editTabs').innerHTML = '';
+                document.getElementById('editTabContents').innerHTML = '';
+                
+                // 更新状态
+                document.getElementById('currentPath').textContent = '未解析';
+                document.getElementById('layerCount').textContent = '层级: 0';
+                
+                showNotification('输出已应用到输入，请重新分析', 'success');
+                updateStatus('输出已应用到输入');
+            } catch (e) {
+                showNotification('应用失败: ' + e.message, 'error');
+            }
+        }
+        
         // 更新层级信息
         function updateLayerInfo() {
-            const container = document.getElementById('layerStructure');
-            container.innerHTML = '';
-            
-            parsedLayers.forEach((layer, index) => {
-                const item = document.createElement('div');
-                item.className = 'layer-item';
-                item.innerHTML = `
-                    <span class="layer-depth">L${layer.depth}</span>
-                    <span>${layer.path}</span>
-                `;
-                container.appendChild(item);
-            });
-            
-            document.getElementById('layerInfo').classList.add('active');
+            // 只更新层级计数
             document.getElementById('layerCount').textContent = `层级: ${parsedLayers.length}`;
-            
-            setTimeout(() => {
-                document.getElementById('layerInfo').classList.remove('active');
-            }, 5000);
         }
         
         // 验证JSON
@@ -1186,35 +1596,87 @@
                 e.preventDefault();
                 generateOutput();
             }
+            // Ctrl+T 新建文档
+            if (e.ctrlKey && e.key === 't') {
+                e.preventDefault();
+                addNewDocument();
+            }
+            // Ctrl+W 关闭当前文档
+            if (e.ctrlKey && e.key === 'w') {
+                e.preventDefault();
+                if (currentDocId) {
+                    closeDocument(currentDocId);
+                }
+            }
+            // Ctrl+Tab 切换到下一个文档
+            if (e.ctrlKey && e.key === 'Tab') {
+                e.preventDefault();
+                const currentIndex = documents.findIndex(d => d.id === currentDocId);
+                if (currentIndex !== -1 && documents.length > 1) {
+                    const nextIndex = (currentIndex + 1) % documents.length;
+                    switchToDocument(documents[nextIndex].id);
+                }
+            }
         });
         
         // 面板大小调整
         let isResizing = false;
+        let currentResizer = null;
         let currentPanel = null;
+        let startX = 0;
+        let startWidth = 0;
         
-        document.querySelectorAll('.resizer').forEach(resizer => {
-            resizer.addEventListener('mousedown', (e) => {
-                isResizing = true;
-                currentPanel = e.target.parentElement;
-                document.body.style.cursor = 'col-resize';
+        // 初始化resizer事件
+        function initResizers() {
+            document.querySelectorAll('.resizer').forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    isResizing = true;
+                    currentResizer = e.target;
+                    currentPanel = e.target.parentElement;
+                    startX = e.clientX;
+                    startWidth = currentPanel.offsetWidth;
+                    document.body.style.cursor = 'col-resize';
+                    document.body.style.userSelect = 'none';
+                    e.preventDefault();
+                });
             });
-        });
+        }
         
         document.addEventListener('mousemove', (e) => {
-            if (!isResizing) return;
+            if (!isResizing || !currentPanel) return;
             
-            const newWidth = e.clientX - currentPanel.offsetLeft;
-            if (newWidth > 200 && newWidth < window.innerWidth - 400) {
+            const diff = e.clientX - startX;
+            const newWidth = startWidth + diff;
+            
+            // 设置最小和最大宽度
+            const minWidth = 250;
+            const maxWidth = window.innerWidth - 500; // 留出空间给其他面板
+            
+            if (newWidth >= minWidth && newWidth <= maxWidth) {
                 currentPanel.style.flex = 'none';
                 currentPanel.style.width = newWidth + 'px';
+                
+                // 触发Monaco编辑器的自动布局
+                Object.keys(editors).forEach(key => {
+                    if (editors[key] && editors[key].layout) {
+                        editors[key].layout();
+                    }
+                });
             }
         });
         
         document.addEventListener('mouseup', () => {
-            isResizing = false;
-            currentPanel = null;
-            document.body.style.cursor = 'default';
+            if (isResizing) {
+                isResizing = false;
+                currentResizer = null;
+                currentPanel = null;
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = '';
+            }
         });
+        
+        // 初始化resizers
+        initResizers();
         
         // 处理跨窗口消息（用于测试）
         window.addEventListener('message', (event) => {

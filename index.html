@@ -822,10 +822,8 @@
             // 只更新标签UI，不重新渲染整个标签栏
             updateTabStyles();
             
-            // 延迟保存，避免阻塞UI
-            setTimeout(() => {
-                saveDocumentsToStorage();
-            }, 100);
+            // 保存到localStorage（已经有防抖）
+            saveDocumentsToStorage();
         }
         
         // 新增：只更新标签样式，不重新创建DOM
@@ -877,27 +875,18 @@
                 title.className = 'main-tab-title';
                 title.textContent = doc.title;
                 
-                // 使用单独的点击计数器来检测双击
-                let clickCount = 0;
-                let clickTimer = null;
-                
+                // 立即响应单击切换
                 title.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    clickCount++;
-                    
-                    if (clickCount === 1) {
-                        // 第一次点击，启动计时器
-                        clickTimer = setTimeout(() => {
-                            // 单击 - 切换文档
-                            if (doc.id !== currentDocId) {
-                                switchToDocument(doc.id);
-                            }
-                            clickCount = 0;
-                        }, 300);
-                    } else if (clickCount === 2) {
-                        // 双击 - 编辑标题
-                        clearTimeout(clickTimer);
-                        clickCount = 0;
+                    if (doc.id !== currentDocId) {
+                        switchToDocument(doc.id);
+                    }
+                });
+                
+                // 双击编辑
+                title.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
                         
                         // 创建输入框
                         const input = document.createElement('input');
@@ -941,7 +930,6 @@
                             input.focus();
                             input.select();
                         }, 10);
-                    }
                 });
                 
                 const closeBtn = document.createElement('span');

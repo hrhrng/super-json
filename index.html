@@ -776,6 +776,11 @@
         }
         
         function switchToDocument(docId) {
+            // 如果是同一个文档，不需要切换
+            if (currentDocId === docId) {
+                return;
+            }
+            
             // 保存当前文档状态
             if (currentDocId) {
                 const currentDoc = documents.find(d => d.id === currentDocId);
@@ -789,9 +794,14 @@
             currentDocId = docId;
             const doc = documents.find(d => d.id === docId);
             if (doc) {
-                // 更新编辑器内容
+                // 使用 setValue 的静默模式避免触发不必要的事件
                 if (editors.input) {
-                    editors.input.setValue(doc.content || '');
+                    const model = editors.input.getModel();
+                    if (model) {
+                        // 暂时禁用自动保存
+                        const originalContent = doc.content || '';
+                        model.setValue(originalContent);
+                    }
                 }
                 
                 // 恢复解析的层级
@@ -809,8 +819,28 @@
                 }
             }
             
-            renderMainTabs();
-            saveDocumentsToStorage();
+            // 只更新标签UI，不重新渲染整个标签栏
+            updateTabStyles();
+            
+            // 延迟保存，避免阻塞UI
+            setTimeout(() => {
+                saveDocumentsToStorage();
+            }, 100);
+        }
+        
+        // 新增：只更新标签样式，不重新创建DOM
+        function updateTabStyles() {
+            const tabs = document.querySelectorAll('.main-tab');
+            tabs.forEach((tab, index) => {
+                const doc = documents[index];
+                if (doc) {
+                    if (doc.id === currentDocId) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                }
+            });
         }
         
         function closeDocument(docId) {
@@ -859,7 +889,9 @@
                         // 第一次点击，启动计时器
                         clickTimer = setTimeout(() => {
                             // 单击 - 切换文档
-                            switchToDocument(doc.id);
+                            if (doc.id !== currentDocId) {
+                                switchToDocument(doc.id);
+                            }
                             clickCount = 0;
                         }, 300);
                     } else if (clickCount === 2) {
@@ -927,24 +959,34 @@
         }
         
         function clearLayerEditors() {
-            // 清理层级编辑器
-            Object.keys(editors).forEach(key => {
-                if (key.startsWith('layer')) {
-                    if (editors[key] && editors[key].dispose) {
-                        editors[key].dispose();
-                    }
-                    delete editors[key];
+            // 批量清理层级编辑器
+            const layerEditorKeys = Object.keys(editors).filter(key => key.startsWith('layer'));
+            
+            // 如果没有层级编辑器，直接返回
+            if (layerEditorKeys.length === 0) {
+                return;
+            }
+            
+            // 批量dispose
+            layerEditorKeys.forEach(key => {
+                if (editors[key] && editors[key].dispose) {
+                    editors[key].dispose();
                 }
+                delete editors[key];
             });
             
-            document.getElementById('editTabs').innerHTML = '';
-            document.getElementById('editTabContents').innerHTML = '';
+            // 一次性清空DOM
+            const tabsContainer = document.getElementById('editTabs');
+            const contentsContainer = document.getElementById('editTabContents');
+            if (tabsContainer) tabsContainer.innerHTML = '';
+            if (contentsContainer) contentsContainer.innerHTML = '';
+            
             document.getElementById('currentPath').textContent = '未解析';
             document.getElementById('layerCount').textContent = '层级: 0';
         }
         
-        // localStorage 操作
-        function saveDocumentsToStorage() {
+        // localStorage 操作 - 使用防抖避免频繁写入
+        const saveDocumentsToStorage = debounce(() => {
             try {
                 const dataToSave = {
                     documents: documents.map(doc => ({
@@ -970,7 +1012,7 @@
             } catch (e) {
                 console.error('Failed to save documents:', e);
             }
-        }
+        }, 300);
         
         function loadDocumentsFromStorage() {
             try {

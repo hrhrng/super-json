@@ -624,9 +624,7 @@
                 </span>
             </div>
             <div>
-                <span id="autoSyncIndicator" style="margin-right: 15px;">
-                    ⚡ 自动同步: <span style="color: #4ec9b0;">开启</span>
-                </span>
+                <span id="autoSaveIndicator" style="margin-right: 15px; color: #4ec9b0;"></span>
                 <span>Universal JSON Editor | Monaco Powered</span>
             </div>
         </div>
@@ -953,11 +951,22 @@
                         id: doc.id,
                         title: doc.title,
                         content: doc.content,
-                        createdAt: doc.createdAt
+                        createdAt: doc.createdAt,
+                        parsedLayers: doc.parsedLayers
                     })),
                     currentDocId: currentDocId
                 };
                 localStorage.setItem('superJsonDocuments', JSON.stringify(dataToSave));
+                
+                // 显示保存提示（可选）
+                const savedIndicator = document.getElementById('autoSaveIndicator');
+                if (savedIndicator) {
+                    savedIndicator.textContent = '✓ 已自动保存';
+                    savedIndicator.style.color = '#4ec9b0';
+                    setTimeout(() => {
+                        savedIndicator.textContent = '';
+                    }, 2000);
+                }
             } catch (e) {
                 console.error('Failed to save documents:', e);
             }
@@ -1030,9 +1039,17 @@
             });
             
             // 监听编辑器变化
-            editors.input.onDidChangeModelContent(() => {
+            editors.input.onDidChangeModelContent(debounce(() => {
                 validateJSON('input');
-            });
+                // 自动保存当前文档内容
+                if (currentDocId) {
+                    const doc = documents.find(d => d.id === currentDocId);
+                    if (doc) {
+                        doc.content = editors.input.getValue();
+                        saveDocumentsToStorage();
+                    }
+                }
+            }, 500));
             
             // 加载保存的文档
             loadDocumentsFromStorage();
@@ -1684,6 +1701,19 @@
         
         // 初始化resizers
         initResizers();
+        
+        // 在页面关闭或刷新前保存
+        window.addEventListener('beforeunload', () => {
+            // 保存当前文档的最新内容
+            if (currentDocId && editors.input) {
+                const doc = documents.find(d => d.id === currentDocId);
+                if (doc) {
+                    doc.content = editors.input.getValue();
+                    doc.parsedLayers = parsedLayers;
+                    saveDocumentsToStorage();
+                }
+            }
+        });
         
         // 处理跨窗口消息（用于测试）
         window.addEventListener('message', (event) => {

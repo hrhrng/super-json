@@ -1,0 +1,273 @@
+{
+    "shortTitle": "肯德基经典草莓圣代套餐",
+    "itemId": "100109518470533",
+    "marketPrice": "2300",
+    "salePrice": "1150",
+    "firstCategory": "美食",
+    "secondCategory": "小吃快餐",
+    "thirdCategory": "西式快餐",
+    "mealDetail": "圣代",
+    "brandName": "肯德基",
+    "refundAnyTime": false,
+    "extraInfo": {
+        "formValue": {
+            "itemId": {
+                "formValue": {
+                    "itemId": "100109518470533",
+                    "customItemTitle": "【买1送1】1份经典草莓圣代",
+                    "customBrandName": "肯德基",
+                    "itemDescription": "圣代",
+                    "useNewProcesses": true,
+                    "isDigitalHuman": true,
+                    "itemBrandName": "肯德基",
+                    "thirdCategory": "西式快餐",
+                    "isSka": true,
+                    "secondCategory": "小吃快餐",
+                    "itemPoiCount": 10209,
+                    "firstCategory": "美食",
+                    "nearestPoiId": "2161710829472592159",
+                    "marketPriceUnitFen": "2300",
+                    "thirdCategoryId": "10120010",
+                    "salePriceUnitFen": "1150",
+                    "itemName": "【买1送1】1份经典草莓圣代",
+                    "skuAttrValueData": [{
+                        "price": 0,
+                        "title": "1份经典草莓圣代"
+                    }],
+                    "merchantId": "204963690015385283",
+                    "poiCityName": "常州市",
+                    "nearestPoiName": "肯德基(邹区泰富店)",
+                    "itemAvatar": "http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg?x-oss-process=image/resize,m_lfit,w_600",
+                    "isVoucher": false,
+                    "scriptFirstCategory": "到餐",
+                    "ticketType": {},
+                    "videoScreenType": 1
+                },
+                "extraConfig": {
+                    "username": "zhangwuyuhua",
+                    "isDigitalHuman": true
+                },
+                "useNewProcesses": {
+                    "formValue": {
+                        "itemId": "100109518470533",
+                        "customItemTitle": "【买1送1】1份经典草莓圣代",
+                        "customBrandName": "肯德基",
+                        "itemDescription": "圣代",
+                        "useNewProcesses": true,
+                        "isDigitalHuman": true,
+                        "itemBrandName": "肯德基",
+                        "thirdCategory": "西式快餐",
+                        "isSka": true,
+                        "secondCategory": "小吃快餐",
+                        "itemPoiCount": 10209,
+                        "firstCategory": "美食",
+                        "nearestPoiId": "2161710829472592159",
+                        "marketPriceUnitFen": "2300",
+                        "thirdCategoryId": "10120010",
+                        "salePriceUnitFen": "1150",
+                        "itemName": "【买1送1】1份经典草莓圣代",
+                        "skuAttrValueData": [{
+                            "price": 0,
+                            "title": "1份经典草莓圣代"
+                        }],
+                        "merchantId": "204963690015385283",
+                        "poiCityName": "常州市",
+                        "nearestPoiName": "肯德基(邹区泰富店)",
+                        "itemAvatar": "http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg?x-oss-process=image/resize,m_lfit,w_600",
+                        "isVoucher": false,
+                        "scriptFirstCategory": "到餐",
+                        "ticketType": {},
+                        "videoScreenType": 1
+                    },
+                    "extraConfig": {
+                        "username": "zhangwuyuhua",
+                        "isDigitalHuman": true
+                    },
+                    "useNewProcesses": {
+                        "formValue": {
+                            "itemId": "100109518470533",
+                            "customItemTitle": "【买1送1】1份经典草莓圣代",
+                            "customBrandName": "肯德基",
+                            "itemDescription": "圣代",
+                            "useNewProcesses": true,
+                            "isDigitalHuman": true,
+                            "itemBrandName": "肯德基",
+                            "thirdCategory": "西式快餐",
+                            "isSka": true,
+                            "secondCategory": "小吃快餐",
+                            "itemPoiCount": 10209,
+                            "firstCategory": "美食",
+                            "nearestPoiId": "2161710829472592159",
+                            "marketPriceUnitFen": "2300",
+                            "thirdCategoryId": "10120010",
+                            "salePriceUnitFen": "1150",
+                            "itemName": "【买1送1】1份经典草莓圣代",
+                            "skuAttrValueData": [{
+                                "price": 0,
+                                "title": "1份经典草莓圣代"
+                            }],
+                            "merchantId": "204963690015385283",
+                            "poiCityName": "常州市",
+                            "nearestPoiName": "肯德基(邹区泰富店)",
+                            "itemAvatar": "http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg?x-oss-process=image/resize,m_lfit,w_600",
+                            "isVoucher": false,
+                            "scriptFirstCategory": "到餐",
+                            "ticketType": {},
+                            "videoScreenType": 1
+                        },
+                        "extraConfig": {
+                            "username": "zhangwuyuhua",
+                            "isDigitalHuman": true
+                        },
+                        "useNewProcesses": {
+                            "formValue": {
+                                "itemId": "100109518470533",
+                                "customItemTitle": "【买1送1】1份经典草莓圣代",
+                                "customBrandName": "肯德基",
+                                "itemDescription": "圣代",
+                                "useNewProcesses": true,
+                                "isDigitalHuman": true,
+                                "itemBrandName": "肯德基",
+                                "thirdCategory": "西式快餐",
+                                "isSka": true,
+                                "secondCategory": "小吃快餐",
+                                "itemPoiCount": 10209,
+                                "firstCategory": "美食",
+                                "nearestPoiId": "2161710829472592159",
+                                "marketPriceUnitFen": "2300",
+                                "thirdCategoryId": "10120010",
+                                "salePriceUnitFen": "1150",
+                                "itemName": "【买1送1】1份经典草莓圣代",
+                                "skuAttrValueData": [{
+                                    "price": 0,
+                                    "title": "1份经典草莓圣代"
+                                }],
+                                "merchantId": "204963690015385283",
+                                "poiCityName": "常州市",
+                                "nearestPoiName": "肯德基(邹区泰富店)",
+                                "itemAvatar": "http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg?x-oss-process=image/resize,m_lfit,w_600",
+                                "isVoucher": false,
+                                "scriptFirstCategory": "到餐",
+                                "ticketType": {},
+                                "videoScreenType": 1
+                            },
+                            "extraConfig": {
+                                "username": "zhangwuyuhua",
+                                "isDigitalHuman": true
+                            },
+                            "useNewProcesses": true
+                        }
+                    }
+                }
+            },
+            "customItemTitle": "【买1送1】1份经典草莓圣代",
+            "customBrandName": "肯德基",
+            "itemDescription": "圣代",
+            "useNewProcesses": true,
+            "isDigitalHuman": true,
+            "itemBrandName": "肯德基",
+            "thirdCategory": "西式快餐",
+            "isSka": true,
+            "secondCategory": "小吃快餐",
+            "itemPoiCount": 10209,
+            "firstCategory": "美食",
+            "nearestPoiId": "2161710829472592159",
+            "marketPriceUnitFen": "2300",
+            "thirdCategoryId": "10120010",
+            "salePriceUnitFen": "1150",
+            "itemName": "【买1送1】1份经典草莓圣代",
+            "skuAttrValueData": [{
+                "price": 0,
+                "title": "1份经典草莓圣代"
+            }],
+            "merchantId": "204963690015385283",
+            "poiCityName": "常州市",
+            "nearestPoiName": "肯德基(邹区泰富店)",
+            "itemAvatar": "http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg?x-oss-process=image/resize,m_lfit,w_600",
+            "isVoucher": false,
+            "scriptFirstCategory": "到餐",
+            "ticketType": {},
+            "videoScreenType": 1
+        },
+        "extraConfig": {
+            "username": "zhangwuyuhua",
+            "isDigitalHuman": true
+        },
+        "useNewProcesses": true
+    },
+    "thirdCategoryId": "10120010",
+    "isVoucher": false,
+    "isSka": false,
+    "skuAttrValueData": [
+        {
+            "title": "1份经典草莓圣代",
+            "price": 0,
+            "count": 0,
+            "unit": ""
+        }
+    ],
+    "mainCategory": "到餐",
+    "isTimesCard": false,
+    "availableTimes": 0,
+    "personalizedTag": {
+        "personalizedTag": "",
+        "extTagFirst": "",
+        "extTagSecond": "",
+        "extTagThird": ""
+    },
+    "universalPrice": "",
+    "itemIntroduction": "",
+    "itemInfoExt": "{\"itemSkuBaseInfo\":\"[{\\\"skuId\\\":100140435260533,\\\"skuMarketingPrice\\\":2300,\\\"skuSinglePrice\\\":1150,\\\"skuSettlementPrice\\\":0,\\\"skuName\\\":\\\"【买1送1】1份经典草莓圣代\\\",\\\"skuAttrValueInfo\\\":[{\\\"id\\\":20414,\\\"skuId\\\":100140435260533,\\\"itemId\\\":100109518470533,\\\"attrId\\\":18,\\\"attrName\\\":\\\"skuDinersCountNew\\\",\\\"attrText\\\":\\\"用餐人数\\\",\\\"attrValueInfos\\\":[{\\\"id\\\":0,\\\"valueId\\\":0,\\\"attrId\\\":18,\\\"valueText\\\":\\\"\\\",\\\"valueData\\\":\\\"{\\\\\\\"lowestPeopleNum\\\\\\\":1,\\\\\\\"highestPeopleNum\\\\\\\":1}\\\",\\\"isDefault\\\":0,\\\"isCustom\\\":0,\\\"state\\\":0,\\\"createTime\\\":0,\\\"updateTime\\\":0,\\\"valueDataType\\\":\\\"string\\\"}],\\\"createTime\\\":1753931956370,\\\"updateTime\\\":1753931956370},{\\\"id\\\":20413,\\\"skuId\\\":100140435260533,\\\"itemId\\\":100109518470533,\\\"attrId\\\":19,\\\"attrName\\\":\\\"skuSetMealDetail\\\",\\\"attrText\\\":\\\"套餐详情\\\",\\\"attrValueInfos\\\":[{\\\"id\\\":0,\\\"valueId\\\":0,\\\"attrId\\\":19,\\\"valueText\\\":\\\"\\\",\\\"valueData\\\":\\\"{\\\\\\\"groups\\\\\\\":[{\\\\\\\"title\\\\\\\":\\\\\\\"套餐\\\\\\\",\\\\\\\"setMealContents\\\\\\\":[{\\\\\\\"title\\\\\\\":\\\\\\\"1份经典草莓圣代\\\\\\\",\\\\\\\"count\\\\\\\":2,\\\\\\\"unit\\\\\\\":\\\\\\\"份\\\\\\\",\\\\\\\"singleSpecification\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"mealImageList\\\\\\\":[],\\\\\\\"mealImageBlobKeyList\\\\\\\":[],\\\\\\\"subContents\\\\\\\":[],\\\\\\\"limitType\\\\\\\":{\\\\\\\"valData\\\\\\\":0,\\\\\\\"limitedCount\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"unit\\\\\\\":\\\\\\\"\\\\\\\"}}],\\\\\\\"fromNum\\\\\\\":1,\\\\\\\"selectNum\\\\\\\":1}],\\\\\\\"remark\\\\\\\":\\\\\\\"\\\\\\\"}\\\",\\\"isDefault\\\":0,\\\"isCustom\\\":0,\\\"state\\\":0,\\\"createTime\\\":0,\\\"updateTime\\\":0,\\\"valueDataType\\\":\\\"string\\\"}],\\\"createTime\\\":1753931956370,\\\"updateTime\\\":1753931956370}],\\\"skuStock\\\":0,\\\"availableTimes\\\":0}]\",\"itemImgUrl\":\"http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg?x-oss-process=image/resize,m_lfit,w_600\"}",
+
+    "poiName": [
+        "肯德基(慈溪银泰)",
+        "肯德基(华业店)",
+        "肯德基(大足印象店)",
+        "肯德基(小港万科未来广场)",
+        "肯德基(温州龙湾吾悦广场)",
+        "肯德基(江川店)",
+        "肯德基(欧亚卖场店)",
+        "肯德基(新大钟寺)",
+        "肯德基(邹区泰富店)",
+        "肯德基(繁花店)"
+    ],
+    "externalBrandName": "肯德基",
+    "salePriceUnitFenAvgUid": "1150",
+    "participantsNum": {
+        "lowestPeopleNum": 1,
+        "highestPeopleNum": 1
+    },
+    "llmBrandName": "肯德基",
+    "llmItemShortDescription": "买1送1经典草莓圣代套餐",
+    "itemCarouselUrl": [
+        "http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg",
+        "http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA1ODRkOGY4OjcyNDgwMTg3MTQ1MzM%3D.jpg",
+        "http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA2YWY5OGFjODo0Njg4ODgyOTU2NTMz.jpg",
+        "http://p3-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0NDRmYmMwZDo0Njg5ODgxNDg2NTMz.jpg",
+        "http://p3-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0OTFmNjVmYjo0NjkxNzMxMDY1NTMz.jpg"
+    ],
+    "itemDetailJson": "{\"itemId\":100109518470533,\"outerItemId\":\"SZKFCKS2507074\",\"sourceType\":3,\"itemTitle\":\"【买1送1】1份经典草莓圣代\",\"itemPattern\":2,\"itemType\":11400,\"itemStatus\":2,\"snapshotVersion\":1,\"validStatus\":true,\"itemStartTime\":0,\"itemEndTime\":0,\"createTime\":1753772596717,\"updateTime\":1754215210038,\"itemImgUrl\":\"http://p3-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg\",\"itemCarouselUrls\":\"http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw%3D%3D.jpg,http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA1ODRkOGY4OjcyNDgwMTg3MTQ1MzM%3D.jpg,http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA2YWY5OGFjODo0Njg4ODgyOTU2NTMz.jpg,http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0NDRmYmMwZDo0Njg5ODgxNDg2NTMz.jpg,http://p5-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0OTFmNjVmYjo0NjkxNzMxMDY1NTMz.jpg\",\"itemDetail\":{\"comboDetailList\":[],\"imageTextDetailList\":[{\"desc\":\"\",\"imgUrl\":\"http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA1ZWMyNDc2ZTo3MjQ3MDMxMDg2NTMz.jpg\",\"splitImgUrl\":[]},{\"desc\":\"\",\"imgUrl\":\"http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA2YjY1NzAyMzoxMDQyNTM0MDA3OTUzMw%3D%3D.jpg\",\"splitImgUrl\":[]},{\"desc\":\"\",\"imgUrl\":\"http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA2Zjk3OWE3YTozMTA0Mjg5ODY1NTMz.jpg\",\"splitImgUrl\":[]}],\"richTextUrl\":\"\",\"itemDetailUrl\":\"\"},\"version\":3,\"userId\":2442143283,\"itemSkuList\":[{\"skuId\":100140435260533,\"outerSkuId\":\"SZKFCKS2507074\",\"skuCode\":\"100140435260533\",\"priceModel\":1,\"stockModel\":1,\"validStatus\":false,\"createTime\":1753772596719,\"updateTime\":1754215210034,\"imageUrl\":\"\",\"skuMarketingPrice\":2300,\"skuSinglePrice\":1150,\"skuAttrs\":[],\"skuAttrMap\":{},\"itemType\":11400,\"skuName\":\"【买1送1】1份经典草莓圣代\",\"skuStock\":0,\"skuSpecificationBaseInfoList\":[],\"skuAttrValueInfo\":[{\"id\":20414,\"skuId\":100140435260533,\"itemId\":100109518470533,\"attrId\":18,\"attrName\":\"skuDinersCountNew\",\"attrText\":\"用餐人数\",\"attrValueInfos\":[{\"id\":0,\"valueId\":0,\"attrId\":18,\"valueText\":\"\",\"valueData\":\"{\\\"lowestPeopleNum\\\":1,\\\"highestPeopleNum\\\":1}\",\"isDefault\":0,\"isCustom\":0,\"state\":0,\"createTime\":0,\"updateTime\":0,\"valueDataType\":\"string\"}],\"createTime\":1753931956370,\"updateTime\":1753931956370},{\"id\":20413,\"skuId\":100140435260533,\"itemId\":100109518470533,\"attrId\":19,\"attrName\":\"skuSetMealDetail\",\"attrText\":\"套餐详情\",\"attrValueInfos\":[{\"id\":0,\"valueId\":0,\"attrId\":19,\"valueText\":\"\",\"valueData\":\"{\\\"groups\\\":[{\\\"title\\\":\\\"套餐\\\",\\\"setMealContents\\\":[{\\\"title\\\":\\\"1份经典草莓圣代\\\",\\\"count\\\":2,\\\"unit\\\":\\\"份\\\",\\\"singleSpecification\\\":\\\"\\\",\\\"mealImageList\\\":[],\\\"mealImageBlobKeyList\\\":[],\\\"subContents\\\":[],\\\"limitType\\\":{\\\"valData\\\":0,\\\"limitedCount\\\":\\\"\\\",\\\"unit\\\":\\\"\\\"}}],\\\"fromNum\\\":1,\\\"selectNum\\\":1}],\\\"remark\\\":\\\"\\\"}\",\"isDefault\":0,\"isCustom\":0,\"state\":0,\"createTime\":0,\"updateTime\":0,\"valueDataType\":\"string\"}],\"createTime\":1753931956370,\"updateTime\":1753931956370}],\"distributionCommission\":0,\"distributionRate\":0.0,\"skuTimesSinglePrice\":0,\"skuRuleMap\":{}}],\"itemExtInfo\":{\"itemShowRule\":\"{\\\"purchaseNotesRule\\\":{\\\"reservationRule\\\":{\\\"reservationFlag\\\":false,\\\"reservationRuleDesc\\\":null,\\\"reservationModel\\\":null},\\\"useRule\\\":{\\\"afterSelectUseDayCount\\\":null,\\\"instruction\\\":\\\"-本产品共1张兑换券（仅限一次兑换）\\\\n-本券仅限在有此产品供应的肯德基餐厅使用，不适用于交通枢纽、旅游景区、西藏自治区餐厅及精选餐厅等部分餐厅，具体情况以餐厅餐牌公示为准；\\\\n-本券仅限使用1次，核销后即失效；\\\\n-本券不可兑换现金，且不能与其他优惠同时使用；\\\\n-本券到期后若未使用，支持退款，详见购券平台《购物须知》；\\\\n-如有疑问，请咨询肯德基在线客服，在线客服工作时间（9:00-22:00）。\\\",\\\"useScopeLimit\\\":[],\\\"useLimitFlag\\\":false,\\\"singleUseLimit\\\":null,\\\"unavailableTime\\\":{\\\"customTime\\\":null,\\\"customTimes\\\":[],\\\"weeks\\\":[],\\\"holidays\\\":[],\\\"specialCondition\\\":null},\\\"unavailableTimeFlag\\\":false},\\\"bookRule\\\":{\\\"type\\\":null,\\\"isCurrentDay\\\":null,\\\"beforeBuyLimitDay\\\":null,\\\"beforeBuyHour\\\":null,\\\"beforeBuyMinute\\\":null,\\\"afterBuyWaitHour\\\":null,\\\"afterBuyWaitMinute\\\":null,\\\"beforePlayDay\\\":null,\\\"beforePlayHour\\\":null,\\\"beforePlayMinute\\\":null}},\\\"itemValidRule\\\":{\\\"buyLimitRule\\\":{\\\"buyLimitType\\\":\\\"SINGLE_ORDER_AMOUNT\\\",\\\"sourceType\\\":null,\\\"sourceUniqueKey\\\":null,\\\"singleOrderLimitNum\\\":5,\\\"buyLimitModel\\\":\\\"PLAY_DAY_BUY_LIMIT\\\",\\\"orderLeastNum\\\":null,\\\"orderMostNum\\\":null,\\\"phoneInDay\\\":null,\\\"phoneMostNum\\\":null,\\\"identityCardInDay\\\":null,\\\"identityCardMostNum\\\":null,\\\"accountInDay\\\":null,\\\"accountMostNum\\\":null,\\\"phoneNoTimeLimitNum\\\":null,\\\"phonePlayTimeLimitNum\\\":null,\\\"idCardPlayTimeLimitNum\\\":null,\\\"accountNoTimeLimitNum\\\":null,\\\"merchantOrderLimitNum\\\":null},\\\"buyLimitRules\\\":[{\\\"buyLimitType\\\":\\\"SINGLE_ORDER_AMOUNT\\\",\\\"sourceType\\\":null,\\\"sourceUniqueKey\\\":null,\\\"singleOrderLimitNum\\\":5,\\\"buyLimitModel\\\":\\\"PLAY_DAY_BUY_LIMIT\\\",\\\"orderLeastNum\\\":null,\\\"orderMostNum\\\":null,\\\"phoneInDay\\\":null,\\\"phoneMostNum\\\":null,\\\"identityCardInDay\\\":null,\\\"identityCardMostNum\\\":null,\\\"accountInDay\\\":null,\\\"accountMostNum\\\":null,\\\"phoneNoTimeLimitNum\\\":null,\\\"phonePlayTimeLimitNum\\\":null,\\\"idCardPlayTimeLimitNum\\\":null,\\\"accountNoTimeLimitNum\\\":null,\\\"merchantOrderLimitNum\\\":null}],\\\"refundRule\\\":{\\\"type\\\":\\\"NO_WRITE_OFF_REFUND_ANY_TIME\\\",\\\"stockRefundRule\\\":{\\\"timeLimitRule\\\":{\\\"timeLimitType\\\":null,\\\"validTimeEndAfterDay\\\":null},\\\"feeRule\\\":{\\\"type\\\":null,\\\"singletonItemFee\\\":null,\\\"singletonOrderFee\\\":null,\\\"pricePercentFee\\\":null},\\\"isCanPartialRefund\\\":null},\\\"calendarType\\\":null,\\\"calendarRefundRule\\\":null,\\\"refundDesc\\\":null},\\\"validTimeRule\\\":{\\\"type\\\":\\\"CUSTOM_TIME\\\",\\\"afterBuyLimitDay\\\":null,\\\"afterBuyDay\\\":null,\\\"fromTime\\\":null,\\\"limitDay\\\":null,\\\"startTime\\\":1753977600000,\\\"endTime\\\":1754236799000},\\\"fillOrderRule\\\":{\\\"type\\\":\\\"NEED_BUYER_PHONE_NUMBER\\\",\\\"needContactFlag\\\":null,\\\"travelerIdentityTypes\\\":null,\\\"travelerType\\\":null,\\\"travelerQualificationTypes\\\":null,\\\"phoneNumberFlag\\\":1,\\\"nameFlag\\\":2,\\\"realNameSystemType\\\":1,\\\"shippingAddressFlag\\\":2},\\\"performanceRule\\\":{\\\"type\\\":\\\"KWAI_ELECTRONIC_CODE\\\",\\\"supplementDesc\\\":null},\\\"supportSelectSeat\\\":false},\\\"activityType\\\":\\\"UNKNOWN\\\",\\\"fillOrderRuleOpt\\\":{\\\"empty\\\":false,\\\"present\\\":true},\\\"itemValidRuleOpt\\\":{\\\"empty\\\":false,\\\"present\\\":true},\\\"buyLimitRuleOpt\\\":{\\\"empty\\\":false,\\\"present\\\":true},\\\"performanceRuleOpt\\\":{\\\"empty\\\":false,\\\"present\\\":true},\\\"refundRuleOpt\\\":{\\\"empty\\\":false,\\\"present\\\":true},\\\"bookRuleOpt\\\":{\\\"empty\\\":false,\\\"present\\\":true},\\\"useRuleOpt\\\":{\\\"empty\\\":false,\\\"present\\\":true},\\\"reservationRuleOpt\\\":{\\\"empty\\\":false,\\\"present\\\":true}}\",\"itemAttrs\":[{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceEndTimeMin\",\"itemAttrDesc\":\"客服结束工作时间-分\",\"itemAttrValues\":[{\"itemAttrValue\":\"0\",\"itemAttrValueDesc\":\"0\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"availableTimePeriod\",\"itemAttrDesc\":\"可用时间段\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":2,\\\"customTimes\\\":[{\\\"startTime\\\":\\\"06:00\\\",\\\"endTime\\\":\\\"23:00\\\"}],\\\"enableText\\\":false,\\\"valTextType\\\":0}\",\"itemAttrValueDesc\":\"自定义\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceEndTimeHour\",\"itemAttrDesc\":\"客服结束工作时间-点\",\"itemAttrValues\":[{\"itemAttrValue\":\"18\",\"itemAttrValueDesc\":\"18\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"unavailableTime\",\"itemAttrDesc\":\"可用日期段\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":1}\",\"itemAttrValueDesc\":\"所有日期可用\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"shareDiscount\",\"itemAttrDesc\":\"是否与其他优惠共享\",\"itemAttrValues\":[{\"itemAttrValue\":\"2\",\"itemAttrValueDesc\":\"不可以\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"supplyChainId\",\"itemAttrDesc\":\"供应商API供应链ID\",\"itemAttrValues\":[{\"itemAttrValue\":\"ks716916767365431437\",\"itemAttrValueDesc\":\"ks716916767365431437\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"buyLimitType\",\"itemAttrDesc\":\"是否限购\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":2,\\\"buyLimitList\\\":[{\\\"type\\\":2,\\\"num\\\":5}],\\\"enableText\\\":false,\\\"valTextType\\\":0}\",\"itemAttrValueDesc\":\"限购\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"memberItem\",\"itemAttrDesc\":\"会员专享品\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"是（仅限商家会员购买）\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"customerInfo\",\"itemAttrDesc\":\"顾客信息\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":1,\\\"enableText\\\":false,\\\"valTextType\\\":0}\",\"itemAttrValueDesc\":\"需要顾客手机号\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"invoiceDesc\",\"itemAttrDesc\":\"发票说明\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"详情咨询商家\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"payCountdown\",\"itemAttrDesc\":\"支付倒计时(秒)\",\"itemAttrValues\":[{\"itemAttrValue\":\"900\",\"itemAttrValueDesc\":\"900\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"performanceType\",\"itemAttrDesc\":\"履约类型\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"仅支持到店\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"reservationFlag\",\"itemAttrDesc\":\"是否需要预约\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":1}\",\"itemAttrValueDesc\":\"不需要预约\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemDataVersion\",\"itemAttrDesc\":\"商品数据版本\",\"itemAttrValues\":[{\"itemAttrValue\":\"2\",\"itemAttrValueDesc\":\"2\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"salesChannelsType\",\"itemAttrDesc\":\"售卖渠道\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"全渠道售卖\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"refundRule\",\"itemAttrDesc\":\"退款政策\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"未使用/过期随时退（已核销使用的部分不可退,未核销使用的部分可退）\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"verifyMode\",\"itemAttrDesc\":\"核销方式\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":3,\\\"enableText\\\":false,\\\"valTextType\\\":0,\\\"guideInfo\\\":{\\\"infoId\\\":6604760,\\\"infoName\\\":\\\"核销图文引导方案一\\\",\\\"imgList\\\":[{\\\"order\\\":0,\\\"image\\\":\\\"/kos/nlav12320/verify/mcts10_c1.png\\\"},{\\\"order\\\":1,\\\"image\\\":\\\"/kos/nlav12320/verify/mcts10_c2.png\\\"}],\\\"text\\\":\\\"通过“肯德基APP 或 肯德基自助点餐微信小程序”点单\\\"}}\",\"itemAttrValueDesc\":\"图文引导至快手APP外核销\"},{\"itemAttrValue\":\"{\\\"valData\\\":2,\\\"enableText\\\":false,\\\"valTextType\\\":0,\\\"deviceList\\\":[{\\\"deviceId\\\":1,\\\"deviceName\\\":\\\"门店POS/收银机\\\"}]}\",\"itemAttrValueDesc\":\"通过店内扫码设备核销\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"supplyChainName\",\"itemAttrDesc\":\"供应商API供应链名称\",\"itemAttrValues\":[{\"itemAttrValue\":\"KFC 本地生活服务对接\",\"itemAttrValueDesc\":\"技术服务应用\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceStartTimeHour\",\"itemAttrDesc\":\"客服开始工作时间-点\",\"itemAttrValues\":[{\"itemAttrValue\":\"10\",\"itemAttrValueDesc\":\"10\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"couponCodeExpireTime\",\"itemAttrDesc\":\"券码有效期\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":3,\\\"startTime\\\":1753977600000,\\\"endTime\\\":1754236799000}\",\"itemAttrValueDesc\":\"自定义有效日期区间\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"showItemInfo\",\"itemAttrDesc\":\"是否展示商品信息\",\"itemAttrValues\":[{\"itemAttrValue\":\"0\",\"itemAttrValueDesc\":\"0\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceTel\",\"itemAttrDesc\":\"客服电话\",\"itemAttrValues\":[{\"itemAttrValue\":\"02159097717\",\"itemAttrValueDesc\":\"02159097717\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceStartTimeMin\",\"itemAttrDesc\":\"客服开始工作时间-分\",\"itemAttrValues\":[{\"itemAttrValue\":\"0\",\"itemAttrValueDesc\":\"0\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"priceAndStockSource\",\"itemAttrDesc\":\"价格库存数据的来源\",\"itemAttrValues\":[{\"itemAttrValue\":\"SELF\",\"itemAttrValueDesc\":\"SELF\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"ruleAdditionalNotes\",\"itemAttrDesc\":\"规则补充说明\",\"itemAttrValues\":[{\"itemAttrValue\":\"-本产品共1张兑换券（仅限一次兑换）\\n-本券仅限在有此产品供应的肯德基餐厅使用，不适用于交通枢纽、旅游景区、西藏自治区餐厅及精选餐厅等部分餐厅，具体情况以餐厅餐牌公示为准；\\n-本券仅限使用1次，核销后即失效；\\n-本券不可兑换现金，且不能与其他优惠同时使用；\\n-本券到期后若未使用，支持退款，详见购券平台《购物须知》；\\n-如有疑问，请咨询肯德基在线客服，在线客服工作时间（9:00-22:00）。\",\"itemAttrValueDesc\":\"-本产品共1张兑换券（仅限一次兑换）\\n-本券仅限在有此产品供应的肯德基餐厅使用，不适用于交通枢纽、旅游景区、西藏自治区餐厅及精选餐厅等部分餐厅，具体情况以餐厅餐牌公示为准；\\n-本券仅限使用1次，核销后即失效；\\n-本券不可兑换现金，且不能与其他优惠同时使用；\\n-本券到期后若未使用，支持退款，详见购券平台《购物须知》；\\n-如有疑问，请咨询肯德基在线客服，在线客服工作时间（9:00-22:00）。\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"sheetNumLimit\",\"itemAttrDesc\":\"使用张数限制\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":1}\",\"itemAttrValueDesc\":\"不限制\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"photoId\",\"itemAttrDesc\":\"商家上传的商品视频编码\",\"itemAttrValues\":[{\"itemAttrValue\":\"0\",\"itemAttrValueDesc\":\"0\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"packagePriceType\",\"itemAttrDesc\":\"SKU门市价计算类型\",\"itemAttrValues\":[{\"itemAttrValue\":\"2\",\"itemAttrValueDesc\":\"设置商品划线价无需设置单商品价格\"}]},{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"partnerId\",\"itemAttrDesc\":\"第三方商家ID\",\"itemAttrValues\":[{\"itemAttrValue\":\"204963690015385283\",\"itemAttrValueDesc\":\"204963690015385283\"}]}],\"itemAttrMap\":{\"itemCustomerServiceEndTimeMin\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceEndTimeMin\",\"itemAttrDesc\":\"客服结束工作时间-分\",\"itemAttrValues\":[{\"itemAttrValue\":\"0\",\"itemAttrValueDesc\":\"0\"}]},\"availableTimePeriod\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"availableTimePeriod\",\"itemAttrDesc\":\"可用时间段\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":2,\\\"customTimes\\\":[{\\\"startTime\\\":\\\"06:00\\\",\\\"endTime\\\":\\\"23:00\\\"}],\\\"enableText\\\":false,\\\"valTextType\\\":0}\",\"itemAttrValueDesc\":\"自定义\"}]},\"itemCustomerServiceEndTimeHour\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceEndTimeHour\",\"itemAttrDesc\":\"客服结束工作时间-点\",\"itemAttrValues\":[{\"itemAttrValue\":\"18\",\"itemAttrValueDesc\":\"18\"}]},\"shareDiscount\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"shareDiscount\",\"itemAttrDesc\":\"是否与其他优惠共享\",\"itemAttrValues\":[{\"itemAttrValue\":\"2\",\"itemAttrValueDesc\":\"不可以\"}]},\"unavailableTime\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"unavailableTime\",\"itemAttrDesc\":\"可用日期段\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":1}\",\"itemAttrValueDesc\":\"所有日期可用\"}]},\"supplyChainId\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"supplyChainId\",\"itemAttrDesc\":\"供应商API供应链ID\",\"itemAttrValues\":[{\"itemAttrValue\":\"ks716916767365431437\",\"itemAttrValueDesc\":\"ks716916767365431437\"}]},\"memberItem\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"memberItem\",\"itemAttrDesc\":\"会员专享品\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"是（仅限商家会员购买）\"}]},\"buyLimitType\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"buyLimitType\",\"itemAttrDesc\":\"是否限购\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":2,\\\"buyLimitList\\\":[{\\\"type\\\":2,\\\"num\\\":5}],\\\"enableText\\\":false,\\\"valTextType\\\":0}\",\"itemAttrValueDesc\":\"限购\"}]},\"invoiceDesc\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"invoiceDesc\",\"itemAttrDesc\":\"发票说明\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"详情咨询商家\"}]},\"customerInfo\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"customerInfo\",\"itemAttrDesc\":\"顾客信息\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":1,\\\"enableText\\\":false,\\\"valTextType\\\":0}\",\"itemAttrValueDesc\":\"需要顾客手机号\"}]},\"payCountdown\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"payCountdown\",\"itemAttrDesc\":\"支付倒计时(秒)\",\"itemAttrValues\":[{\"itemAttrValue\":\"900\",\"itemAttrValueDesc\":\"900\"}]},\"performanceType\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"performanceType\",\"itemAttrDesc\":\"履约类型\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"仅支持到店\"}]},\"reservationFlag\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"reservationFlag\",\"itemAttrDesc\":\"是否需要预约\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":1}\",\"itemAttrValueDesc\":\"不需要预约\"}]},\"itemDataVersion\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemDataVersion\",\"itemAttrDesc\":\"商品数据版本\",\"itemAttrValues\":[{\"itemAttrValue\":\"2\",\"itemAttrValueDesc\":\"2\"}]},\"salesChannelsType\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"salesChannelsType\",\"itemAttrDesc\":\"售卖渠道\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"全渠道售卖\"}]},\"verifyMode\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"verifyMode\",\"itemAttrDesc\":\"核销方式\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":3,\\\"enableText\\\":false,\\\"valTextType\\\":0,\\\"guideInfo\\\":{\\\"infoId\\\":6604760,\\\"infoName\\\":\\\"核销图文引导方案一\\\",\\\"imgList\\\":[{\\\"order\\\":0,\\\"image\\\":\\\"/kos/nlav12320/verify/mcts10_c1.png\\\"},{\\\"order\\\":1,\\\"image\\\":\\\"/kos/nlav12320/verify/mcts10_c2.png\\\"}],\\\"text\\\":\\\"通过“肯德基APP 或 肯德基自助点餐微信小程序”点单\\\"}}\",\"itemAttrValueDesc\":\"图文引导至快手APP外核销\"},{\"itemAttrValue\":\"{\\\"valData\\\":2,\\\"enableText\\\":false,\\\"valTextType\\\":0,\\\"deviceList\\\":[{\\\"deviceId\\\":1,\\\"deviceName\\\":\\\"门店POS/收银机\\\"}]}\",\"itemAttrValueDesc\":\"通过店内扫码设备核销\"}]},\"refundRule\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"refundRule\",\"itemAttrDesc\":\"退款政策\",\"itemAttrValues\":[{\"itemAttrValue\":\"1\",\"itemAttrValueDesc\":\"未使用/过期随时退（已核销使用的部分不可退,未核销使用的部分可退）\"}]},\"supplyChainName\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"supplyChainName\",\"itemAttrDesc\":\"供应商API供应链名称\",\"itemAttrValues\":[{\"itemAttrValue\":\"KFC 本地生活服务对接\",\"itemAttrValueDesc\":\"技术服务应用\"}]},\"itemCustomerServiceStartTimeHour\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceStartTimeHour\",\"itemAttrDesc\":\"客服开始工作时间-点\",\"itemAttrValues\":[{\"itemAttrValue\":\"10\",\"itemAttrValueDesc\":\"10\"}]},\"couponCodeExpireTime\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"couponCodeExpireTime\",\"itemAttrDesc\":\"券码有效期\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":3,\\\"startTime\\\":1753977600000,\\\"endTime\\\":1754236799000}\",\"itemAttrValueDesc\":\"自定义有效日期区间\"}]},\"showItemInfo\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"showItemInfo\",\"itemAttrDesc\":\"是否展示商品信息\",\"itemAttrValues\":[{\"itemAttrValue\":\"0\",\"itemAttrValueDesc\":\"0\"}]},\"itemCustomerServiceTel\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceTel\",\"itemAttrDesc\":\"客服电话\",\"itemAttrValues\":[{\"itemAttrValue\":\"02159097717\",\"itemAttrValueDesc\":\"02159097717\"}]},\"itemCustomerServiceStartTimeMin\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"itemCustomerServiceStartTimeMin\",\"itemAttrDesc\":\"客服开始工作时间-分\",\"itemAttrValues\":[{\"itemAttrValue\":\"0\",\"itemAttrValueDesc\":\"0\"}]},\"ruleAdditionalNotes\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"ruleAdditionalNotes\",\"itemAttrDesc\":\"规则补充说明\",\"itemAttrValues\":[{\"itemAttrValue\":\"-本产品共1张兑换券（仅限一次兑换）\\n-本券仅限在有此产品供应的肯德基餐厅使用，不适用于交通枢纽、旅游景区、西藏自治区餐厅及精选餐厅等部分餐厅，具体情况以餐厅餐牌公示为准；\\n-本券仅限使用1次，核销后即失效；\\n-本券不可兑换现金，且不能与其他优惠同时使用；\\n-本券到期后若未使用，支持退款，详见购券平台《购物须知》；\\n-如有疑问，请咨询肯德基在线客服，在线客服工作时间（9:00-22:00）。\",\"itemAttrValueDesc\":\"-本产品共1张兑换券（仅限一次兑换）\\n-本券仅限在有此产品供应的肯德基餐厅使用，不适用于交通枢纽、旅游景区、西藏自治区餐厅及精选餐厅等部分餐厅，具体情况以餐厅餐牌公示为准；\\n-本券仅限使用1次，核销后即失效；\\n-本券不可兑换现金，且不能与其他优惠同时使用；\\n-本券到期后若未使用，支持退款，详见购券平台《购物须知》；\\n-如有疑问，请咨询肯德基在线客服，在线客服工作时间（9:00-22:00）。\"}]},\"priceAndStockSource\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"priceAndStockSource\",\"itemAttrDesc\":\"价格库存数据的来源\",\"itemAttrValues\":[{\"itemAttrValue\":\"SELF\",\"itemAttrValueDesc\":\"SELF\"}]},\"sheetNumLimit\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"sheetNumLimit\",\"itemAttrDesc\":\"使用张数限制\",\"itemAttrValues\":[{\"itemAttrValue\":\"{\\\"valData\\\":1}\",\"itemAttrValueDesc\":\"不限制\"}]},\"photoId\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"photoId\",\"itemAttrDesc\":\"商家上传的商品视频编码\",\"itemAttrValues\":[{\"itemAttrValue\":\"0\",\"itemAttrValueDesc\":\"0\"}]},\"packagePriceType\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"packagePriceType\",\"itemAttrDesc\":\"SKU门市价计算类型\",\"itemAttrValues\":[{\"itemAttrValue\":\"2\",\"itemAttrValueDesc\":\"设置商品划线价无需设置单商品价格\"}]},\"partnerId\":{\"itemId\":100109518470533,\"itemType\":0,\"itemAttrType\":\"partnerId\",\"itemAttrDesc\":\"第三方商家ID\",\"itemAttrValues\":[{\"itemAttrValue\":\"204963690015385283\",\"itemAttrValueDesc\":\"204963690015385283\"}]}},\"itemRuleMap\":{\"fillOrderRule\":\"{\\\"fillOrderRule\\\":{\\\"type\\\":\\\"NEED_BUYER_PHONE_NUMBER\\\",\\\"needContactFlag\\\":null,\\\"travelerIdentityTypes\\\":null,\\\"travelerType\\\":null,\\\"travelerQualificationTypes\\\":null,\\\"phoneNumberFlag\\\":1,\\\"nameFlag\\\":2,\\\"realNameSystemType\\\":1,\\\"shippingAddressFlag\\\":2}}\",\"performanceRule\":\"{\\\"performanceRule\\\":{\\\"type\\\":\\\"KWAI_ELECTRONIC_CODE\\\",\\\"supplementDesc\\\":null}}\",\"useRule\":\"{\\\"useRule\\\":{\\\"afterSelectUseDayCount\\\":null,\\\"instruction\\\":\\\"-本产品共1张兑换券（仅限一次兑换）\\\\n-本券仅限在有此产品供应的肯德基餐厅使用，不适用于交通枢纽、旅游景区、西藏自治区餐厅及精选餐厅等部分餐厅，具体情况以餐厅餐牌公示为准；\\\\n-本券仅限使用1次，核销后即失效；\\\\n-本券不可兑换现金，且不能与其他优惠同时使用；\\\\n-本券到期后若未使用，支持退款，详见购券平台《购物须知》；\\\\n-如有疑问，请咨询肯德基在线客服，在线客服工作时间（9:00-22:00）。\\\",\\\"useScopeLimit\\\":[],\\\"useLimitFlag\\\":false,\\\"singleUseLimit\\\":null,\\\"unavailableTime\\\":{\\\"customTime\\\":null,\\\"customTimes\\\":[],\\\"weeks\\\":[],\\\"holidays\\\":[],\\\"specialCondition\\\":null},\\\"unavailableTimeFlag\\\":false}}\",\"ItemActivityRule\":\"{\\\"activityType\\\":\\\"UNKNOWN\\\"}\",\"displayRule\":\"{\\\"displayRule\\\":{\\\"salesChannelsType\\\":\\\"ALL_CHANNELS\\\"}}\",\"reservationRule\":\"{\\\"reservationRule\\\":{\\\"reservationFlag\\\":false,\\\"reservationRuleDesc\\\":null,\\\"reservationModel\\\":null}}\",\"buyLimitRule\":\"{\\\"buyLimitRules\\\":[{\\\"buyLimitType\\\":\\\"SINGLE_ORDER_AMOUNT\\\",\\\"sourceType\\\":null,\\\"sourceUniqueKey\\\":null,\\\"singleOrderLimitNum\\\":5,\\\"buyLimitModel\\\":\\\"PLAY_DAY_BUY_LIMIT\\\",\\\"orderLeastNum\\\":null,\\\"orderMostNum\\\":null,\\\"phoneInDay\\\":null,\\\"phoneMostNum\\\":null,\\\"identityCardInDay\\\":null,\\\"identityCardMostNum\\\":null,\\\"accountInDay\\\":null,\\\"accountMostNum\\\":null,\\\"phoneNoTimeLimitNum\\\":null,\\\"phonePlayTimeLimitNum\\\":null,\\\"idCardPlayTimeLimitNum\\\":null,\\\"accountNoTimeLimitNum\\\":null,\\\"merchantOrderLimitNum\\\":null}]}\",\"refundRule\":\"{\\\"type\\\":\\\"NO_WRITE_OFF_REFUND_ANY_TIME\\\",\\\"conditionRefundRule\\\":{\\\"refundRules\\\":[]},\\\"refundDesc\\\":null,\\\"isCanPartialRefund\\\":null,\\\"sevenDayUnConditionalRefundType\\\":null}\",\"validTimeRule\":\"{\\\"validTimeRule\\\":{\\\"type\\\":\\\"CUSTOM_TIME\\\",\\\"afterBuyLimitDay\\\":null,\\\"afterBuyDay\\\":null,\\\"fromTime\\\":null,\\\"limitDay\\\":null,\\\"startTime\\\":1753977600000,\\\"endTime\\\":1754236799000}}\",\"ticketEnterParkRule\":\"{\\\"ticketEnterParkRule\\\":{\\\"ticketEnterParkModel\\\":null,\\\"ticketEnterParkBringInfos\\\":null,\\\"ticketEnterParkBringOtherRemark\\\":null,\\\"ticketExchangeAddress\\\":null,\\\"ticketEnterPartTimeRule\\\":null,\\\"ticketEnterParkAddress\\\":null}}\",\"useTimeRule\":\"{\\\"source\\\":0,\\\"useTime\\\":[[\\\"06:00\\\",\\\"23:00\\\"]],\\\"type\\\":2,\\\"specialCondition\\\":null}\",\"bookRule\":\"{\\\"bookRule\\\":{\\\"type\\\":null,\\\"isCurrentDay\\\":null,\\\"beforeBuyLimitDay\\\":null,\\\"beforeBuyHour\\\":null,\\\"beforeBuyMinute\\\":null,\\\"afterBuyWaitHour\\\":null,\\\"afterBuyWaitMinute\\\":null,\\\"beforePlayDay\\\":null,\\\"beforePlayHour\\\":null,\\\"beforePlayMinute\\\":null}}\",\"isSupportSelectSeat\":\"false\"},\"supplyChainFlag\":true,\"projectDetailInfos\":[],\"moduleShowContent\":[],\"moduleShowContentNew\":[]},\"poiList\":[],\"contactPhoneNumbers\":[],\"itemIndustryType\":10400,\"itemSkuShowInfo\":{\"itemId\":100109518470533,\"minSinglePrice\":1150,\"maxSinglePrice\":1150,\"itemStock\":99824,\"minMarketPrice\":2300,\"maxMarketPrice\":2300,\"itemSoldStock\":179,\"discount\":5.0,\"itemSaleTotalStock\":99824,\"itemSaleTotalReserveStock\":0,\"skuTimesSinglePrice\":0,\"earliestAvailableDate\":0},\"auditStatus\":2,\"offOperator\":-10000,\"offReason\":\"商品使用规则不能为空\",\"highRisk\":false,\"result\":{\"resultCode\":0,\"errorMsg\":\"\",\"isSuccess\":true},\"skuStockMap\":{\"100140435260533\":99824},\"showItemInfo\":\"0\",\"activityTags\":[],\"itemOpStatus\":1,\"itemExt\":\"{\\\"ITEM_REMARK\\\":\\\"长线门店+无宅新店\\\",\\\"ITEM_FROM_TYPE\\\":101,\\\"ITEM_BRAND_INFO\\\":{\\\"brandId\\\":0,\\\"brandName\\\":\\\"肯德基\\\",\\\"brandSourceType\\\":200},\\\"ITEM_TIME_SHELF\\\":{\\\"onShelfTime\\\":1753977616000,\\\"offShelfTime\\\":1754215210000,\\\"onAutoDelayFlag\\\":false,\\\"onRealShelfTime\\\":1753977616000,\\\"offAutoDelayFlag\\\":false,\\\"offRealShelfTime\\\":1754215210000,\\\"sysOnAutoDelayFlag\\\":false,\\\"sysOffAutoDelayFlag\\\":false},\\\"ENABLE_DISTRIBUTION\\\":false,\\\"ITEM_IMAGE_BLOB_KEY\\\":\\\"dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw==.jpg\\\",\\\"ITEM_SOURCE_TYPE_NEW\\\":101,\\\"ITEM_LIST_DISPLAY_INFO\\\":{\\\"firstAuditPassTime\\\":1753772635094,\\\"onShelfTime4AuditPassOrOp\\\":1753772635254},\\\"ITEM_CAROUSEL_BLOB_KEYS\\\":\\\"dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0ZmU2NjBmOToxMDQyNDM0NTYyOTUzMw==.jpg,dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA1ODRkOGY4OjcyNDgwMTg3MTQ1MzM=.jpg,dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA2YWY5OGFjODo0Njg4ODgyOTU2NTMz.jpg,dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0NDRmYmMwZDo0Njg5ODgxNDg2NTMz.jpg,dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA0OTFmNjVmYjo0NjkxNzMxMDY1NTMz.jpg\\\"}\",\"distributionCommission\":0,\"distributionRate\":0.0,\"shopId\":0,\"sellerId\":10533,\"showHelpRule\":{\"meituanInfo\":{\"meituanItem\":false,\"meituanLogin\":false,\"meituanSignIn\":false,\"authorizationIgnored\":false}},\"degradeWebUrl\":\"\",\"itemDetailJumpUrl\":\"\",\"categoryInfo\":{\"categoryId\":10120010,\"categoryName\":\"西式快餐\",\"parentCategory\":{\"categoryId\":10190000,\"categoryName\":\"小吃快餐\",\"parentCategory\":{\"categoryId\":10000000,\"categoryName\":\"美食\",\"parentCategory\":{\"categoryId\":0,\"categoryName\":\"\",\"fullCategoryName\":\"\"},\"fullCategoryName\":\"\"},\"fullCategoryName\":\"\"},\"fullCategoryName\":\"美食-小吃快餐-西式快餐\"},\"salesChannelsType\":1,\"sellerInfo\":{\"merchantId\":204963690015385283,\"merchantUid\":2442143283,\"merchantName\":\"肯德基\",\"isShowQualification\":false},\"poiCount\":10321,\"itemTypeCode\":1,\"zippedImgFields\":{\"zippedItemImgUrl\":\"http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA2ZDRlNGYyYzoxMDQyOTI2NTg0MTUzMw%3D%3D.webp\",\"zippedItemCarouselUrls\":[\"http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA2ZDRlNGYyYzoxMDQyOTI2NTg0MTUzMw%3D%3D.webp\",\"http://p3-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkAyZjI4YTMyNTo3MjQ3MDI4OTE5NTMz.webp\",\"http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkAxNzJmMTQxODo0Njg3OTIwMDI0NTMz.webp\",\"http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA1MmZiMTZmNTo0NjkxNzMwOTIwNTMz.webp\",\"http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA1NGY0MDYyYTo0NjkzNTk5NTA0NTMz.webp\"],\"zippedItemDetail\":{\"comboDetailList\":[],\"imageTextDetailList\":[{\"desc\":\"\",\"imgUrl\":\"http://p4-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkAxM2I5MzNhMDo3MjQ4MDIwOTQzNTMz.webp\",\"splitImgUrl\":[]},{\"desc\":\"\",\"imgUrl\":\"http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkAxNTBhN2M4YzoxMDQyNDM0NjUzMTUzMw%3D%3D.webp\",\"splitImgUrl\":[]},{\"desc\":\"\",\"imgUrl\":\"http://p2-sh.shukwai.com/bs2/upload-lbs-sku-public/dXBsb2FkLWxicy1za3UtcHVibGljOmxvY2FsbGlmZV9pdGVtX3Bob3RvOjEwNTMzOkxPQ0FMTElGRV9NRVJDSEFOVDpbQkA3YjE3ZmVlYzozMTA4MjQ4MTMzNTMz.webp\",\"splitImgUrl\":[]}],\"richTextUrl\":\"\",\"itemDetailUrl\":\"\"}},\"saleItemStatusInfo\":{\"saleStatus\":false,\"nonSaleReason\":[3,11]},\"firstCategory\":{\"categoryId\":10000000,\"categoryName\":\"美食\",\"categoryPid\":0,\"hierarchy\":1,\"categoryDesc\":\"美食\",\"categoryStatus\":100,\"isLeaf\":false,\"createTime\":1679474855848,\"updateTime\":1695281501105,\"sort\":1},\"secondCategory\":{\"categoryId\":10190000,\"categoryName\":\"小吃快餐\",\"categoryPid\":10000000,\"hierarchy\":2,\"categoryDesc\":\"美食-小吃快餐\",\"categoryStatus\":100,\"isLeaf\":false,\"createTime\":1679474855851,\"updateTime\":1695281501170,\"sort\":18},\"thirdCategory\":{\"categoryId\":10120010,\"categoryName\":\"西式快餐\",\"categoryPid\":10190000,\"hierarchy\":3,\"categoryDesc\":\"美食-小吃快餐-西式快餐\",\"categoryStatus\":100,\"isLeaf\":true,\"createTime\":1679474855853,\"updateTime\":1712738246443,\"sort\":10},\"memberInfo\":{\"memberItem\":true,\"userJoinMember\":false,\"canNotBuy\":false},\"itemTagIds\":[],\"templateId\":443,\"industryIdentityCode\":1,\"industryIdentityName\":\"到餐\",\"guideDecisionInfoMap\":{\"guideDecisionInfoMap\":{\"1\":{\"guideDecisionInto\":[{\"propId\":12,\"propName\":\"\",\"propValue\":\"27\",\"extraInfo\":{}},{\"propId\":13,\"propName\":\"\",\"propValue\":\"483\",\"extraInfo\":{}},{\"propId\":14,\"propName\":\"\",\"propValue\":\"456\",\"extraInfo\":{}},{\"propId\":15,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}},{\"propId\":16,\"propName\":\"\",\"propValue\":\"21348\",\"extraInfo\":{}},{\"propId\":17,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}},{\"propId\":18,\"propName\":\"\",\"propValue\":\"42588\",\"extraInfo\":{}},{\"propId\":19,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}},{\"propId\":21,\"propName\":\"\",\"propValue\":\"80\",\"extraInfo\":{}},{\"propId\":25,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}},{\"propId\":27,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}},{\"propId\":28,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}},{\"propId\":32,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}},{\"propId\":35,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}},{\"propId\":37,\"propName\":\"\",\"propValue\":\"0\",\"extraInfo\":{}}]}}}}",
+    "poiTotal": 10209,
+    "recentlyPoi": {
+        "distance": 688.8,
+        "name": "肯德基(邹区泰富店)",
+        "address": "江苏省常州市钟楼区邹区东方路188号易买得超市1楼",
+        "score": 0,
+        "per": 3600,
+        "businessTime": "06:00-23:00"
+    },
+    "safeguardList": [
+        "随时退",
+        "过期退"
+    ],
+    "noticeList": [
+        "仅到店",
+        "周末节假日通用",
+        "营业时间可用"
+    ],
+    "isTrust": false,
+    "poiPageUrl": "",
+    "goodsPageUrl": "",
+    "choiceTotalNum": 0,
+    "choiceNum": 0
+}

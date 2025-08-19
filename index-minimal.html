@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000;
+            --fg: #0f0;
+            --dim: #090;
+            --border: #030;
+            --accent: #0ff;
+            --error: #f00;
+            --warning: #ff0;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: var(--bg);
+            color: var(--fg);
+            font-size: 12px;
+            line-height: 1.4;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 40px;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+        }
+
+        .mode-btn {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            color: var(--dim);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .mode-btn:hover {
+            color: var(--fg);
+        }
+
+        .mode-btn.active {
+            color: var(--accent);
+        }
+
+        .mode-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent);
+        }
+
+        .mode-tooltip {
+            position: absolute;
+            left: 45px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 100;
+        }
+
+        .mode-btn:hover .mode-tooltip {
+            opacity: 1;
+        }
+
+        /* Main Area */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            height: 40px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 20px;
+        }
+
+        .title {
+            font-weight: bold;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--dim);
+            padding: 4px 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            color: var(--fg);
+            border-color: var(--fg);
+        }
+
+        .btn.primary {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn.primary:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* Tabs */
+        .tabs {
+            height: 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 5px;
+        }
+
+        .tab {
+            padding: 4px 10px;
+            cursor: pointer;
+            color: var(--dim);
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tab:hover {
+            color: var(--fg);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-color: var(--border);
+        }
+
+        .tab-close {
+            margin-left: 5px;
+            opacity: 0.5;
+            cursor: pointer;
+        }
+
+        .tab-close:hover {
+            opacity: 1;
+            color: var(--error);
+        }
+
+        .tab-add {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dim);
+            border: 1px solid var(--border);
+        }
+
+        .tab-add:hover {
+            color: var(--fg);
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            min-width: 200px;
+            position: relative;
+        }
+
+        .panel:last-child {
+            border-right: none;
+        }
+
+        .panel-header {
+            height: 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 11px;
+            color: var(--dim);
+        }
+
+        .panel-title {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .panel-info {
+            margin-left: auto;
+            color: var(--accent);
+        }
+
+        .editor-container {
+            flex: 1;
+            position: relative;
+            background: #000;
+        }
+
+        /* Layer tabs */
+        .layer-tabs-container {
+            height: 25px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .layer-tabs {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            gap: 5px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+        .layer-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .layer-tab {
+            padding: 2px 8px;
+            cursor: pointer;
+            color: var(--dim);
+            border: 1px solid var(--border);
+            font-size: 10px;
+            white-space: nowrap;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .layer-tab:hover {
+            color: var(--fg);
+        }
+
+        .layer-tab.active {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .layer-tabs-nav {
+            width: 20px;
+            height: 25px;
+            background: var(--bg);
+            border: none;
+            color: var(--dim);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .layer-tabs-nav:hover {
+            color: var(--fg);
+            background: var(--border);
+        }
+
+        .layer-tabs-nav-left {
+            border-right: 1px solid var(--border);
+        }
+
+        .layer-tabs-nav-right {
+            border-left: 1px solid var(--border);
+        }
+
+        /* Processor panel */
+        .processor-tools {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 3px 8px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .tool-btn:hover {
+            color: var(--fg);
+            border-color: var(--fg);
+        }
+
+        /* Status */
+        .status {
+            height: 25px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 10px;
+            color: var(--dim);
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--dim);
+        }
+
+        .status-dot.active {
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--error);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            font-size: 11px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideIn 0.2s;
+        }
+
+        .notification.success {
+            border-color: var(--fg);
+            color: var(--fg);
+        }
+
+        .notification.error {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Resizer */
+        .resizer {
+            position: absolute;
+            right: -2px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            cursor: col-resize;
+            z-index: 10;
+        }
+
+        .resizer:hover {
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dim);
+        }
+
+        /* Monaco overrides */
+        .monaco-editor, .monaco-editor-background {
+            background: #000 !important;
+        }
+
+        .monaco-editor .margin {
+            background: #000 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <button class="mode-btn active" data-mode="layer" onclick="switchMode('layer')">
+                ⊞
+                <span class="mode-tooltip">Layer Editor</span>
+            </button>
+            <button class="mode-btn" data-mode="processor" onclick="switchMode('processor')">
+                ⚡
+                <span class="mode-tooltip">Processor</span>
+            </button>
+        </div>
+        
+        <div class="main-area">
+            <div class="header">
+                <span class="title">JSON</span>
+                <div class="actions" id="layerActions">
+                    <button class="btn" onclick="analyzeJSON()">ANALYZE</button>
+                    <button class="btn primary" onclick="generateOutput()">GENERATE</button>
+                </div>
+                <div class="actions" id="processorActions" style="display: none;">
+                    <button class="btn" onclick="formatJSON()">FORMAT</button>
+                    <button class="btn" onclick="minifyJSON()">MINIFY</button>
+                    <button class="btn" onclick="validateJSON()">VALIDATE</button>
+                    <button class="btn" onclick="escapeJSON()">ESCAPE</button>
+                    <button class="btn" onclick="unescapeJSON()">UNESCAPE</button>
+                </div>
+            </div>
+            
+            <div class="tabs" id="mainTabs">
+                <div class="tab active" id="mainTab_0">
+                    <span ondblclick="editTabName(event)">doc-1</span>
+                    <span class="tab-close" onclick="closeTab(event)">×</span>
+                </div>
+                <div class="tab-add" onclick="addNewDocument()">+</div>
+            </div>
+            
+            <!-- Layer Mode -->
+            <div class="content" id="layerMode">
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">INPUT</span>
+                        <span class="panel-info" id="inputInfo"></span>
+                    </div>
+                    <div class="editor-container" id="inputEditor"></div>
+                    <div class="resizer"></div>
+                </div>
+                
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">LAYERS</span>
+                        <span class="panel-info" id="layerInfo">0</span>
+                    </div>
+                    <div class="layer-tabs-container">
+                        <button class="layer-tabs-nav layer-tabs-nav-left" onclick="scrollLayerTabs('left')" style="display: none;">‹</button>
+                        <div class="layer-tabs" id="layerTabs"></div>
+                        <button class="layer-tabs-nav layer-tabs-nav-right" onclick="scrollLayerTabs('right')" style="display: none;">›</button>
+                    </div>
+                    <div class="editor-container" id="layerEditor"></div>
+                    <div class="resizer"></div>
+                </div>
+                
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">OUTPUT</span>
+                        <span class="panel-info" id="outputInfo"></span>
+                    </div>
+                    <div class="editor-container" id="outputEditor"></div>
+                </div>
+            </div>
+            
+            <!-- Processor Mode -->
+            <div class="content" id="processorMode" style="display: none;">
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">INPUT</span>
+                        <span class="panel-info" id="procInputInfo"></span>
+                    </div>
+                    <div class="editor-container" id="procInputEditor"></div>
+                    <div class="resizer"></div>
+                </div>
+                
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">OUTPUT</span>
+                        <span class="panel-info" id="procOutputInfo"></span>
+                    </div>
+                    <div class="processor-tools">
+                        <button class="tool-btn" onclick="base64Encode()">B64 ENC</button>
+                        <button class="tool-btn" onclick="base64Decode()">B64 DEC</button>
+                        <button class="tool-btn" onclick="urlEncode()">URL ENC</button>
+                        <button class="tool-btn" onclick="urlDecode()">URL DEC</button>
+                        <button class="tool-btn" onclick="sortKeys()">SORT</button>
+                        <button class="tool-btn" onclick="copyOutput()">COPY</button>
+                        <button class="tool-btn" onclick="clearAll()">CLEAR</button>
+                    </div>
+                    <div class="editor-container" id="procOutputEditor"></div>
+                </div>
+            </div>
+            
+            <div class="status">
+                <div class="status-item">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">READY</span>
+                </div>
+                <div class="status-item" id="saveStatus" style="display: none;">
+                    <span>SAVED</span>
+                </div>
+                <div class="status-item" style="margin-left: auto;">
+                    <span>JSON EDITOR v2.0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    <script>
+        // Global state
+        let currentMode = 'layer';
+        let currentDocId = 0;
+        let documents = {};
+        let editors = {};
+        let parsedLayers = [];
+        let isUpdating = false;
+        let saveTimer = null;
+
+        // Initialize
+        require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' }});
+        
+        require(['vs/editor/editor.main'], function() {
+            // Dark theme
+            monaco.editor.defineTheme('minimal', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { token: 'string.key.json', foreground: '00ff00' },
+                    { token: 'string.value.json', foreground: '00ffff' },
+                    { token: 'number', foreground: 'ffff00' },
+                    { token: 'keyword', foreground: 'ff00ff' }
+                ],
+                colors: {
+                    'editor.background': '#000000',
+                    'editor.foreground': '#00ff00',
+                    'editor.lineHighlightBackground': '#001100',
+                    'editorLineNumber.foreground': '#009900',
+                    'editorIndentGuide.background': '#003300',
+                    'editor.selectionBackground': '#00ffff33',
+                    'editorCursor.foreground': '#00ffff'
+                }
+            });
+            
+            monaco.editor.setTheme('minimal');
+            
+            // Create first document
+            createDocument();
+            initEditors();
+            loadFromStorage();
+        });
+
+        // Document management
+        function createDocument() {
+            const id = Date.now();
+            documents[id] = {
+                id: id,
+                name: `doc-${Object.keys(documents).length + 1}`,
+                input: '',
+                output: '',
+                layers: [],
+                currentLayer: 0,
+                mode: 'layer'
+            };
+            currentDocId = id;
+            renderTabs();
+            return id;
+        }
+
+        function switchDocument(id) {
+            saveCurrentDocument();
+            currentDocId = id;
+            loadDocument();
+            renderTabs();
+        }
+
+        function saveCurrentDocument() {
+            if (!documents[currentDocId]) return;
+            
+            const doc = documents[currentDocId];
+            doc.input = editors.input?.getValue() || '';
+            doc.output = editors.output?.getValue() || '';
+            doc.layers = parsedLayers;
+            
+            // Save layer contents
+            parsedLayers.forEach((layer, i) => {
+                if (editors[`layer_${i}`]) {
+                    layer.edited = editors[`layer_${i}`].getValue();
+                }
+            });
+        }
+
+        function loadDocument() {
+            const doc = documents[currentDocId];
+            if (!doc) return;
+            
+            editors.input?.setValue(doc.input || '');
+            editors.output?.setValue(doc.output || '');
+            parsedLayers = doc.layers || [];
+            
+            renderLayers();
+        }
+
+        function closeTab(e) {
+            e.stopPropagation();
+            
+            if (Object.keys(documents).length <= 1) {
+                showNotification('Cannot close last document', 'error');
+                return;
+            }
+            
+            const tabElement = e.target.closest('.tab');
+            const docId = parseInt(tabElement.id.replace('mainTab_', ''));
+            
+            delete documents[docId];
+            
+            if (currentDocId === docId) {
+                currentDocId = Object.keys(documents)[0];
+                loadDocument();
+            }
+            
+            renderTabs();
+            saveToStorage();
+        }
+
+        function addNewDocument() {
+            saveCurrentDocument();
+            createDocument();
+            loadDocument();
+            saveToStorage();
+        }
+
+        function editTabName(e) {
+            e.stopPropagation();
+            const span = e.target;
+            const oldName = span.textContent;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = oldName;
+            input.style.cssText = 'background: #000; border: 1px solid #0ff; color: #0f0; padding: 2px; font: inherit;';
+            
+            input.onblur = () => {
+                const newName = input.value.trim() || oldName;
+                documents[currentDocId].name = newName;
+                span.textContent = newName;
+                saveToStorage();
+            };
+            
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') input.blur();
+                if (e.key === 'Escape') {
+                    input.value = oldName;
+                    input.blur();
+                }
+            };
+            
+            span.textContent = '';
+            span.appendChild(input);
+            input.focus();
+            input.select();
+        }
+
+        function renderTabs() {
+            const container = document.getElementById('mainTabs');
+            const tabs = Object.values(documents).map(doc => `
+                <div class="tab ${doc.id === currentDocId ? 'active' : ''}" id="mainTab_${doc.id}" onclick="switchDocument(${doc.id})">
+                    <span ondblclick="editTabName(event)">${doc.name}</span>
+                    <span class="tab-close" onclick="closeTab(event)">×</span>
+                </div>
+            `).join('');
+            
+            container.innerHTML = tabs + '<div class="tab-add" onclick="addNewDocument()">+</div>';
+        }
+
+        // Mode switching
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+            
+            document.getElementById('layerActions').style.display = mode === 'layer' ? 'flex' : 'none';
+            document.getElementById('processorActions').style.display = mode === 'processor' ? 'flex' : 'none';
+            document.getElementById('layerMode').style.display = mode === 'layer' ? 'flex' : 'none';
+            document.getElementById('processorMode').style.display = mode === 'processor' ? 'flex' : 'none';
+            
+            if (mode === 'processor' && !editors.procInput) {
+                initProcessorEditors();
+            }
+        }
+
+        // Editor initialization
+        function initEditors() {
+            editors.input = monaco.editor.create(document.getElementById('inputEditor'), {
+                value: '',
+                language: 'json',
+                theme: 'minimal',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 12,
+                lineNumbers: 'off',
+                folding: false,
+                scrollBeyondLastLine: false,
+                wordWrap: 'on'
+            });
+            
+            editors.output = monaco.editor.create(document.getElementById('outputEditor'), {
+                value: '',
+                language: 'json',
+                theme: 'minimal',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 12,
+                lineNumbers: 'off',
+                folding: false,
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                readOnly: true
+            });
+            
+            // Auto-save on change (only save after 5 seconds of inactivity)
+            editors.input.onDidChangeModelContent(() => {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(() => {
+                    saveCurrentDocument();
+                    saveToStorage();
+                }, 5000); // Increased to 5 seconds
+            });
+        }
+
+        function initProcessorEditors() {
+            editors.procInput = monaco.editor.create(document.getElementById('procInputEditor'), {
+                value: '',
+                language: 'json',
+                theme: 'minimal',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 12,
+                lineNumbers: 'off',
+                folding: false,
+                scrollBeyondLastLine: false,
+                wordWrap: 'on'
+            });
+            
+            editors.procOutput = monaco.editor.create(document.getElementById('procOutputEditor'), {
+                value: '',
+                language: 'json',
+                theme: 'minimal',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 12,
+                lineNumbers: 'off',
+                folding: false,
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                readOnly: true
+            });
+        }
+
+        // JSON Analysis
+        class JSONAnalyzer {
+            constructor() {
+                this.layers = [];
+            }
+            
+            analyze(str, path = 'root', depth = 0) {
+                if (depth > 10) return str;
+                
+                try {
+                    const parsed = JSON.parse(str);
+                    this.layers.push({
+                        depth,
+                        path,
+                        content: parsed,
+                        raw: str
+                    });
+                    
+                    this.scanObject(parsed, depth);
+                    return parsed;
+                } catch {
+                    return str;
+                }
+            }
+            
+            scanObject(obj, depth, path = '') {
+                if (!obj || typeof obj !== 'object') return;
+                
+                Object.entries(obj).forEach(([key, val]) => {
+                    const fieldPath = path ? `${path}.${key}` : key;
+                    if (typeof val === 'string' && this.looksLikeJSON(val)) {
+                        this.analyze(val, fieldPath, depth + 1);
+                    } else if (typeof val === 'object') {
+                        this.scanObject(val, depth, fieldPath);
+                    }
+                });
+            }
+            
+            looksLikeJSON(str) {
+                const trimmed = str.trim();
+                return (trimmed[0] === '{' && trimmed[trimmed.length - 1] === '}') ||
+                       (trimmed[0] === '[' && trimmed[trimmed.length - 1] === ']');
+            }
+        }
+
+        function analyzeJSON() {
+            const input = editors.input.getValue();
+            if (!input) {
+                showNotification('No input', 'error');
+                return;
+            }
+            
+            const analyzer = new JSONAnalyzer();
+            try {
+                analyzer.analyze(input);
+                parsedLayers = analyzer.layers;
+                
+                renderLayers();
+                updateStatus('active');
+                showNotification(`${parsedLayers.length} layers found`, 'success');
+                
+                saveCurrentDocument();
+                saveToStorage();
+            } catch (e) {
+                showNotification('Parse error', 'error');
+                updateStatus('error');
+            }
+        }
+
+        function renderLayers() {
+            const tabs = document.getElementById('layerTabs');
+            const info = document.getElementById('layerInfo');
+            
+            info.textContent = parsedLayers.length;
+            
+            if (parsedLayers.length === 0) {
+                tabs.innerHTML = '';
+                if (editors.currentLayer) {
+                    editors.currentLayer.dispose();
+                    delete editors.currentLayer;
+                }
+                updateLayerTabsNavButtons();
+                return;
+            }
+            
+            tabs.innerHTML = parsedLayers.map((layer, i) => 
+                `<div class="layer-tab ${i === 0 ? 'active' : ''}" onclick="switchLayer(${i})">L${i + 1}</div>`
+            ).join('');
+            
+            switchLayer(0);
+            updateLayerTabsNavButtons();
+        }
+
+        function scrollLayerTabs(direction) {
+            const container = document.getElementById('layerTabs');
+            const scrollAmount = 100;
+            
+            if (direction === 'left') {
+                container.scrollLeft -= scrollAmount;
+            } else {
+                container.scrollLeft += scrollAmount;
+            }
+        }
+
+        function updateLayerTabsNavButtons() {
+            const container = document.getElementById('layerTabs');
+            const leftBtn = document.querySelector('.layer-tabs-nav-left');
+            const rightBtn = document.querySelector('.layer-tabs-nav-right');
+            
+            if (!container || !leftBtn || !rightBtn) return;
+            
+            const hasOverflow = container.scrollWidth > container.clientWidth;
+            
+            if (hasOverflow) {
+                leftBtn.style.display = container.scrollLeft > 0 ? 'flex' : 'none';
+                rightBtn.style.display = 
+                    container.scrollLeft < (container.scrollWidth - container.clientWidth - 1) ? 'flex' : 'none';
+            } else {
+                leftBtn.style.display = 'none';
+                rightBtn.style.display = 'none';
+            }
+        }
+
+        // Add scroll event listener to update nav buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            const layerTabs = document.getElementById('layerTabs');
+            if (layerTabs) {
+                layerTabs.addEventListener('scroll', updateLayerTabsNavButtons);
+            }
+        });
+
+        function switchLayer(index) {
+            document.querySelectorAll('.layer-tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === index);
+            });
+            
+            // Scroll active tab into view
+            const activeTab = document.querySelectorAll('.layer-tab')[index];
+            if (activeTab) {
+                activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+            
+            const container = document.getElementById('layerEditor');
+            
+            if (editors.currentLayer) {
+                editors.currentLayer.dispose();
+            }
+            
+            const layer = parsedLayers[index];
+            const content = layer.edited || JSON.stringify(layer.content, null, 2);
+            
+            editors.currentLayer = monaco.editor.create(container, {
+                value: content,
+                language: 'json',
+                theme: 'minimal',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 12,
+                lineNumbers: 'off',
+                folding: false,
+                scrollBeyondLastLine: false,
+                wordWrap: 'on'
+            });
+            
+            editors.currentLayer.onDidChangeModelContent(() => {
+                layer.edited = editors.currentLayer.getValue();
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(() => {
+                    saveCurrentDocument();
+                    saveToStorage();
+                }, 5000); // Increased to 5 seconds
+            });
+        }
+
+        function generateOutput() {
+            if (parsedLayers.length === 0) {
+                showNotification('No layers', 'error');
+                return;
+            }
+            
+            try {
+                // Rebuild from edited layers
+                let result = parsedLayers[0].content;
+                
+                for (let i = 1; i < parsedLayers.length; i++) {
+                    const layer = parsedLayers[i];
+                    const edited = layer.edited ? JSON.parse(layer.edited) : layer.content;
+                    setNestedValue(result, layer.path, JSON.stringify(edited));
+                }
+                
+                const output = JSON.stringify(result, null, 2);
+                editors.output.setValue(output);
+                updateStatus('active');
+                showNotification('Generated', 'success');
+                
+                saveCurrentDocument();
+                saveToStorage();
+            } catch (e) {
+                showNotification('Generation failed', 'error');
+                updateStatus('error');
+            }
+        }
+
+        function setNestedValue(obj, path, value) {
+            const keys = path.split('.');
+            let current = obj;
+            
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!(keys[i] in current)) {
+                    current[keys[i]] = {};
+                }
+                current = current[keys[i]];
+            }
+            
+            current[keys[keys.length - 1]] = value;
+        }
+
+        // Processor functions
+        function formatJSON() {
+            processJSON(str => JSON.stringify(JSON.parse(str), null, 2));
+        }
+
+        function minifyJSON() {
+            processJSON(str => JSON.stringify(JSON.parse(str)));
+        }
+
+        function validateJSON() {
+            try {
+                const input = editors.procInput.getValue();
+                JSON.parse(input);
+                editors.procOutput.setValue('VALID JSON');
+                showNotification('Valid', 'success');
+            } catch (e) {
+                editors.procOutput.setValue(`INVALID: ${e.message}`);
+                showNotification('Invalid', 'error');
+            }
+        }
+
+        function escapeJSON() {
+            processJSON(str => JSON.stringify(str));
+        }
+
+        function unescapeJSON() {
+            processJSON(str => JSON.parse(str));
+        }
+
+        function sortKeys() {
+            processJSON(str => JSON.stringify(sortObject(JSON.parse(str)), null, 2));
+        }
+
+        function sortObject(obj) {
+            if (Array.isArray(obj)) return obj.map(sortObject);
+            if (obj && typeof obj === 'object') {
+                return Object.keys(obj).sort().reduce((acc, key) => {
+                    acc[key] = sortObject(obj[key]);
+                    return acc;
+                }, {});
+            }
+            return obj;
+        }
+
+        function base64Encode() {
+            processJSON(str => btoa(unescape(encodeURIComponent(str))), false);
+        }
+
+        function base64Decode() {
+            processJSON(str => decodeURIComponent(escape(atob(str.trim()))), false);
+        }
+
+        function urlEncode() {
+            processJSON(str => encodeURIComponent(str), false);
+        }
+
+        function urlDecode() {
+            processJSON(str => decodeURIComponent(str), false);
+        }
+
+        function processJSON(fn, parseFirst = true) {
+            if (!editors.procInput) return;
+            
+            try {
+                const input = editors.procInput.getValue();
+                if (parseFirst) JSON.parse(input); // Validate
+                const result = fn(input);
+                editors.procOutput.setValue(typeof result === 'string' ? result : JSON.stringify(result, null, 2));
+                showNotification('Done', 'success');
+            } catch (e) {
+                showNotification('Error: ' + e.message, 'error');
+            }
+        }
+
+        function copyOutput() {
+            const output = editors.procOutput?.getValue() || '';
+            navigator.clipboard.writeText(output).then(() => {
+                showNotification('Copied', 'success');
+            });
+        }
+
+        function clearAll() {
+            if (editors.procInput) editors.procInput.setValue('');
+            if (editors.procOutput) editors.procOutput.setValue('');
+        }
+
+        // Storage
+        function saveToStorage() {
+            try {
+                saveCurrentDocument();
+                localStorage.setItem('json_editor_v2', JSON.stringify({
+                    documents,
+                    currentDocId,
+                    currentMode
+                }));
+                
+                // Show save indicator briefly
+                const saveStatus = document.getElementById('saveStatus');
+                saveStatus.style.display = 'flex';
+                setTimeout(() => {
+                    saveStatus.style.display = 'none';
+                }, 500); // Reduced to 0.5 seconds
+            } catch (e) {
+                console.error('Save failed:', e);
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('json_editor_v2');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    documents = data.documents || {};
+                    currentDocId = data.currentDocId || Object.keys(documents)[0];
+                    
+                    if (Object.keys(documents).length === 0) {
+                        createDocument();
+                    } else {
+                        renderTabs();
+                        loadDocument();
+                    }
+                }
+            } catch (e) {
+                console.error('Load failed:', e);
+            }
+        }
+
+        // Utilities
+        function updateStatus(status = '') {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            
+            dot.className = status ? `status-dot ${status}` : 'status-dot';
+            
+            if (status === 'active') text.textContent = 'ACTIVE';
+            else if (status === 'error') text.textContent = 'ERROR';
+            else text.textContent = 'READY';
+        }
+
+        function showNotification(message, type = '') {
+            const notif = document.getElementById('notification');
+            notif.textContent = message.toUpperCase();
+            notif.className = `notification show ${type}`;
+            
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 2000);
+        }
+
+        // Panel resizing
+        let resizing = false;
+        let resizeTarget = null;
+        let startX = 0;
+        let startWidth = 0;
+
+        document.querySelectorAll('.resizer').forEach(resizer => {
+            resizer.addEventListener('mousedown', e => {
+                resizing = true;
+                resizeTarget = resizer.parentElement;
+                startX = e.clientX;
+                startWidth = resizeTarget.offsetWidth;
+                e.preventDefault();
+            });
+        });
+
+        document.addEventListener('mousemove', e => {
+            if (!resizing) return;
+            const newWidth = startWidth + (e.clientX - startX);
+            if (newWidth >= 200 && newWidth <= window.innerWidth * 0.6) {
+                resizeTarget.style.width = newWidth + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            resizing = false;
+            resizeTarget = null;
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        if (currentMode === 'layer') analyzeJSON();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        if (currentMode === 'layer') generateOutput();
+                        break;
+                    case 't':
+                        e.preventDefault();
+                        addNewDocument();
+                        break;
+                    case 'w':
+                        e.preventDefault();
+                        const tab = document.querySelector('.tab.active .tab-close');
+                        if (tab) tab.click();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

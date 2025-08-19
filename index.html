@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super JSON Editor</title>
+    <title>Super JSON Editor - Optimized</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="description" content="The Ultimate Multi-Layer Escaped JSON Editor - Parse, Edit, and Rebuild Complex Nested JSON with Ease!">
@@ -11,11 +11,18 @@
     <meta property="og:description" content="Parse and edit multi-layer escaped JSON with ease. Features smart analysis, bidirectional sync, and beautiful UI.">
     <meta property="og:image" content="icon.png">
     <meta property="og:url" content="https://hrhrng.github.io/super-json">
+    
+    <!-- External CSS for better caching and performance -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js" as="script">
     <style>
-        * {
+        /* Critical inline styles for immediate rendering */
+        body {
+            background: #1e1e1e;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
         
         body {
@@ -1119,18 +1126,27 @@
                 lineNumbers: config.showLineNumbers ? 'on' : 'off'
             });
             
-            // 监听编辑器变化
-            editors.input.onDidChangeModelContent(debounce(() => {
+            // 监听编辑器变化 - 移除防抖，避免累积
+            let saveTimeout = null;
+            editors.input.onDidChangeModelContent(() => {
                 validateJSON('input');
-                // 自动保存当前文档内容
-                if (currentDocId) {
-                    const doc = documents.find(d => d.id === currentDocId);
-                    if (doc) {
-                        doc.content = editors.input.getValue();
-                        saveDocumentsToStorage();
-                    }
+                
+                // 清除之前的保存定时器
+                if (saveTimeout) {
+                    clearTimeout(saveTimeout);
                 }
-            }, 500));
+                
+                // 延迟保存
+                saveTimeout = setTimeout(() => {
+                    if (currentDocId) {
+                        const doc = documents.find(d => d.id === currentDocId);
+                        if (doc) {
+                            doc.content = editors.input.getValue();
+                            saveDocumentsToStorage();
+                        }
+                    }
+                }, 1000);
+            });
             
             // 加载保存的文档
             loadDocumentsFromStorage();

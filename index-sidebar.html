@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super JSON Editor - Pro</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="description" content="The Ultimate Multi-Layer Escaped JSON Editor - Parse, Edit, and Rebuild Complex Nested JSON with Ease!">
+    <meta property="og:title" content="Super JSON Editor">
+    <meta property="og:description" content="Parse and edit multi-layer escaped JSON with ease. Features smart analysis, bidirectional sync, and beautiful UI.">
+    <meta property="og:image" content="icon.png">
+    <meta property="og:url" content="https://hrhrng.github.io/super-json">
+    
+    <!-- External CSS for better caching and performance -->
+    <link rel="stylesheet" href="styles-sidebar.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js" as="script">
+</head>
+<body>
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-tabs">
+                <div class="sidebar-tab active" data-mode="layer" onclick="switchMode('layer')">
+                    <span class="sidebar-icon">🔍</span>
+                    <span class="sidebar-label">层级编辑器</span>
+                </div>
+                <div class="sidebar-tab" data-mode="processor" onclick="switchMode('processor')">
+                    <span class="sidebar-icon">⚡</span>
+                    <span class="sidebar-label">通用处理器</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-area">
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">
+                        <h1>Super JSON Editor</h1>
+                    </div>
+                </div>
+                <div class="toolbar" id="layerToolbar">
+                    <button onclick="analyzeJSON()">
+                        <span>🔍</span>
+                        <span>智能分析</span>
+                    </button>
+                    <button onclick="generateOutput()" class="success">
+                        <span>📤</span>
+                        <span>生成输出</span>
+                    </button>
+                </div>
+                <div class="toolbar" id="processorToolbar" style="display: none;">
+                    <button onclick="formatJSON()">
+                        <span>✨</span>
+                        <span>格式化</span>
+                    </button>
+                    <button onclick="minifyJSON()">
+                        <span>📦</span>
+                        <span>压缩</span>
+                    </button>
+                    <button onclick="validateJSON()">
+                        <span>✅</span>
+                        <span>验证</span>
+                    </button>
+                    <button onclick="escapeJSON()">
+                        <span>🔒</span>
+                        <span>转义</span>
+                    </button>
+                    <button onclick="unescapeJSON()">
+                        <span>🔓</span>
+                        <span>反转义</span>
+                    </button>
+                    <button onclick="sortKeys()">
+                        <span>🔤</span>
+                        <span>排序键</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Main tabs bar -->
+            <div class="main-tabs">
+                <div class="main-tabs-list" id="mainTabsList">
+                    <!-- Dynamically generated main tabs -->
+                </div>
+                <button class="main-tab-add" onclick="addNewDocument()" title="新建文档">
+                    <span>+</span>
+                </button>
+            </div>
+            
+            <!-- Layer Editor Mode -->
+            <div class="main-content" id="layerMode">
+                <!-- Input Panel -->
+                <div class="panel" id="inputPanel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span class="status-indicator" id="inputStatus"></span>
+                            <span>输入 JSON</span>
+                        </div>
+                    </div>
+                    <div class="editor-container" id="inputEditor">
+                        <div class="welcome-screen">
+                            <h2>🚀 准备就绪</h2>
+                            <p>支持任意层级的转义JSON解析</p>
+                            <p><span class="shortcut">Ctrl+Enter</span> 智能分析</p>
+                            <p><span class="shortcut">Ctrl+S</span> 生成输出</p>
+                        </div>
+                    </div>
+                    <div class="resizer"></div>
+                </div>
+                
+                <!-- Edit Panel -->
+                <div class="panel" id="editPanel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span class="status-indicator" id="editStatus"></span>
+                            <span>JSON 编辑器</span>
+                            <span class="json-path" id="currentPath">未解析</span>
+                        </div>
+                    </div>
+                    <div class="tabs" id="editTabs">
+                        <!-- Dynamically generated tabs -->
+                    </div>
+                    <div id="editTabContents" style="flex: 1; position: relative; background: #1e1e1e;">
+                        <!-- Dynamically generated tab contents -->
+                    </div>
+                    <div class="resizer"></div>
+                </div>
+                
+                <!-- Output Panel -->
+                <div class="panel" id="outputPanel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span class="status-indicator" id="outputStatus"></span>
+                            <span>输出 JSON</span>
+                        </div>
+                        <button onclick="applyOutputToInput()" class="secondary" style="padding: 4px 10px; font-size: 12px;">
+                            ↩️ 应用到输入
+                        </button>
+                    </div>
+                    <div class="editor-container" id="outputEditor">
+                        <div class="welcome-screen">
+                            <h2>⏳ 等待输出</h2>
+                            <p>编辑完成后点击"生成输出"</p>
+                        </div>
+                    </div>
+                    <div class="resizer"></div>
+                </div>
+            </div>
+            
+            <!-- Processor Mode -->
+            <div class="main-content" id="processorMode" style="display: none;">
+                <!-- Processor Input Panel -->
+                <div class="panel" id="processorInputPanel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span class="status-indicator" id="processorInputStatus"></span>
+                            <span>输入 JSON</span>
+                        </div>
+                        <div class="panel-actions">
+                            <button onclick="loadSample()" class="secondary mini">
+                                📋 示例
+                            </button>
+                            <button onclick="clearProcessor()" class="secondary mini">
+                                🗑️ 清空
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-container" id="processorInputEditor">
+                        <div class="welcome-screen">
+                            <h2>⚡ JSON 处理器</h2>
+                            <p>粘贴或输入需要处理的JSON</p>
+                            <p>支持格式化、压缩、验证、转义等操作</p>
+                        </div>
+                    </div>
+                    <div class="resizer"></div>
+                </div>
+                
+                <!-- Processor Options Panel -->
+                <div class="panel" id="processorOptionsPanel" style="width: 300px;">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span>⚙️ 处理选项</span>
+                        </div>
+                    </div>
+                    <div class="options-container">
+                        <div class="option-group">
+                            <h3>格式化选项</h3>
+                            <label class="option">
+                                <input type="checkbox" id="sortKeysOption" checked>
+                                <span>按字母顺序排序键</span>
+                            </label>
+                            <label class="option">
+                                <span>缩进空格数:</span>
+                                <input type="number" id="indentSize" value="2" min="0" max="8" style="width: 50px;">
+                            </label>
+                        </div>
+                        
+                        <div class="option-group">
+                            <h3>验证选项</h3>
+                            <label class="option">
+                                <input type="checkbox" id="strictMode" checked>
+                                <span>严格模式</span>
+                            </label>
+                            <label class="option">
+                                <input type="checkbox" id="allowComments">
+                                <span>允许注释</span>
+                            </label>
+                        </div>
+                        
+                        <div class="option-group">
+                            <h3>快速操作</h3>
+                            <button onclick="base64Encode()" class="action-btn">
+                                🔐 Base64 编码
+                            </button>
+                            <button onclick="base64Decode()" class="action-btn">
+                                🔓 Base64 解码
+                            </button>
+                            <button onclick="urlEncode()" class="action-btn">
+                                🌐 URL 编码
+                            </button>
+                            <button onclick="urlDecode()" class="action-btn">
+                                🔗 URL 解码
+                            </button>
+                        </div>
+                        
+                        <div class="option-group">
+                            <h3>统计信息</h3>
+                            <div class="stats" id="jsonStats">
+                                <div class="stat-item">
+                                    <span>大小:</span>
+                                    <span id="statSize">0 B</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>键数:</span>
+                                    <span id="statKeys">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>深度:</span>
+                                    <span id="statDepth">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>类型:</span>
+                                    <span id="statType">未知</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resizer"></div>
+                </div>
+                
+                <!-- Processor Output Panel -->
+                <div class="panel" id="processorOutputPanel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span class="status-indicator" id="processorOutputStatus"></span>
+                            <span>处理结果</span>
+                        </div>
+                        <div class="panel-actions">
+                            <button onclick="copyProcessorOutput()" class="secondary mini">
+                                📋 复制
+                            </button>
+                            <button onclick="downloadProcessorOutput()" class="secondary mini">
+                                💾 下载
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-container" id="processorOutputEditor">
+                        <div class="welcome-screen">
+                            <h2>📊 等待处理</h2>
+                            <p>选择上方的处理操作</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-bar">
+                <div class="status-message">
+                    <span id="statusText">就绪</span>
+                    <span class="json-path" id="layerCount">层级: 0</span>
+                    <span id="syncStatus" style="margin-left: 15px; display: none;">
+                        🔄 同步中...
+                    </span>
+                </div>
+                <div>
+                    <span id="autoSaveIndicator" style="margin-right: 15px; color: #4ec9b0;"></span>
+                    <span>Universal JSON Editor | Monaco Powered</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification"></div>
+    
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    
+    <!-- Combined JavaScript -->
+    <script src="js/app-sidebar.js"></script>
+</body>
+</html>

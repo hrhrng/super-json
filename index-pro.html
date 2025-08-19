@@ -351,23 +351,62 @@
         .editor-container {
             flex: 1;
             position: relative;
+            padding-top: 22px; /* Space for VS Code breadcrumb */
         }
 
-        /* Compact Layer Navigator */
-        .layer-navigator {
+        /* VS Code-style Breadcrumb */
+        .vscode-breadcrumb {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 32px;
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            height: 22px;
+            background: #252526;
+            border-bottom: 1px solid #3c3c3c;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
+            padding: 0 10px;
+            font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
             z-index: 100;
+        }
+        
+        .vscode-breadcrumb::-webkit-scrollbar {
+            height: 0;
+        }
+        
+        .breadcrumb-item {
+            color: #cccccc;
+            cursor: pointer;
+            padding: 1px 5px;
+            border-radius: 3px;
+            transition: background-color 0.1s;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .breadcrumb-item:hover {
+            background-color: rgba(90, 93, 94, 0.31);
+        }
+        
+        .breadcrumb-item.active {
+            color: #ffffff;
+        }
+        
+        .breadcrumb-separator {
+            color: #858585;
+            margin: 0 2px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        /* Old navigator - hidden */
+        .layer-navigator {
+            display: none;
         }
         
         .layer-current {
@@ -397,10 +436,6 @@
             border-color: var(--accent);
         }
         
-        .layer-icon {
-            font-size: 12px;
-            opacity: 0.8;
-        }
         
         .layer-location {
             flex: 1;
@@ -518,8 +553,6 @@
         .layer-name {
             flex: 1;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         .tree-info {
@@ -949,22 +982,9 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Compact layer navigator -->
-                    <div class="layer-navigator">
-                        <button class="layer-current" id="layerCurrentBtn" onclick="toggleLayerDropdown(event)">
-                            <span class="layer-icon">📍</span>
-                            <span class="layer-location" id="layerLocation">L1: Root</span>
-                            <span class="layer-arrow">▼</span>
-                        </button>
-                        <div class="layer-stats" id="layerStats">
-                            <span class="stat-item">Total: <strong>0</strong></span>
-                            <span class="stat-item">Depth: <strong>0</strong></span>
-                        </div>
-                    </div>
-                    
-                    <!-- Layer dropdown menu (hidden by default) -->
-                    <div class="layer-dropdown-menu" id="layerDropdownMenu">
-                        <!-- Tree will be populated here -->
+                    <!-- VS Code-style breadcrumb -->
+                    <div class="vscode-breadcrumb" id="layerBreadcrumb">
+                        <span class="breadcrumb-item active" onclick="selectLayer(0)">Root</span>
                     </div>
                     <div class="editor-container" id="layerEditor"></div>
                     <div class="resizer"></div>
@@ -1355,46 +1375,45 @@
             const currentLayer = window.parsedLayers[currentIndex];
             if (!currentLayer) return;
             
-            // Update current location button
-            const locationBtn = document.getElementById('layerLocation');
-            if (locationBtn) {
-                const label = currentLayer.parentField || 'Root';
-                const depth = currentLayer.depth + 1;
-                locationBtn.textContent = `L${depth}: ${label}`;
+            // Build VS Code-style breadcrumb path
+            const breadcrumb = document.getElementById('layerBreadcrumb');
+            if (!breadcrumb) return;
+            
+            // Build path from root to current layer
+            const path = [];
+            let layerIndex = currentIndex;
+            
+            while (layerIndex >= 0) {
+                const layer = window.parsedLayers[layerIndex];
+                path.unshift({ index: layerIndex, layer });
+                layerIndex = layer.parentIndex;
             }
             
-            // Update stats
-            const statsEl = document.getElementById('layerStats');
-            if (statsEl) {
-                const maxDepth = Math.max(...window.parsedLayers.map(l => l.depth)) + 1;
-                statsEl.innerHTML = `
-                    <span class="stat-item">Total: <strong>${window.parsedLayers.length}</strong></span>
-                    <span class="stat-item">Depth: <strong>${maxDepth}</strong></span>
-                `;
-            }
-            
-            // Build dropdown menu
-            const dropdownMenu = document.getElementById('layerDropdownMenu');
-            if (!dropdownMenu) return;
-            
-            let treeHTML = '';
-            window.parsedLayers.forEach((layer, i) => {
-                const isActive = i === currentIndex;
-                const label = layer.parentField || 'Root';
-                const depth = layer.depth + 1;
-                const indent = layer.depth * 20;
+            // Render breadcrumb with VS Code style
+            let breadcrumbHTML = '';
+            path.forEach((item, i) => {
+                const label = item.layer.parentField || 'Root';
+                const isActive = item.index === currentIndex;
                 
-                treeHTML += `
-                    <div class="layer-dropdown-item ${isActive ? 'active' : ''}" 
-                         style="padding-left: ${indent + 12}px;"
-                         onclick="selectLayer(${i})">
-                        <span class="layer-depth">L${depth}</span>
-                        <span class="layer-name" title="${label}">${label}</span>
-                    </div>
+                breadcrumbHTML += `
+                    <span class="breadcrumb-item ${isActive ? 'active' : ''}" 
+                          onclick="selectLayer(${item.index})">${label}</span>
                 `;
+                
+                if (i < path.length - 1) {
+                    breadcrumbHTML += '<span class="breadcrumb-separator">›</span>';
+                }
             });
             
-            dropdownMenu.innerHTML = treeHTML;
+            breadcrumb.innerHTML = breadcrumbHTML;
+            
+            // Auto-scroll to show the active item
+            setTimeout(() => {
+                const activeItem = breadcrumb.querySelector('.breadcrumb-item.active');
+                if (activeItem) {
+                    activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
+                }
+            }, 0);
         }
         
         function toggleLayerDropdown(event) {
@@ -1427,9 +1446,7 @@
         }
         
         function selectLayer(index) {
-            const menu = document.getElementById('layerDropdownMenu');
-            menu.classList.remove('open');
-            
+            // Directly switch to the selected layer
             if (window.switchLayer) {
                 window.switchLayer(index);
             }

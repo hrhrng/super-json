@@ -17,6 +17,7 @@ interface DocumentStore {
   updateOutputContent: (id: string, content: string) => void
   updateLayers: (id: string, layers: JSONLayer[]) => void
   updateLayer: (docId: string, layerIndex: number, content: string) => void
+  updateHeroUrl: (id: string, url: string) => void
   
   // Persistence
   saveToLocalStorage: () => void
@@ -129,6 +130,10 @@ export const useDocumentStore = create<DocumentStore>()(
       })
       
       get().saveToLocalStorage()
+    },
+
+    updateHeroUrl: (id, url) => {
+      get().updateDocument(id, { heroUrl: url })
     },
 
     saveToLocalStorage: () => {

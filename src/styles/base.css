@@ -5,6 +5,10 @@ body {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* 优化中文字体渲染 */
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga" 1;
+  letter-spacing: 0.02em;
 }
 
 #root {

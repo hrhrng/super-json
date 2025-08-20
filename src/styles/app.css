@@ -334,14 +334,14 @@ body {
     position: relative;
 }
 
-/* Modern Breadcrumb - Dark theme style */
+/* Modern Breadcrumb - Clear interaction guidance */
 .vscode-breadcrumb {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 28px;
-    background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.85));
+    background: rgba(13, 20, 26, 0.95);
     border-bottom: 1px solid rgba(31, 182, 255, 0.1);
     display: flex;
     align-items: center;
@@ -363,23 +363,35 @@ body {
     color: var(--text-dim);
     cursor: pointer;
     padding: 3px 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
+    border-radius: 3px;
+    transition: all 0.15s;
     display: inline-flex;
     align-items: center;
     font-weight: 500;
     letter-spacing: 0.3px;
     position: relative;
+    border: 1px solid rgba(31, 182, 255, 0.15);
+    background: transparent;
+    text-decoration: none;
+    /* Visual cue for clickability */
+    box-shadow: inset 0 0 0 1px transparent;
 }
 
 .breadcrumb-item:hover {
     background: rgba(31, 182, 255, 0.08);
     color: var(--text-secondary);
+    border-color: rgba(31, 182, 255, 0.25);
+    /* Subtle underline on hover */
+    text-decoration: underline;
+    text-decoration-color: rgba(31, 182, 255, 0.3);
+    text-underline-offset: 3px;
 }
 
 .breadcrumb-item.active {
     color: var(--accent);
     background: rgba(0, 255, 136, 0.05);
+    border-color: rgba(0, 255, 136, 0.25);
+    font-weight: 600;
 }
 
 .breadcrumb-item.active::after {
@@ -390,12 +402,13 @@ body {
     right: 8px;
     height: 2px;
     background: var(--accent);
-    border-radius: 2px;
+    border-radius: 1px;
 }
 
 .breadcrumb-item.dropdown-open {
     background: rgba(31, 182, 255, 0.1);
     color: var(--text-secondary);
+    border-color: rgba(31, 182, 255, 0.3);
 }
 
 .breadcrumb-separator {
@@ -405,6 +418,7 @@ body {
     display: inline-flex;
     align-items: center;
     opacity: 0.6;
+    font-weight: 300;
 }
 
 /* Processor Tools */

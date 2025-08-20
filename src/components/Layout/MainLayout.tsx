@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Editor, { loader } from '@monaco-editor/react'
 import { useDocumentStore } from '@stores/documentStore'
 import { useAppStore } from '@stores/appStore'
@@ -43,14 +43,19 @@ export function MainLayout() {
     updateInputContent,
     updateLayers,
     updateLayer,
+    updateDocumentTitle,
+    updateHeroUrl,
     loadFromLocalStorage,
     getCurrentDocument
   } = useDocumentStore()
   
   const { viewMode, setViewMode, loadSettings } = useAppStore()
   const [processorOutput, setProcessorOutput] = useState('')
-  const [heroUrl, setHeroUrl] = useState('')
   const [activeLayerIndex, setActiveLayerIndex] = useState(0)
+  const [editingDocId, setEditingDocId] = useState<string | null>(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [showDocSelector, setShowDocSelector] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
   
   const currentDoc = getCurrentDocument()
 
@@ -63,6 +68,29 @@ export function MainLayout() {
   useEffect(() => {
     setActiveLayerIndex(0)
   }, [currentDocId])
+
+  // Focus input when editing doc title
+  useEffect(() => {
+    if (editingDocId && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [editingDocId])
+
+  // Close document selector when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (showDocSelector && !target.closest('.doc-selector-dropdown') && !target.closest('.layer-action-btn')) {
+        setShowDocSelector(false)
+      }
+    }
+    
+    if (showDocSelector) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [showDocSelector])
 
   const handleAnalyze = () => {
     if (!currentDoc) return
@@ -290,35 +318,42 @@ export function MainLayout() {
   const handleReplaceFromDoc = () => {
     if (!currentDoc || !currentDoc.layers[activeLayerIndex]) return
     
-    // Simple implementation: use the first available document's input
     const otherDocs = documents.filter(d => d.id !== currentDoc.id)
     if (otherDocs.length === 0) {
       showNotification('No other documents available', 'error')
       return
     }
     
-    // For now, use the first other document's input
-    const sourceDoc = otherDocs[0]
+    // Show document selector
+    setShowDocSelector(true)
+  }
+  
+  const handleSelectDocForReplace = (sourceDoc: any) => {
+    if (!currentDoc || !currentDoc.layers[activeLayerIndex]) return
+    
     const newContent = sourceDoc.inputContent
     
+    // Try to parse as JSON, if it fails, use as string
+    let parsedContent: any
     try {
-      // Parse the new content to validate it's JSON
-      const parsed = JSON.parse(newContent)
-      
-      // Update current layer
-      const updatedLayers = [...currentDoc.layers]
-      updatedLayers[activeLayerIndex] = {
-        ...updatedLayers[activeLayerIndex],
-        content: parsed
-      }
-      
-      // Sync all related layers
-      syncLayers(updatedLayers, activeLayerIndex)
-      
-      showNotification(`Replaced from "${sourceDoc.title}"`, 'success')
-    } catch (error) {
-      showNotification('Source document is not valid JSON', 'error')
+      parsedContent = JSON.parse(newContent)
+    } catch {
+      // If not valid JSON, use as string
+      parsedContent = newContent
     }
+    
+    // Update current layer
+    const updatedLayers = [...currentDoc.layers]
+    updatedLayers[activeLayerIndex] = {
+      ...updatedLayers[activeLayerIndex],
+      content: parsedContent
+    }
+    
+    // Sync all related layers
+    syncLayers(updatedLayers, activeLayerIndex)
+    
+    showNotification(`Replaced from "${sourceDoc.title}"`, 'success')
+    setShowDocSelector(false)
   }
 
   // Processor Tools
@@ -470,7 +505,9 @@ export function MainLayout() {
       
       if (response.ok) {
         const data = await response.json()
-        setHeroUrl(data.location)
+        if (currentDoc) {
+          updateHeroUrl(currentDoc.id, data.location)
+        }
         showNotification('加载到 Hero 视图', 'success')
       } else {
         showNotification('加载失败', 'error')
@@ -544,7 +581,7 @@ export function MainLayout() {
                       formatOnType: true,
                       folding: true,
                       tabSize: 2,
-                      fontFamily: 'JetBrains Mono, monospace',
+                      fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",
                       maxTokenizationLineLength: 100000,
                     }}
                   />
@@ -656,7 +693,7 @@ export function MainLayout() {
                       formatOnType: true,
                       folding: true,
                       tabSize: 2,
-                      fontFamily: 'JetBrains Mono, monospace',
+                      fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",
                       maxTokenizationLineLength: 100000,
                     }}
                   />
@@ -669,9 +706,9 @@ export function MainLayout() {
                 <span className="panel-info">Interactive</span>
               </div>
               <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-                {heroUrl ? (
+                {currentDoc?.heroUrl ? (
                   <iframe 
-                    src={heroUrl}
+                    src={currentDoc.heroUrl}
                     style={{ width: '100%', height: '100%', border: 'none', background: '#000' }}
                   />
                 ) : (
@@ -729,7 +766,7 @@ export function MainLayout() {
                       formatOnType: true,
                       folding: true,
                       tabSize: 2,
-                      fontFamily: 'JetBrains Mono, monospace',
+                      fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",
                       maxTokenizationLineLength: 100000,
                     }}
                   />
@@ -795,7 +832,7 @@ export function MainLayout() {
                         formatOnType: true,
                         folding: true,
                         tabSize: 2,
-                        fontFamily: 'JetBrains Mono, monospace',
+                        fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",
                         maxTokenizationLineLength: 100000, // 增加到100000字符
                       }}
                     />
@@ -803,8 +840,137 @@ export function MainLayout() {
                 )}
               </div>
             </div>
+            
+            {/* Document Selector Dropdown */}
+            {showDocSelector && currentDoc && currentDoc.layers.length > 0 && (
+              <div 
+                className="doc-selector-dropdown"
+                style={{
+                  position: 'absolute',
+                  top: '63px',
+                  right: '15px',
+                  background: 'var(--bg-panel)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  padding: '8px',
+                  zIndex: 1000,
+                  minWidth: '200px',
+                  maxWidth: '300px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)'
+                }}
+              >
+                <div style={{
+                  fontSize: '11px',
+                  color: 'var(--text-dim)',
+                  marginBottom: '8px',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>
+                  Select Document
+                </div>
+                {documents.filter(d => d.id !== currentDoc.id).length === 0 ? (
+                  <div style={{
+                    fontSize: '12px',
+                    color: 'var(--text-dim)',
+                    padding: '10px',
+                    textAlign: 'center'
+                  }}>
+                    No other documents available
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {documents.filter(d => d.id !== currentDoc.id).map(doc => (
+                      <button
+                        key={doc.id}
+                        onClick={() => handleSelectDocForReplace(doc)}
+                        style={{
+                          background: 'rgba(31, 182, 255, 0.05)',
+                          border: '1px solid var(--border)',
+                          borderRadius: '4px',
+                          padding: '8px 12px',
+                          cursor: 'pointer',
+                          color: 'var(--text-secondary)',
+                          fontSize: '12px',
+                          textAlign: 'left',
+                          transition: 'all 0.2s',
+                          fontFamily: 'JetBrains Mono, monospace'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(31, 182, 255, 0.1)'
+                          e.currentTarget.style.borderColor = 'var(--text-secondary)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'rgba(31, 182, 255, 0.05)'
+                          e.currentTarget.style.borderColor = 'var(--border)'
+                        }}
+                      >
+                        <div style={{ fontWeight: '500' }}>{doc.title}</div>
+                        <div style={{ 
+                          fontSize: '10px', 
+                          color: 'var(--text-dim)', 
+                          marginTop: '2px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '250px'
+                        }}>
+                          {doc.inputContent.substring(0, 50)}...
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <button
+                  onClick={() => setShowDocSelector(false)}
+                  style={{
+                    marginTop: '8px',
+                    width: '100%',
+                    padding: '6px',
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    borderRadius: '4px',
+                    color: 'var(--text-dim)',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontFamily: 'JetBrains Mono, monospace',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--error)'
+                    e.currentTarget.style.color = 'var(--error)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)'
+                    e.currentTarget.style.color = 'var(--text-dim)'
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         )
+    }
+  }
+
+  const handleDoubleClickTab = (doc: typeof documents[0]) => {
+    setEditingDocId(doc.id)
+    setEditTitle(doc.title)
+  }
+
+  const handleTitleSubmit = () => {
+    if (editingDocId && editTitle.trim()) {
+      updateDocumentTitle(editingDocId, editTitle.trim())
+    }
+    setEditingDocId(null)
+  }
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleTitleSubmit()
+    } else if (e.key === 'Escape') {
+      setEditingDocId(null)
     }
   }
 
@@ -881,8 +1047,31 @@ export function MainLayout() {
               key={doc.id}
               className={`tab ${doc.id === currentDocId ? 'active' : ''}`}
               onClick={() => switchDocument(doc.id)}
+              onDoubleClick={() => handleDoubleClickTab(doc)}
             >
-              {doc.title}
+              {editingDocId === doc.id ? (
+                <input
+                  ref={inputRef}
+                  className="tab-title-input"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  onBlur={handleTitleSubmit}
+                  onKeyDown={handleTitleKeyDown}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                    color: 'inherit',
+                    font: 'inherit',
+                    padding: 0,
+                    margin: 0,
+                    width: '100px'
+                  }}
+                />
+              ) : (
+                <span>{doc.title}</span>
+              )}
               {documents.length > 1 && (
                 <span 
                   className="tab-close"

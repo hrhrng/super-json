@@ -34,5 +34,8 @@ coverage
 .env.test.local
 .env.production.local
 
-# Playwright screenshots
+# Playwright and testing
 .playwright-mcp/
+test-results/
+playwright-report/
+*.spec.ts.snap

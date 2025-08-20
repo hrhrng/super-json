@@ -19,6 +19,7 @@ export interface Document {
   createdAt: number
   updatedAt: number
   isActive: boolean
+  heroUrl?: string
 }
 
 export interface EditorInstance {

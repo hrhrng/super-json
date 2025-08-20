@@ -66,13 +66,25 @@ export function MainLayout() {
 
   const handleAnalyze = () => {
     if (!currentDoc) return
+    
+    // Check if input is empty or only whitespace
+    const input = currentDoc.inputContent.trim()
+    if (!input) {
+      showNotification('请输入JSON内容', 'error')
+      return
+    }
+    
     try {
       const layers = analyzer.analyze(currentDoc.inputContent)
+      if (layers.length === 0) {
+        showNotification('未检测到有效的JSON结构', 'error')
+        return
+      }
       updateLayers(currentDoc.id, layers)
       setActiveLayerIndex(0)
       showNotification(`成功解析 ${layers.length} 个JSON层级`, 'success')
     } catch (error) {
-      showNotification('解析失败', 'error')
+      showNotification('JSON格式错误，请检查输入', 'error')
     }
   }
 

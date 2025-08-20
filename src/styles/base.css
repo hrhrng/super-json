@@ -1,0 +1,13 @@
+body {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+}

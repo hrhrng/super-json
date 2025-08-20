@@ -1,9 +1,0 @@
-{
-    "name": "test1",
-    "age": 18,
-    "gender": "male",
-    "address": {
-        "city": "Beijing",
-        "street": "{\"name\":\"test1\",\"age\":18,\"gender\":\"male\",\"address\":{\"city\":\"Beijing\",\"street\":\"\"}}"
-    }
-}

@@ -76,10 +76,21 @@ export function MainLayout() {
     
     try {
       const layers = analyzer.analyze(currentDoc.inputContent)
+      
+      // Check if the first layer is a raw string (not valid JSON)
+      if (layers.length === 1 && 
+          layers[0].depth === 0 && 
+          layers[0].type === 'string' && 
+          typeof layers[0].content === 'string') {
+        showNotification('JSON格式错误，请检查输入', 'error')
+        return
+      }
+      
       if (layers.length === 0) {
         showNotification('未检测到有效的JSON结构', 'error')
         return
       }
+      
       updateLayers(currentDoc.id, layers)
       setActiveLayerIndex(0)
       showNotification(`成功解析 ${layers.length} 个JSON层级`, 'success')

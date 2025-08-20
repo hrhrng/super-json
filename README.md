@@ -27,7 +27,15 @@ Ever struggled with deeply nested, escaped JSON strings? Like this nightmare:
 **Super JSON Editor** makes it beautiful and editable! 🎨
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x400/1e1e1e/007acc?text=Super+JSON+Editor+Demo" alt="Demo" />
+  <img src="docs/demo-main-interface.png" alt="Super JSON Editor Interface" width="100%" />
+  <p><em>Clean and intuitive interface with multi-layer JSON parsing</em></p>
+</div>
+
+### 📸 See It In Action
+
+<div align="center">
+  <img src="docs/demo-multilayer.png" alt="Multi-layer JSON Editing" width="100%" />
+  <p><em>Navigate through complex nested JSON layers with ease</em></p>
 </div>
 
 ## 🔥 Features That Will Blow Your Mind

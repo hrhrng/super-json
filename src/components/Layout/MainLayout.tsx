@@ -271,6 +271,56 @@ export function MainLayout() {
     }
   }
 
+  // Layer actions
+  const handleSaveLayerAsDoc = () => {
+    if (!currentDoc || !currentDoc.layers[activeLayerIndex]) return
+    
+    const currentLayer = currentDoc.layers[activeLayerIndex]
+    const layerContent = typeof currentLayer.content === 'string' 
+      ? currentLayer.content 
+      : JSON.stringify(currentLayer.content, null, 2)
+    
+    // Create new document with current layer content
+    const newDocId = createDocument()
+    updateInputContent(newDocId, layerContent)
+    switchToDocument(newDocId)
+    showNotification('Layer saved as new document', 'success')
+  }
+
+  const handleReplaceFromDoc = () => {
+    if (!currentDoc || !currentDoc.layers[activeLayerIndex]) return
+    
+    // Simple implementation: use the first available document's input
+    const otherDocs = documents.filter(d => d.id !== currentDoc.id)
+    if (otherDocs.length === 0) {
+      showNotification('No other documents available', 'error')
+      return
+    }
+    
+    // For now, use the first other document's input
+    const sourceDoc = otherDocs[0]
+    const newContent = sourceDoc.inputContent
+    
+    try {
+      // Parse the new content to validate it's JSON
+      const parsed = JSON.parse(newContent)
+      
+      // Update current layer
+      const updatedLayers = [...currentDoc.layers]
+      updatedLayers[activeLayerIndex] = {
+        ...updatedLayers[activeLayerIndex],
+        content: parsed
+      }
+      
+      // Sync all related layers
+      syncLayers(updatedLayers, activeLayerIndex)
+      
+      showNotification(`Replaced from "${sourceDoc.title}"`, 'success')
+    } catch (error) {
+      showNotification('Source document is not valid JSON', 'error')
+    }
+  }
+
   // Processor Tools
   const formatJSON = () => {
     if (!currentDoc?.inputContent) return
@@ -691,6 +741,24 @@ export function MainLayout() {
               <div className="panel-header">
                 LAYERS
                 <span className="panel-info">{currentDoc?.layers.length || 0} layers</span>
+                {currentDoc && currentDoc.layers.length > 0 && (
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                    <button 
+                      className="layer-action-btn"
+                      onClick={() => handleSaveLayerAsDoc()}
+                      title="Save current layer as new document"
+                    >
+                      Save as Doc
+                    </button>
+                    <button 
+                      className="layer-action-btn"
+                      onClick={() => handleReplaceFromDoc()}
+                      title="Replace current layer from another document"
+                    >
+                      Replace from Doc
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="editor-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 {currentDoc && (

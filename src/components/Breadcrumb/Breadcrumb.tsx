@@ -77,9 +77,9 @@ function useClickOutside(ref: React.RefObject<HTMLElement>, onOutside: () => voi
   }, [ref, onOutside])
 }
 
-// TreeMenu that can auto-expand to a target node id
+// TreeMenu that can auto-expand to a target node id (currently not used in simplified version)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function TreeMenu({
+const TreeMenu = ({
   nodes,
   targetId,
   onSelect,
@@ -89,7 +89,7 @@ function TreeMenu({
   targetId?: string
   onSelect: (n: Crumb) => void
   onClose: () => void
-}) {
+}) => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const boxRef = useRef<HTMLDivElement>(null)
   useClickOutside(boxRef, onClose)
@@ -352,7 +352,7 @@ export function Breadcrumb({ layers, activeLayerIndex, onSelectLayer }: Breadcru
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(31, 182, 255, 0.1)',
                 padding: '4px'
               }}>
-                {layerTree.map((node, i) => (
+                {layerTree.map((node) => (
                   <div key={node.id}>
                     <button
                       onClick={() => {

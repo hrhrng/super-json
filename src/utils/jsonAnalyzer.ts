@@ -1,4 +1,4 @@
-import { JSONLayer } from '@types/index'
+import { JSONLayer } from '@/types'
 
 export class JSONLayerAnalyzer {
   private maxDepth: number

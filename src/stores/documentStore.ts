@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { nanoid } from 'nanoid'
-import { Document, JSONLayer } from '@types/index'
+import { Document, JSONLayer } from '@/types'
 
 interface DocumentStore {
   documents: Document[]

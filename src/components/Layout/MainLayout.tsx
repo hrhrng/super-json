@@ -793,9 +793,9 @@ export function MainLayout() {
                   </div>
                 )}
               </div>
-              <div className="editor-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div className="editor-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
                 {currentDoc && (
-                  <div style={{ flexShrink: 0 }}>
+                  <div style={{ flexShrink: 0, zIndex: 10 }}>
                     <Breadcrumb
                       layers={currentDoc.layers}
                       activeLayerIndex={activeLayerIndex}
@@ -804,7 +804,7 @@ export function MainLayout() {
                   </div>
                 )}
                 {currentDoc && currentDoc.layers.length > 0 && (
-                  <div style={{ flex: 1, overflow: 'hidden' }}>
+                  <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', position: 'relative' }}>
                     <Editor
                       key={`layer-${activeLayerIndex}-${currentDoc.id}`}
                       height="100%"

@@ -361,8 +361,28 @@ export function Breadcrumb({ layers, activeLayerIndex, onSelectLayer }: Breadcru
         )
       })}
       
-      {/* Show expandable button if current layer has children */}
-      {currentLayerChildren.length > 0 && (
+      {/* Show children - single child directly, multiple with dropdown */}
+      {currentLayerChildren.length === 1 && (
+        <>
+          <span className="breadcrumb-separator">
+            →
+          </span>
+          <button
+            onClick={() => onSelectLayer(currentLayerChildren[0].layerIndex)}
+            className="breadcrumb-item"
+            style={{
+              fontSize: '11px',
+              fontFamily: 'inherit',
+              opacity: 0.7
+            }}
+            title="Click to navigate to nested layer"
+          >
+            {currentLayerChildren[0].label}
+          </button>
+        </>
+      )}
+      
+      {currentLayerChildren.length > 1 && (
         <>
           <span className="breadcrumb-separator">
             →
@@ -376,7 +396,7 @@ export function Breadcrumb({ layers, activeLayerIndex, onSelectLayer }: Breadcru
                 fontFamily: 'inherit',
                 fontWeight: '600'
               }}
-              title={`${currentLayerChildren.length} nested layer${currentLayerChildren.length > 1 ? 's' : ''}`}
+              title={`${currentLayerChildren.length} nested layers`}
             >
               +{currentLayerChildren.length}
             </button>

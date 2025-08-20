@@ -59,11 +59,16 @@ body {
     color: var(--text-primary);
     overflow: hidden;
     height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
     display: flex;
     height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
 }
 
 /* Sidebar */
@@ -124,6 +129,9 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+    height: 100vh;
 }
 
 /* Header */
@@ -278,6 +286,8 @@ body {
     display: flex;
     background: var(--bg-dark);
     overflow: hidden;
+    min-height: 0;
+    position: relative;
 }
 
 .panel {
@@ -286,6 +296,7 @@ body {
     border-right: 1px solid var(--border);
     position: relative;
     overflow: hidden;
+    min-height: 0;
 }
 
 .panel:last-child {
@@ -305,6 +316,9 @@ body {
     min-width: 500px;
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 #layerMode .panel-layer .editor-container {
@@ -337,6 +351,8 @@ body {
 .editor-container {
     flex: 1;
     position: relative;
+    min-height: 0;
+    overflow: hidden;
 }
 
 /* Modern Breadcrumb - Clear interaction guidance */
@@ -527,6 +543,7 @@ body {
     font-size: 11px;
     color: var(--text-dim);
     gap: 20px;
+    flex-shrink: 0;
 }
 
 .status-item {

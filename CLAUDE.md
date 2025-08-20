@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## deploy guidline
+use playwright to test ui by snapshot.
+
 ## Project Overview
 
 Super JSON Editor is a sophisticated standalone web application that parses, edits, and reconstructs deeply nested/escaped JSON structures. The application is built as a single HTML file with embedded JavaScript and CSS, utilizing Monaco Editor for a professional IDE-like experience.

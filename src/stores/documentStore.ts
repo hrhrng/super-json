@@ -18,6 +18,7 @@ interface DocumentStore {
   updateLayers: (id: string, layers: JSONLayer[]) => void
   updateLayer: (docId: string, layerIndex: number, content: string) => void
   updateHeroUrl: (id: string, url: string) => void
+  reorderDocuments: (fromIndex: number, toIndex: number) => void
   
   // Persistence
   saveToLocalStorage: () => void
@@ -143,6 +144,19 @@ export const useDocumentStore = create<DocumentStore>()(
         currentDocId: state.currentDocId,
       }
       localStorage.setItem('superJsonDocuments', JSON.stringify(data))
+    },
+
+    reorderDocuments: (fromIndex, toIndex) => {
+      set((state) => {
+        if (fromIndex === toIndex) return
+        
+        const docs = [...state.documents]
+        const [movedDoc] = docs.splice(fromIndex, 1)
+        docs.splice(toIndex, 0, movedDoc)
+        state.documents = docs
+      })
+      
+      get().saveToLocalStorage()
     },
 
     loadFromLocalStorage: () => {

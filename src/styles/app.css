@@ -237,6 +237,11 @@ body {
     color: var(--text-primary);
 }
 
+.tab.drag-over {
+    background: rgba(31, 182, 255, 0.2);
+    border-color: var(--text-secondary);
+}
+
 .tab-close {
     margin-left: 4px;
     opacity: 0.5;

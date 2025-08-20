@@ -77,8 +77,7 @@ function useClickOutside(ref: React.RefObject<HTMLElement>, onOutside: () => voi
   }, [ref, onOutside])
 }
 
-// TreeMenu that can auto-expand to a target node id (currently not used in simplified version)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// TreeMenu that can auto-expand to a target node id
 const TreeMenu = ({
   nodes,
   targetId,
@@ -129,12 +128,12 @@ const TreeMenu = ({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            gap: '4px',
             padding: '4px 8px',
-            paddingLeft: `${depth * 12 + 8}px`,
+            paddingLeft: `${depth * 16 + 8}px`,
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '12px',
+            fontSize: '11px',
             color: isActive ? '#00ff88' : '#a8b2d1',
             backgroundColor: isActive ? 'rgba(0, 255, 136, 0.1)' : 'transparent',
             transition: 'all 0.15s'
@@ -151,19 +150,27 @@ const TreeMenu = ({
               e.currentTarget.style.color = '#a8b2d1'
             }
           }}
+          onClick={() => {
+            onSelect(node)
+            onClose()
+          }}
         >
           {hasChildren ? (
             <button
               style={{
-                marginRight: '4px',
-                padding: '2px',
+                padding: '0',
+                width: '14px',
+                height: '14px',
                 background: 'transparent',
                 border: 'none',
                 color: 'rgba(31, 182, 255, 0.6)',
                 cursor: 'pointer',
                 fontSize: '10px',
                 transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
-                transition: 'transform 0.1s'
+                transition: 'transform 0.1s',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
               onClick={(e) => {
                 e.stopPropagation()
@@ -173,7 +180,7 @@ const TreeMenu = ({
               ▸
             </button>
           ) : (
-            <span style={{ marginRight: '4px', display: 'inline-block', width: '14px' }} />
+            <span style={{ display: 'inline-block', width: '14px' }} />
           )}
 
           <span
@@ -182,36 +189,21 @@ const TreeMenu = ({
               fontSize: '10px',
               marginRight: '6px',
               fontWeight: 600,
-              letterSpacing: '0.5px'
+              letterSpacing: '0.5px',
+              minWidth: '20px'
             }}
           >
             L{node.depth + 1}
           </span>
 
-          <button
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'inherit',
-              cursor: 'pointer',
-              padding: 0,
-              fontSize: 'inherit',
-              fontFamily: 'inherit',
-              textAlign: 'left',
-              flex: 1
-            }}
-            onClick={() => {
-              onSelect(node)
-              onClose()
-            }}
-          >
+          <span style={{ flex: 1 }}>
             {node.label}
-          </button>
+          </span>
         </div>
         {hasChildren && isExpanded && (
-          <div>
-            {node.children!.map(k => (
-              <Row key={k.id} node={k} depth={depth + 1} />
+          <div style={{ width: '100%' }}>
+            {node.children!.map(child => (
+              <Row key={child.id} node={child} depth={depth + 1} />
             ))}
           </div>
         )}
@@ -226,10 +218,9 @@ const TreeMenu = ({
       style={{
         position: 'absolute',
         left: 0,
-        top: '100%',
+        top: 'calc(100% + 4px)',
         zIndex: 10000,
-        marginTop: '4px',
-        maxHeight: '384px',
+        maxHeight: '400px',
         width: '320px',
         overflow: 'auto',
         borderRadius: '8px',
@@ -353,105 +344,12 @@ export function Breadcrumb({ layers, activeLayerIndex, onSelectLayer }: Breadcru
             </button>
             
             {isOpen && (
-              <div style={{
-                position: 'absolute',
-                top: 'calc(100% + 4px)',
-                left: 0,
-                backgroundColor: 'rgba(10, 10, 10, 0.98)',
-                border: '1px solid rgba(31, 182, 255, 0.3)',
-                borderRadius: '8px',
-                zIndex: 10000,
-                minWidth: '280px',
-                maxHeight: '350px',
-                overflow: 'auto',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(31, 182, 255, 0.1)',
-                padding: '4px'
-              }}>
-                {layerTree.map((node) => (
-                  <div key={node.id}>
-                    <button
-                      onClick={() => {
-                        console.log('Selected:', node.label)
-                        handleLayerSelect(node)
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        width: '100%',
-                        textAlign: 'left',
-                        padding: '4px 8px',
-                        backgroundColor: 'transparent',
-                        color: '#a8b2d1',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '11px',
-                        fontFamily: 'inherit',
-                        gap: '6px'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = 'rgba(31, 182, 255, 0.08)'
-                        e.currentTarget.style.color = '#1FB6FF'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent'
-                        e.currentTarget.style.color = '#a8b2d1'
-                      }}
-                    >
-                      <span style={{ 
-                        color: '#1FB6FF', 
-                        fontSize: '10px',
-                        fontWeight: 600
-                      }}>
-                        L{node.depth + 1}
-                      </span>
-                      <span>{node.label}</span>
-                    </button>
-                    {node.children && node.children.map(child => (
-                      <button
-                        key={child.id}
-                        onClick={() => {
-                          console.log('Selected child:', child.label)
-                          handleLayerSelect(child)
-                        }}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          width: '100%',
-                          textAlign: 'left',
-                          padding: '4px 8px 4px 20px',
-                          backgroundColor: 'transparent',
-                          color: '#808080',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontSize: '11px',
-                          fontFamily: 'inherit',
-                          gap: '6px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'rgba(31, 182, 255, 0.08)'
-                          e.currentTarget.style.color = '#1FB6FF'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent'
-                          e.currentTarget.style.color = '#808080'
-                        }}
-                      >
-                        <span style={{ 
-                          color: '#1FB6FF', 
-                          fontSize: '10px',
-                          fontWeight: 600,
-                          opacity: 0.6
-                        }}>
-                          L{child.depth + 1}
-                        </span>
-                        <span>{child.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                ))}
-              </div>
+              <TreeMenu
+                nodes={layerTree}
+                targetId={item.id}
+                onSelect={handleLayerSelect}
+                onClose={() => setMenuOpenAt(null)}
+              />
             )}
             
             {!isLast && (

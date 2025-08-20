@@ -45,6 +45,7 @@ export function MainLayout() {
     updateLayer,
     updateDocumentTitle,
     updateHeroUrl,
+    reorderDocuments,
     loadFromLocalStorage,
     getCurrentDocument
   } = useDocumentStore()
@@ -55,6 +56,8 @@ export function MainLayout() {
   const [editingDocId, setEditingDocId] = useState<string | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [showDocSelector, setShowDocSelector] = useState(false)
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   
   const currentDoc = getCurrentDocument()
@@ -342,15 +345,8 @@ export function MainLayout() {
       parsedContent = newContent
     }
     
-    // Update current layer
-    const updatedLayers = [...currentDoc.layers]
-    updatedLayers[activeLayerIndex] = {
-      ...updatedLayers[activeLayerIndex],
-      content: parsedContent
-    }
-    
-    // Sync all related layers
-    syncLayers(updatedLayers, activeLayerIndex)
+    // Directly update the layer content
+    updateLayer(currentDoc.id, activeLayerIndex, parsedContent)
     
     showNotification(`Replaced from "${sourceDoc.title}"`, 'success')
     setShowDocSelector(false)
@@ -737,7 +733,7 @@ export function MainLayout() {
         
       default: // layer mode
         return (
-          <div className="content" id="layerMode">
+          <div className="content" id="layerMode" style={{ position: 'relative' }}>
             <div className="panel panel-input">
               <div className="panel-header">
                 INPUT
@@ -847,7 +843,7 @@ export function MainLayout() {
                 className="doc-selector-dropdown"
                 style={{
                   position: 'absolute',
-                  top: '63px',
+                  top: '35px',
                   right: '15px',
                   background: 'var(--bg-panel)',
                   border: '1px solid var(--border)',
@@ -974,6 +970,34 @@ export function MainLayout() {
     }
   }
 
+  // Drag and drop handlers
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index)
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    setDragOverIndex(index)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    if (draggedIndex !== null && draggedIndex !== dropIndex) {
+      reorderDocuments(draggedIndex, dropIndex)
+    }
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
   const renderActions = () => {
     if (viewMode === 'processor') {
       return (
@@ -1042,12 +1066,22 @@ export function MainLayout() {
         </div>
         
         <div className="tabs">
-          {documents.map(doc => (
+          {documents.map((doc, index) => (
             <div 
               key={doc.id}
-              className={`tab ${doc.id === currentDocId ? 'active' : ''}`}
+              className={`tab ${doc.id === currentDocId ? 'active' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`}
               onClick={() => switchDocument(doc.id)}
               onDoubleClick={() => handleDoubleClickTab(doc)}
+              draggable={!editingDocId}
+              onDragStart={() => handleDragStart(index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+              style={{
+                opacity: draggedIndex === index ? 0.5 : 1,
+                cursor: editingDocId ? 'text' : 'move'
+              }}
             >
               {editingDocId === doc.id ? (
                 <input

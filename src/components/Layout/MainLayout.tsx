@@ -5,6 +5,7 @@ import { useAppStore } from '@stores/appStore'
 import { JSONLayerAnalyzer } from '@utils/jsonAnalyzer'
 import { Breadcrumb } from '@components/Breadcrumb/Breadcrumb'
 import { showNotification } from '@components/Notification/Notification'
+import iconImg from '/icon.png'
 
 const analyzer = new JSONLayerAnalyzer()
 
@@ -777,7 +778,7 @@ export function MainLayout() {
       <div className="main-area">
         <div className="header">
           <div className="logo">
-            <img src="/icon.png" alt="Logo" style={{ width: 28, height: 28 }} />
+            <img src={iconImg} alt="Logo" style={{ width: 28, height: 28 }} />
             <span className="title">SUPER JSON</span>
           </div>
           {renderActions()}

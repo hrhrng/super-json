@@ -5,6 +5,15 @@
     box-sizing: border-box;
 }
 
+/* Ensure all buttons have pointer cursor */
+button {
+    cursor: pointer !important;
+}
+
+button:hover {
+    cursor: pointer !important;
+}
+
 /* Global scrollbar styling */
 ::-webkit-scrollbar {
     width: 6px;
@@ -254,14 +263,20 @@ body {
     margin-left: 4px;
     opacity: 0.5;
     font-size: 14px;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 2px 4px;
 }
 
 .tab-close:hover {
     opacity: 1;
     color: var(--error);
+    cursor: pointer;
 }
 
-.tab-add {
+.tab-add, .tab-paste {
     width: 26px;
     height: 26px;
     border-radius: 4px;
@@ -273,11 +288,32 @@ body {
     background: rgba(31, 182, 255, 0.05);
     border: 1px solid var(--border);
     transition: all 0.3s;
+    font-size: 14px;
 }
 
 .tab-add:hover {
     background: rgba(31, 182, 255, 0.1);
     color: var(--text-secondary);
+}
+
+.tab-paste {
+    background: rgba(102, 126, 234, 0.05);
+    border-color: rgba(102, 126, 234, 0.2);
+}
+
+.tab-paste:hover {
+    background: rgba(102, 126, 234, 0.15);
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+
+/* Make tabs container relative for absolute positioning */
+.tabs-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* Content */
@@ -604,12 +640,29 @@ body {
     color: var(--error);
 }
 
+.notification.warning {
+    border-color: #ff1493;
+    color: #ff1493;
+    background: rgba(255, 20, 147, 0.1);
+}
+
 @keyframes slideIn {
     from { 
         transform: translateX(100%);
         opacity: 0;
     }
     to { 
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-10px);
+        opacity: 0;
+    }
+    to {
         transform: translateX(0);
         opacity: 1;
     }

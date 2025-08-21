@@ -4,8 +4,10 @@ import { useDocumentStore } from '@stores/documentStore'
 import { useAppStore } from '@stores/appStore'
 import { JSONLayerAnalyzer } from '@utils/jsonAnalyzer'
 import { Breadcrumb } from '@components/Breadcrumb/Breadcrumb'
-import { showNotification } from '@components/Notification/Notification'
-import iconImg from '/icon.png'
+import { showNotification, useNotification } from '@components/Notification/Notification'
+import { useSimpleImport } from '@hooks/useSimpleImport'
+import { createShareUrl, copyToClipboard } from '@utils/simpleShare'
+const iconImg = '/super-json/icon.png'
 
 const analyzer = new JSONLayerAnalyzer()
 
@@ -54,12 +56,16 @@ export function MainLayout() {
   const [processorOutput, setProcessorOutput] = useState('')
   const [activeLayerIndex, setActiveLayerIndex] = useState(0)
   const [editingDocId, setEditingDocId] = useState<string | null>(null)
+  
+  const { showNotification: showNotificationHook } = useNotification()
   const [editTitle, setEditTitle] = useState('')
   const [showDocSelector, setShowDocSelector] = useState(false)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [compareDocId, setCompareDocId] = useState<string | null>(null)
   const [showOnlyDifferences, setShowOnlyDifferences] = useState(true)
+  const [sharingDoc, setSharingDoc] = useState(false)
+  const [showPasteButton, setShowPasteButton] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   
   const currentDoc = getCurrentDocument()
@@ -68,6 +74,9 @@ export function MainLayout() {
     loadSettings()
     loadFromLocalStorage()
   }, [])
+  
+  // Handle imports from URL after documents are loaded
+  useSimpleImport()
 
   // Reset active layer when document changes
   useEffect(() => {
@@ -96,6 +105,77 @@ export function MainLayout() {
       return () => document.removeEventListener('click', handleClickOutside)
     }
   }, [showDocSelector])
+
+  const handleShare = async () => {
+    if (!currentDoc) return
+    
+    setSharingDoc(true)
+    
+    try {
+      const result = createShareUrl(currentDoc.inputContent)
+      await copyToClipboard(result.url)
+      
+      showNotificationHook({
+        type: 'success',
+        message: `Share link copied! (${result.length} chars)`
+      })
+    } catch (error) {
+      showNotificationHook({
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Failed to create share link'
+      })
+    } finally {
+      setSharingDoc(false)
+    }
+  }
+
+  const handleCopyJson = async () => {
+    if (!currentDoc) return
+    
+    try {
+      await copyToClipboard(currentDoc.inputContent)
+      showNotificationHook({
+        type: 'success',
+        message: 'JSON content copied!'
+      })
+    } catch (error) {
+      showNotificationHook({
+        type: 'error',
+        message: 'Failed to copy JSON'
+      })
+    }
+  }
+
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      
+      // Create new document first
+      const newDocId = createDocument()
+      
+      // Try to validate it's JSON
+      try {
+        JSON.parse(text)
+        updateInputContent(newDocId, text)
+        showNotificationHook({
+          type: 'success',
+          message: 'JSON content pasted to new document!'
+        })
+      } catch {
+        // If not valid JSON, still paste it
+        updateInputContent(newDocId, text)
+        showNotificationHook({
+          type: 'info',
+          message: 'Content pasted to new document (not valid JSON)'
+        })
+      }
+    } catch (error) {
+      showNotificationHook({
+        type: 'error',
+        message: 'Failed to paste from clipboard'
+      })
+    }
+  }
 
   const handleAnalyze = () => {
     if (!currentDoc) return
@@ -316,7 +396,7 @@ export function MainLayout() {
     // Create new document with current layer content
     const newDocId = createDocument()
     updateInputContent(newDocId, layerContent)
-    switchToDocument(newDocId)
+    switchDocument(newDocId)
     showNotification('Layer saved as new document', 'success')
   }
 
@@ -555,6 +635,23 @@ export function MainLayout() {
               <div className="panel-header">
                 INPUT
                 <span className="panel-info">JSON</span>
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                  <button
+                    className="tool-btn"
+                    onClick={handleShare}
+                    disabled={sharingDoc}
+                    title="Copy share link"
+                  >
+                    {sharingDoc ? '⏳' : 'Share'}
+                  </button>
+                  <button
+                    className="tool-btn"
+                    onClick={handleCopyJson}
+                    title="Copy JSON content"
+                  >
+                    Copy
+                  </button>
+                </div>
               </div>
               <div className="editor-container">
                 {currentDoc && (
@@ -725,7 +822,6 @@ export function MainLayout() {
                     renderSideBySide: true,
                     renderIndicators: true,
                     originalEditable: true,  // Left side editable
-                    modifiedEditable: false,  // Right side read-only
                     ignoreTrimWhitespace: false,
                     renderOverviewRuler: true,
                     enableSplitViewResizing: true,
@@ -741,7 +837,7 @@ export function MainLayout() {
                       contextLineCount: 3
                     }
                   }}
-                  onMount={(diffEditor, monaco) => {
+                  onMount={(diffEditor) => {
                     const originalEditor = diffEditor.getOriginalEditor()
                     
                     // Ensure the editor has proper undo/redo stack
@@ -779,7 +875,7 @@ export function MainLayout() {
                             updateInputContent(currentDoc.id, value)
                           }
                         }}
-                        onMount={(editor, monaco) => {
+                        onMount={(editor) => {
                           // Set initial value
                           editor.setValue(formatJson(currentDoc.inputContent))
                           
@@ -939,6 +1035,23 @@ export function MainLayout() {
               <div className="panel-header">
                 INPUT
                 <span className="panel-info">JSON</span>
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                  <button
+                    className="tool-btn"
+                    onClick={handleShare}
+                    disabled={sharingDoc}
+                    title="Copy share link"
+                  >
+                    {sharingDoc ? '⏳' : 'Share'}
+                  </button>
+                  <button
+                    className="tool-btn"
+                    onClick={handleCopyJson}
+                    title="Copy JSON content"
+                  >
+                    Copy
+                  </button>
+                </div>
               </div>
               <div className="editor-container">
                 {currentDoc && (
@@ -1333,7 +1446,54 @@ export function MainLayout() {
               )}
             </div>
           ))}
-          <button className="tab-add" onClick={createDocument}>+</button>
+          <div 
+            style={{ display: 'inline-flex', alignItems: 'center' }}
+            onMouseEnter={() => setShowPasteButton(true)}
+            onMouseLeave={() => setShowPasteButton(false)}
+          >
+            <button className="tab-add" onClick={createDocument}>+</button>
+            {showPasteButton && (
+              <button
+                onClick={handlePaste}
+                aria-label="Paste from clipboard"
+                title="New document from clipboard"
+                style={{ 
+                  height: '26px',
+                  padding: '0 10px',
+                  background: 'rgba(31, 182, 255, 0.05)',
+                  color: 'var(--text-dim)',
+                  marginLeft: '6px',
+                  borderRadius: '4px',
+                  border: '1px solid var(--border)',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontWeight: '400',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  animation: 'slideInFromLeft 0.2s ease-out',
+                  transition: 'all 0.2s',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(31, 182, 255, 0.1)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
+                  e.currentTarget.style.borderColor = 'var(--text-secondary)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(31, 182, 255, 0.05)';
+                  e.currentTarget.style.color = 'var(--text-dim)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
         
         {renderContent()}

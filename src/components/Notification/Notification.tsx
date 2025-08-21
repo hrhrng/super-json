@@ -2,15 +2,25 @@ import { useEffect, useState } from 'react'
 
 interface NotificationProps {
   message: string
-  type: 'success' | 'error' | 'info'
+  type: 'success' | 'error' | 'info' | 'warning'
   duration?: number
 }
 
 let notificationInstance: ((props: NotificationProps) => void) | null = null
 
-export function showNotification(message: string, type: 'success' | 'error' | 'info' = 'info') {
+export function showNotification(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') {
   if (notificationInstance) {
     notificationInstance({ message, type })
+  }
+}
+
+export function useNotification() {
+  return {
+    showNotification: (props: { message: string; type: 'success' | 'error' | 'info' | 'warning'; duration?: number }) => {
+      if (notificationInstance) {
+        notificationInstance(props)
+      }
+    }
   }
 }
 

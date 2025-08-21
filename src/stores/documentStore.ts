@@ -9,6 +9,7 @@ interface DocumentStore {
   
   // Actions
   createDocument: () => string
+  importDocument: (title: string, inputContent: string, outputContent: string, layers: JSONLayer[]) => string
   deleteDocument: (id: string) => void
   switchDocument: (id: string) => void
   updateDocument: (id: string, updates: Partial<Document>) => void
@@ -55,6 +56,30 @@ export const useDocumentStore = create<DocumentStore>()(
 
       set((state) => {
         state.documents.push(newDoc)
+        state.currentDocId = id
+      })
+
+      get().saveToLocalStorage()
+      return id
+    },
+
+    importDocument: (title, inputContent, outputContent, layers) => {
+      const id = nanoid()
+      const now = Date.now()
+      
+      const importedDoc: Document = {
+        id,
+        title: `${title} (Imported)`,
+        inputContent,
+        outputContent,
+        layers,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      }
+
+      set((state) => {
+        state.documents.push(importedDoc)
         state.currentDocId = id
       })
 

@@ -227,10 +227,11 @@ export function generateSideBySideDiff(oldJson: any, newJson: any): {
   // Create decorations for highlighting changes
   const significantDiffs = diffs.filter(d => d.type !== 'unchanged')
   
-  for (const diff of significantDiffs) {
-    // This would require line number calculation based on the path
-    // For now, return basic structure
-  }
+  // This would require line number calculation based on the path
+  // For now, return basic structure
+  significantDiffs.forEach(() => {
+    // Future implementation
+  })
   
   return {
     original,

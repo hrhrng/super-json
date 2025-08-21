@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type ViewMode = 'layer' | 'processor' | 'hero'
+type ViewMode = 'layer' | 'processor' | 'hero' | 'diff'
 
 interface AppStore {
   viewMode: ViewMode

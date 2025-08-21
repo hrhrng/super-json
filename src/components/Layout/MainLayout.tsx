@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import Editor, { loader } from '@monaco-editor/react'
+import Editor, { DiffEditor, loader } from '@monaco-editor/react'
 import { useDocumentStore } from '@stores/documentStore'
 import { useAppStore } from '@stores/appStore'
 import { JSONLayerAnalyzer } from '@utils/jsonAnalyzer'
@@ -58,6 +58,8 @@ export function MainLayout() {
   const [showDocSelector, setShowDocSelector] = useState(false)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [compareDocId, setCompareDocId] = useState<string | null>(null)
+  const [showOnlyDifferences, setShowOnlyDifferences] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
   
   const currentDoc = getCurrentDocument()
@@ -625,6 +627,205 @@ export function MainLayout() {
           </div>
         )
         
+      case 'diff':
+        const otherDocs = documents.filter(d => d.id !== currentDocId)
+        const compareDoc = compareDocId ? documents.find(d => d.id === compareDocId) : null
+        
+        // Format JSON for better comparison
+        const formatJson = (content: string) => {
+          try {
+            const parsed = JSON.parse(content)
+            return JSON.stringify(parsed, null, 2)
+          } catch {
+            return content
+          }
+        }
+        
+        return (
+          <div className="content" id="diffMode" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="panel-header" style={{
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0 20px',
+              height: '35px',
+              borderBottom: '1px solid var(--border)'
+            }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '11px', fontWeight: '600' }}>
+                  DIFF
+                </span>
+                <span className="panel-info" style={{ fontSize: '11px' }}>
+                  {currentDoc?.title}
+                </span>
+                <span style={{ color: 'var(--text-dim)', fontSize: '11px' }}>vs</span>
+                <select
+                  value={compareDocId || ''}
+                  onChange={(e) => setCompareDocId(e.target.value || null)}
+                  style={{
+                    background: 'var(--bg-panel)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-secondary)',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '11px',
+                    fontFamily: 'JetBrains Mono, monospace',
+                    cursor: 'pointer',
+                    minWidth: '150px'
+                  }}
+                >
+                  <option value="">Select document...</option>
+                  {otherDocs.map(doc => (
+                    <option key={doc.id} value={doc.id}>{doc.title}</option>
+                  ))}
+                </select>
+              </span>
+              
+              {compareDoc && (
+                <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '11px',
+                    color: 'var(--text-dim)',
+                    cursor: 'pointer'
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={showOnlyDifferences}
+                      onChange={(e) => setShowOnlyDifferences(e.target.checked)}
+                      style={{
+                        cursor: 'pointer'
+                      }}
+                    />
+                    Show only differences
+                  </label>
+                </div>
+              )}
+            </div>
+            
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+              {compareDoc && currentDoc ? (
+                <DiffEditor
+                  height="100%"
+                  language="json"
+                  theme="superJSON"
+                  originalModelPath={`original-${currentDoc.id}.json`}
+                  modifiedModelPath={`modified-${compareDoc.id}.json`}
+                  original={formatJson(currentDoc.inputContent)}
+                  modified={formatJson(compareDoc.inputContent)}
+                  options={{
+                    fontSize: 13,
+                    minimap: { enabled: false },
+                    wordWrap: 'on',
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    readOnly: false,
+                    renderSideBySide: true,
+                    renderIndicators: true,
+                    originalEditable: true,  // Left side editable
+                    modifiedEditable: false,  // Right side read-only
+                    ignoreTrimWhitespace: false,
+                    renderOverviewRuler: true,
+                    enableSplitViewResizing: true,
+                    renderLineHighlight: 'all',
+                    fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",
+                    diffWordWrap: 'on',
+                    diffAlgorithm: 'advanced',
+                    renderWhitespace: 'none',
+                    hideUnchangedRegions: {
+                      enabled: showOnlyDifferences,
+                      revealLineCount: 3,
+                      minimumLineCount: 3,
+                      contextLineCount: 3
+                    }
+                  }}
+                  onMount={(diffEditor, monaco) => {
+                    const originalEditor = diffEditor.getOriginalEditor()
+                    
+                    // Ensure the editor has proper undo/redo stack
+                    originalEditor.pushUndoStop()
+                    
+                    // Focus the original editor for shortcuts to work
+                    originalEditor.focus()
+                    
+                    // Handle changes to the original (left) side without losing cursor position
+                    let isInternalUpdate = false
+                    originalEditor.onDidChangeModelContent(() => {
+                      if (isInternalUpdate) return
+                      
+                      const newContent = originalEditor.getValue()
+                      if (currentDoc) {
+                        // Update the store without triggering re-render
+                        updateInputContent(currentDoc.id, newContent)
+                      }
+                    })
+                  }}
+                />
+              ) : (
+                // Show current document on left, empty on right when no comparison selected
+                <div style={{ display: 'flex', height: '100%' }}>
+                  <div style={{ flex: 1, borderRight: '1px solid var(--border)' }}>
+                    {currentDoc && (
+                      <Editor
+                        height="100%"
+                        defaultLanguage="json"
+                        theme="superJSON"
+                        key={`standalone-${currentDoc.id}`}
+                        defaultValue={formatJson(currentDoc.inputContent)}
+                        onChange={(value) => {
+                          if (value !== undefined && currentDoc) {
+                            updateInputContent(currentDoc.id, value)
+                          }
+                        }}
+                        onMount={(editor, monaco) => {
+                          // Set initial value
+                          editor.setValue(formatJson(currentDoc.inputContent))
+                          
+                          // Ensure editor has focus for shortcuts to work
+                          editor.focus()
+                          
+                          // Make sure undo/redo stack is maintained
+                          editor.pushUndoStop()
+                        }}
+                        options={{
+                          fontSize: 13,
+                          minimap: { enabled: false },
+                          wordWrap: 'on',
+                          lineNumbers: 'on',
+                          scrollBeyondLastLine: false,
+                          automaticLayout: true,
+                          readOnly: false,
+                          formatOnPaste: true,
+                          formatOnType: true,
+                          folding: true,
+                          tabSize: 2,
+                          fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",
+                          // Ensure shortcuts work
+                          contextmenu: true,
+                          suggestOnTriggerCharacters: true,
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div style={{ 
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--text-dim)',
+                    fontFamily: 'JetBrains Mono, monospace',
+                    fontSize: '12px'
+                  }}>
+                    Select a document to compare
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+        
       case 'hero':
         return (
           <div className="content" id="heroMode">
@@ -1012,6 +1213,10 @@ export function MainLayout() {
       return null // Hero mode has inline buttons
     }
     
+    if (viewMode === 'diff') {
+      return null // Diff mode doesn't need actions
+    }
+    
     // Layer mode
     return (
       <div className="actions">
@@ -1053,6 +1258,15 @@ export function MainLayout() {
             <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
           </svg>
           <span className="mode-label">HERO</span>
+        </button>
+        <button 
+          className={`mode-btn ${viewMode === 'diff' ? 'active' : ''}`}
+          onClick={() => setViewMode('diff')}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M16 2v20M8 2v20M3 12h18"/>
+          </svg>
+          <span className="mode-label">DIFF</span>
         </button>
       </div>
       
@@ -1149,6 +1363,9 @@ export function MainLayout() {
             {viewMode === 'layer' && `${currentDoc?.layers.length || 0} layers`}
             {viewMode === 'processor' && 'Processor'}
             {viewMode === 'hero' && 'Hero View'}
+            {viewMode === 'diff' && (compareDocId 
+              ? `Comparing: ${documents.find(d => d.id === compareDocId)?.title} ↔ ${currentDoc?.title}` 
+              : 'Select document to compare')}
           </div>
         </div>
       </div>

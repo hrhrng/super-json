@@ -19,7 +19,7 @@ The application features a three-panel layout with multi-document support:
 ### Core Behaviors
 - **Multi-document support** - Work with multiple JSON documents simultaneously via main tabs
 - **No automatic syncing between sections** - Input, Layer Editor, and Output are independent by design
-- **Two primary action buttons**: "智能分析" (Smart Analysis) and "生成输出" (Generate Output)
+- **Two primary action buttons**: "Parse" and "Apply"
 - **Bidirectional tab sync** - Changes in any layer tab automatically update related parent/child tabs
 - **Explicit workflow** - User-controlled flow: Input → Analyze → Edit Layers → Generate → Output
 - **Auto-save functionality** - All documents and states are automatically saved to localStorage

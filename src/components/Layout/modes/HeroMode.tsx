@@ -29,12 +29,12 @@ export function HeroMode() {
         if (currentDoc) {
           updateHeroUrl(currentDoc.id, data.location)
         }
-        showNotification('加载到 Hero 视图', 'success')
+        showNotification('Loaded to Hero view', 'success')
       } else {
-        showNotification('加载失败', 'error')
+        showNotification('Failed to load', 'error')
       }
     } catch (error) {
-      showNotification('JSON格式错误或网络错误', 'error')
+      showNotification('Invalid JSON or network error', 'error')
     }
   }
 
@@ -59,12 +59,12 @@ export function HeroMode() {
       if (response.ok) {
         const data = await response.json()
         window.open(data.location, '_blank')
-        showNotification('在新标签页打开', 'success')
+        showNotification('Opened in new tab', 'success')
       } else {
-        showNotification('加载失败', 'error')
+        showNotification('Failed to load', 'error')
       }
     } catch (error) {
-      showNotification('JSON格式错误或网络错误', 'error')
+      showNotification('Invalid JSON or network error', 'error')
     }
   }
 

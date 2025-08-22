@@ -75,7 +75,7 @@ export function MainLayout() {
     
     const input = currentDoc.inputContent.trim()
     if (!input) {
-      showNotification('请输入JSON内容', 'error')
+      showNotification('Please enter JSON content', 'error')
       return
     }
     
@@ -86,18 +86,18 @@ export function MainLayout() {
           layers[0].depth === 0 && 
           layers[0].type === 'string' && 
           typeof layers[0].content === 'string') {
-        showNotification('JSON格式错误，请检查输入', 'error')
+        showNotification('Invalid JSON format, please check input', 'error')
         return
       }
       
       if (layers.length === 0) {
-        showNotification('未检测到有效的JSON结构', 'error')
+        showNotification('No valid JSON structure detected', 'error')
         return
       }
       
       updateLayers(currentDoc.id, layers)
       setActiveLayerIndex(0)
-      showNotification(`成功解析 ${layers.length} 个JSON层级`, 'success')
+      showNotification(`Successfully parsed ${layers.length} JSON layers`, 'success')
     } catch (error) {
       showNotification('JSON格式错误，请检查输入', 'error')
     }
@@ -108,22 +108,22 @@ export function MainLayout() {
     try {
       const output = analyzer.rebuild(currentDoc.layers)
       updateInputContent(currentDoc.id, output)
-      showNotification('应用成功', 'success')
+      showNotification('Applied successfully', 'success')
     } catch (error) {
-      showNotification('应用失败', 'error')
+      showNotification('Failed to apply', 'error')
     }
   }
 
   // Processor mode handlers  
   const copyOutput = () => {
     navigator.clipboard.writeText(processorOutput)
-    showNotification('已复制到剪贴板', 'success')
+    showNotification('Copied to clipboard', 'success')
   }
 
   const applyToInput = () => {
     if (!processorOutput || !currentDoc) return
     updateInputContent(currentDoc.id, processorOutput)
-    showNotification('已应用到输入', 'success')
+    showNotification('Applied to input', 'success')
   }
 
   const renderContent = () => {

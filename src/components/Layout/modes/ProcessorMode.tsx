@@ -62,9 +62,9 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
       const parsed = JSON.parse(currentDoc.inputContent)
       const formatted = JSON.stringify(parsed, null, 2)
       setProcessorOutput(formatted)
-      showNotification('格式化成功', 'success')
+      showNotification('Formatted successfully', 'success')
     } catch {
-      showNotification('JSON格式错误', 'error')
+      showNotification('Invalid JSON format', 'error')
     }
   }
 
@@ -74,9 +74,9 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
       const parsed = JSON.parse(currentDoc.inputContent)
       const minified = JSON.stringify(parsed)
       setProcessorOutput(minified)
-      showNotification('压缩成功', 'success')
+      showNotification('Minified successfully', 'success')
     } catch {
-      showNotification('JSON格式错误', 'error')
+      showNotification('Invalid JSON format', 'error')
     }
   }
 
@@ -85,9 +85,9 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
     try {
       const escaped = JSON.stringify(currentDoc.inputContent)
       setProcessorOutput(escaped)
-      showNotification('转义成功', 'success')
+      showNotification('Escaped successfully', 'success')
     } catch {
-      showNotification('转义失败', 'error')
+      showNotification('Failed to escape', 'error')
     }
   }
 
@@ -97,13 +97,13 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
       const unescaped = JSON.parse(currentDoc.inputContent)
       if (typeof unescaped === 'string') {
         setProcessorOutput(unescaped)
-        showNotification('去转义成功', 'success')
+        showNotification('Unescaped successfully', 'success')
       } else {
         setProcessorOutput(JSON.stringify(unescaped, null, 2))
-        showNotification('去转义成功', 'success')
+        showNotification('Unescaped successfully', 'success')
       }
     } catch {
-      showNotification('去转义失败', 'error')
+      showNotification('Failed to unescape', 'error')
     }
   }
 
@@ -112,9 +112,9 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
     try {
       const encoded = btoa(unescape(encodeURIComponent(currentDoc.inputContent)))
       setProcessorOutput(encoded)
-      showNotification('Base64 编码成功', 'success')
+      showNotification('Base64 encoded successfully', 'success')
     } catch {
-      showNotification('编码失败', 'error')
+      showNotification('Failed to encode', 'error')
     }
   }
 
@@ -123,9 +123,9 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
     try {
       const decoded = decodeURIComponent(escape(atob(currentDoc.inputContent)))
       setProcessorOutput(decoded)
-      showNotification('Base64 解码成功', 'success')
+      showNotification('Base64 decoded successfully', 'success')
     } catch {
-      showNotification('解码失败', 'error')
+      showNotification('Failed to decode', 'error')
     }
   }
 
@@ -133,7 +133,7 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
     if (!currentDoc?.inputContent) return
     const encoded = encodeURIComponent(currentDoc.inputContent)
     setProcessorOutput(encoded)
-    showNotification('URL 编码成功', 'success')
+    showNotification('URL encoded successfully', 'success')
   }
 
   const urlDecode = () => {
@@ -141,9 +141,9 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
     try {
       const decoded = decodeURIComponent(currentDoc.inputContent)
       setProcessorOutput(decoded)
-      showNotification('URL 解码成功', 'success')
+      showNotification('URL decoded successfully', 'success')
     } catch {
-      showNotification('解码失败', 'error')
+      showNotification('Failed to decode', 'error')
     }
   }
 
@@ -164,9 +164,9 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
       }
       const sorted = JSON.stringify(sortObject(parsed), null, 2)
       setProcessorOutput(sorted)
-      showNotification('键排序成功', 'success')
+      showNotification('Keys sorted successfully', 'success')
     } catch {
-      showNotification('JSON格式错误', 'error')
+      showNotification('Invalid JSON format', 'error')
     }
   }
 

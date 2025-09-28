@@ -197,8 +197,15 @@ export class JSONLayerAnalyzer {
       // Convert current layer back to string
       const jsonString = JSON.stringify(currentLayer.content)
       
-      // Update parent's content
-      this.setNestedValue(parentLayer.content, currentLayer.parentField!, jsonString)
+      // Special handling for [parsed] field - replace entire parent content
+      if (currentLayer.parentField === '[parsed]') {
+        // The entire parent is an escaped JSON string
+        parentLayer.content = currentLayer.content
+      } else {
+        // For regular fields, we need to completely replace the field value
+        // not merge it, to avoid keeping old keys when keys are renamed
+        this.setNestedValue(parentLayer.content, currentLayer.parentField!, jsonString)
+      }
     }
     
     return JSON.stringify(workingLayers[0].content, null, 2)

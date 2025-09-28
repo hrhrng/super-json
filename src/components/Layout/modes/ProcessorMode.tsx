@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import Editor from '@monaco-editor/react'
 import { useDocumentStore } from '@stores/documentStore'
 import { showNotification, useNotification } from '@components/Notification/Notification'
 import { createShareUrl, copyToClipboard } from '@utils/simpleShare'
+import { formatJsonBestEffort, minifyJsonBestEffort } from '@utils/jsonFormatter'
+import type { editor } from 'monaco-editor'
 
 interface ProcessorModeProps {
   processorOutput: string
@@ -13,8 +15,46 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
   const { getCurrentDocument, updateInputContent } = useDocumentStore()
   const { showNotification: showNotificationHook } = useNotification()
   const [sharingDoc, setSharingDoc] = useState(false)
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
+  const formatTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
   const currentDoc = getCurrentDocument()
+
+  const handleEagerFormat = useCallback((value: string) => {
+    if (!currentDoc || !editorRef.current) return
+    
+    if (formatTimeoutRef.current) {
+      clearTimeout(formatTimeoutRef.current)
+    }
+    
+    formatTimeoutRef.current = setTimeout(() => {
+      const lines = value.split('\n')
+      const lastChar = value.trim().slice(-1)
+      
+      const shouldFormat = (lastChar === '}' || lastChar === ']') && lines.length > 1
+      
+      if (shouldFormat) {
+        try {
+          JSON.parse(value)
+          // If JSON is valid, trigger Monaco's built-in formatter
+          editorRef.current?.getAction('editor.action.formatDocument')?.run()
+        } catch {
+          // If JSON is invalid, try best-effort formatting
+          const result = formatJsonBestEffort(value)
+          if (result.mode === 'strict' && result.output !== value) {
+            const position = editorRef.current.getPosition()
+            updateInputContent(currentDoc.id, result.output)
+            // Restore cursor position after update
+            setTimeout(() => {
+              if (position && editorRef.current) {
+                editorRef.current.setPosition(position)
+              }
+            }, 0)
+          }
+        }
+      }
+    }, 300)
+  }, [currentDoc, updateInputContent])
 
   const handleShare = async () => {
     if (!currentDoc) return
@@ -58,25 +98,23 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
 
   const formatJSON = () => {
     if (!currentDoc?.inputContent) return
-    try {
-      const parsed = JSON.parse(currentDoc.inputContent)
-      const formatted = JSON.stringify(parsed, null, 2)
-      setProcessorOutput(formatted)
+    const result = formatJsonBestEffort(currentDoc.inputContent)
+    setProcessorOutput(result.output)
+    if (result.mode === 'strict') {
       showNotification('Formatted successfully', 'success')
-    } catch {
-      showNotification('Invalid JSON format', 'error')
+    } else {
+      showNotification('Input contains errors; applied best-effort formatting', 'warning')
     }
   }
 
   const minifyJSON = () => {
     if (!currentDoc?.inputContent) return
-    try {
-      const parsed = JSON.parse(currentDoc.inputContent)
-      const minified = JSON.stringify(parsed)
-      setProcessorOutput(minified)
+    const result = minifyJsonBestEffort(currentDoc.inputContent)
+    setProcessorOutput(result.output)
+    if (result.mode === 'strict') {
       showNotification('Minified successfully', 'success')
-    } catch {
-      showNotification('Invalid JSON format', 'error')
+    } else {
+      showNotification('Input contains errors; applied best-effort minification', 'warning')
     }
   }
 
@@ -170,6 +208,54 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
     }
   }
 
+  const camelToSnake = () => {
+    if (!currentDoc?.inputContent) return
+    try {
+      const parsed = JSON.parse(currentDoc.inputContent)
+      const convertKeysToSnakeCase = (obj: any): any => {
+        if (Array.isArray(obj)) {
+          return obj.map(convertKeysToSnakeCase)
+        } else if (obj !== null && typeof obj === 'object') {
+          return Object.keys(obj).reduce((result: any, key) => {
+            const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`).replace(/^_/, '')
+            result[snakeKey] = convertKeysToSnakeCase(obj[key])
+            return result
+          }, {})
+        }
+        return obj
+      }
+      const converted = JSON.stringify(convertKeysToSnakeCase(parsed), null, 2)
+      setProcessorOutput(converted)
+      showNotification('Converted to snake_case successfully', 'success')
+    } catch {
+      showNotification('Invalid JSON format', 'error')
+    }
+  }
+
+  const snakeToCamel = () => {
+    if (!currentDoc?.inputContent) return
+    try {
+      const parsed = JSON.parse(currentDoc.inputContent)
+      const convertKeysToCamelCase = (obj: any): any => {
+        if (Array.isArray(obj)) {
+          return obj.map(convertKeysToCamelCase)
+        } else if (obj !== null && typeof obj === 'object') {
+          return Object.keys(obj).reduce((result: any, key) => {
+            const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+            result[camelKey] = convertKeysToCamelCase(obj[key])
+            return result
+          }, {})
+        }
+        return obj
+      }
+      const converted = JSON.stringify(convertKeysToCamelCase(parsed), null, 2)
+      setProcessorOutput(converted)
+      showNotification('Converted to camelCase successfully', 'success')
+    } catch {
+      showNotification('Invalid JSON format', 'error')
+    }
+  }
+
   return (
     <div className="content" id="processorMode" style={{ display: 'flex' }}>
       <div className="panel" style={{ flex: 1 }}>
@@ -201,9 +287,13 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
               defaultLanguage="json"
               theme="superJSON"
               value={currentDoc.inputContent}
+              onMount={(editor) => {
+                editorRef.current = editor
+              }}
               onChange={(value) => {
                 if (value !== undefined && currentDoc) {
                   updateInputContent(currentDoc.id, value)
+                  handleEagerFormat(value)
                 }
               }}
               options={{
@@ -240,6 +330,8 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
           <button className="tool-btn" onClick={urlEncode}>URL Encode</button>
           <button className="tool-btn" onClick={urlDecode}>URL Decode</button>
           <button className="tool-btn" onClick={sortKeys}>Sort Keys</button>
+          <button className="tool-btn" onClick={camelToSnake}>camelCase → snake_case</button>
+          <button className="tool-btn" onClick={snakeToCamel}>snake_case → camelCase</button>
         </div>
         <div className="editor-container">
           <Editor

@@ -144,37 +144,51 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
       const parentLayer = layers[childLayer.parentIndex]
       if (!parentLayer) return
       
-      const parentContent = typeof parentLayer.content === 'object' 
-        ? JSON.parse(JSON.stringify(parentLayer.content))
-        : parentLayer.content
-      
-      const updatedContent = JSON.stringify(childLayer.content)
-      
-      const keys = childLayer.parentField.match(/[^.\[\]]+/g) || []
-      let current = parentContent
-      
-      for (let i = 0; i < keys.length - 1; i++) {
-        const key = keys[i]
-        if (typeof current === 'object' && current !== null) {
-          if (!(key in current)) {
-            const nextKey = keys[i + 1]
-            current[key] = /^\d+$/.test(nextKey) ? [] : {}
-          }
-          current = current[key]
+      // Special handling for [parsed] field - replace entire parent content
+      if (childLayer.parentField === '[parsed]') {
+        // The entire parent is an escaped JSON string, replace it completely
+        layers[childLayer.parentIndex].content = childLayer.content
+        
+        if (childLayer.parentIndex !== activeLayerIndex) {
+          setEditorValues(prev => ({ 
+            ...prev, 
+            [childLayer.parentIndex]: JSON.stringify(childLayer.content, null, 2) 
+          }))
         }
-      }
-      
-      if (current && typeof current === 'object' && keys.length > 0) {
-        current[keys[keys.length - 1]] = updatedContent
-      }
-      
-      layers[childLayer.parentIndex].content = parentContent
-      
-      if (childLayer.parentIndex !== activeLayerIndex) {
-        setEditorValues(prev => ({ 
-          ...prev, 
-          [childLayer.parentIndex]: JSON.stringify(parentContent, null, 2) 
-        }))
+      } else {
+        // Normal field update
+        const parentContent = typeof parentLayer.content === 'object' 
+          ? JSON.parse(JSON.stringify(parentLayer.content))
+          : parentLayer.content
+        
+        const updatedContent = JSON.stringify(childLayer.content)
+        
+        const keys = childLayer.parentField.match(/[^.\[\]]+/g) || []
+        let current = parentContent
+        
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = keys[i]
+          if (typeof current === 'object' && current !== null) {
+            if (!(key in current)) {
+              const nextKey = keys[i + 1]
+              current[key] = /^\d+$/.test(nextKey) ? [] : {}
+            }
+            current = current[key]
+          }
+        }
+        
+        if (current && typeof current === 'object' && keys.length > 0) {
+          current[keys[keys.length - 1]] = updatedContent
+        }
+        
+        layers[childLayer.parentIndex].content = parentContent
+        
+        if (childLayer.parentIndex !== activeLayerIndex) {
+          setEditorValues(prev => ({ 
+            ...prev, 
+            [childLayer.parentIndex]: JSON.stringify(parentContent, null, 2) 
+          }))
+        }
       }
       
       updateParentLayers(layers, childLayer.parentIndex, visited)

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Editor, { DiffEditor } from '@monaco-editor/react'
 import { useDocumentStore } from '@stores/documentStore'
+import { formatJsonBestEffort } from '@utils/jsonFormatter'
 
 export function DiffMode() {
   const { documents, currentDocId, getCurrentDocument, updateInputContent } = useDocumentStore()
@@ -12,12 +13,9 @@ export function DiffMode() {
   const compareDoc = compareDocId ? documents.find(d => d.id === compareDocId) : null
   
   const formatJson = (content: string) => {
-    try {
-      const parsed = JSON.parse(content)
-      return JSON.stringify(parsed, null, 2)
-    } catch {
-      return content
-    }
+    if (!content.trim()) return content
+    const result = formatJsonBestEffort(content)
+    return result.output || content
   }
   
   return (

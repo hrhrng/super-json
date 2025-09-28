@@ -1,10 +1,9 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { useDocumentStore } from '@stores/documentStore'
 import { showNotification, useNotification } from '@components/Notification/Notification'
 import { createShareUrl, copyToClipboard } from '@utils/simpleShare'
 import { formatJsonBestEffort, minifyJsonBestEffort } from '@utils/jsonFormatter'
-import type { editor } from 'monaco-editor'
 
 interface ProcessorModeProps {
   processorOutput: string
@@ -15,46 +14,8 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
   const { getCurrentDocument, updateInputContent } = useDocumentStore()
   const { showNotification: showNotificationHook } = useNotification()
   const [sharingDoc, setSharingDoc] = useState(false)
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
-  const formatTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   
   const currentDoc = getCurrentDocument()
-
-  const handleEagerFormat = useCallback((value: string) => {
-    if (!currentDoc || !editorRef.current) return
-    
-    if (formatTimeoutRef.current) {
-      clearTimeout(formatTimeoutRef.current)
-    }
-    
-    formatTimeoutRef.current = setTimeout(() => {
-      const lines = value.split('\n')
-      const lastChar = value.trim().slice(-1)
-      
-      const shouldFormat = (lastChar === '}' || lastChar === ']') && lines.length > 1
-      
-      if (shouldFormat) {
-        try {
-          JSON.parse(value)
-          // If JSON is valid, trigger Monaco's built-in formatter
-          editorRef.current?.getAction('editor.action.formatDocument')?.run()
-        } catch {
-          // If JSON is invalid, try best-effort formatting
-          const result = formatJsonBestEffort(value)
-          if (result.mode === 'strict' && result.output !== value) {
-            const position = editorRef.current?.getPosition()
-            updateInputContent(currentDoc.id, result.output)
-            // Restore cursor position after update
-            setTimeout(() => {
-              if (position && editorRef.current) {
-                editorRef.current.setPosition(position)
-              }
-            }, 0)
-          }
-        }
-      }
-    }, 300)
-  }, [currentDoc, updateInputContent])
 
   const handleShare = async () => {
     if (!currentDoc) return
@@ -296,13 +257,9 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
               defaultLanguage="json"
               theme="superJSON"
               value={currentDoc.inputContent}
-              onMount={(editor) => {
-                editorRef.current = editor
-              }}
               onChange={(value) => {
                 if (value !== undefined && currentDoc) {
                   updateInputContent(currentDoc.id, value)
-                  handleEagerFormat(value)
                 }
               }}
               options={{

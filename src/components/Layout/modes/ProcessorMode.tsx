@@ -16,7 +16,7 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
   const { showNotification: showNotificationHook } = useNotification()
   const [sharingDoc, setSharingDoc] = useState(false)
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
-  const formatTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const formatTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   
   const currentDoc = getCurrentDocument()
 
@@ -42,7 +42,7 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
           // If JSON is invalid, try best-effort formatting
           const result = formatJsonBestEffort(value)
           if (result.mode === 'strict' && result.output !== value) {
-            const position = editorRef.current.getPosition()
+            const position = editorRef.current?.getPosition()
             updateInputContent(currentDoc.id, result.output)
             // Restore cursor position after update
             setTimeout(() => {
@@ -148,7 +148,10 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
   const base64Encode = () => {
     if (!currentDoc?.inputContent) return
     try {
-      const encoded = btoa(unescape(encodeURIComponent(currentDoc.inputContent)))
+      // Convert string to UTF-8 bytes then to base64
+      const bytes = new TextEncoder().encode(currentDoc.inputContent)
+      const binString = Array.from(bytes, byte => String.fromCodePoint(byte)).join('')
+      const encoded = btoa(binString)
       setProcessorOutput(encoded)
       showNotification('Base64 encoded successfully', 'success')
     } catch {
@@ -159,7 +162,13 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
   const base64Decode = () => {
     if (!currentDoc?.inputContent) return
     try {
-      const decoded = decodeURIComponent(escape(atob(currentDoc.inputContent)))
+      // Decode base64 to bytes then to UTF-8 string
+      const binString = atob(currentDoc.inputContent)
+      const bytes = new Uint8Array(binString.length)
+      for (let i = 0; i < binString.length; i++) {
+        bytes[i] = binString.codePointAt(i)!
+      }
+      const decoded = new TextDecoder().decode(bytes)
       setProcessorOutput(decoded)
       showNotification('Base64 decoded successfully', 'success')
     } catch {

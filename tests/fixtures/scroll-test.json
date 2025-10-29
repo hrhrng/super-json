@@ -1,0 +1,15 @@
+{
+  "chat_input|01": {
+    "chat_input": "我要退款\n",
+    "query": "",
+    "customerId": "",
+    "poiId": 0,
+    "itemId": "",
+    "merchantId": 0,
+    "extraInfo": "",
+    "clientInfo": "",
+    "orderId": 0,
+    "sessionId": "",
+    "history@#@#": "[{\"lc\": 1, \"type\": \"constructor\", \"id\": [\"langchain\", \"schema\", \"messages\", \"HumanMessage\"], \"kwargs\": {\"content\": \"（全款预售）黄金嘎粮王（5500粒）\", \"type\": \"human\", \"id\": \"8408eff0-adb9-4f43-91db-f25066d8b6c0\"}}, {\"lc\": 1, \"type\": \"constructor\", \"id\": [\"langchain\", \"schema\", \"messages\", \"AIMessage\"], \"kwargs\": {\"content\": \"None\", \"type\": \"ai\", \"id\": \"0aeed911-5f95-44fa-b306-2cce2d7f4ae6\", \"tool_calls\": [], \"invalid_tool_calls\": []}}, {\"lc\": 1, \"type\": \"constructor\", \"id\": [\"langchain\", \"schema\", \"messages\", \"HumanMessage\"], \"kwargs\": {\"content\": \"我要退款\", \"type\": \"human\", \"id\": \"f0151acc-59e3-4491-93d0-f7921eb48dab\"}}, {\"lc\": 1, \"type\": \"constructor\", \"id\": [\"langchain\", \"schema\", \"messages\", \"AIMessage\"], \"kwargs\": {\"content\": \"请问您要咨询哪个订单的退款呢？请先选择对应的订单，以便我为您处理。\", \"type\": \"ai\", \"id\": \"9571cb8a-1ef1-4bf6-aa32-111880673c70\", \"tool_calls\": [], \"invalid_tool_calls\": []}}, {\"lc\": 1, \"type\": \"constructor\", \"id\": [\"langchain\", \"schema\", \"messages\", \"AIMessage\"], \"kwargs\": {\"content\": \"请问您要咨询哪个订单的退款呢？请先选择对应的订单，以便我为您处理。\", \"type\": \"ai\", \"id\": \"6694ec13-5d8b-4bcb-9584-fd8dd99dc5f8\", \"tool_calls\": [], \"invalid_tool_calls\": []}}, {\"lc\": 1, \"type\": \"constructor\", \"id\": [\"langchain\", \"schema\", \"messages\", \"AIMessage\"], \"kwargs\": {\"content\": \"请问您要咨询哪个订单的退款呢？请先选择对应的订单，以便我为您处理。\", \"type\": \"ai\", \"id\": \"04b548b1-4eec-4e91-ba3c-679ae833b0e6\", \"tool_calls\": [], \"invalid_tool_calls\": []}}]"
+  }
+}

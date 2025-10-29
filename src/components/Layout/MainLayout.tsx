@@ -197,7 +197,7 @@ export function MainLayout() {
           </div>
           <div className="status-item" style={{ marginLeft: 'auto' }}>
             {viewMode === 'layer' && `${currentDoc?.layers.length || 0} layers`}
-            {viewMode === 'processor' && 'Processor'}
+            {viewMode === 'processor' && 'Tools Mode'}
             {viewMode === 'hero' && 'Hero View'}
             {viewMode === 'diff' && 'Diff Mode'}
           </div>

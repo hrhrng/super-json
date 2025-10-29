@@ -312,7 +312,7 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
               options={{
                 fontSize: 13,
                 minimap: { enabled: false },
-                wordWrap: 'on',
+                wordWrap: 'off',
                 lineNumbers: 'on',
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
@@ -378,7 +378,7 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                 options={{
                   fontSize: 13,
                   minimap: { enabled: false },
-                  wordWrap: 'on',
+                  wordWrap: 'off',
                   lineNumbers: 'on',
                   scrollBeyondLastLine: false,
                   automaticLayout: true,

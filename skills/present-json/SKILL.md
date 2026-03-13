@@ -107,22 +107,6 @@ open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
 
 This auto-switches to Hero view and loads the JSON Hero interactive explorer.
 
-## Temp file cleanup
-
-The redirect HTML files are small (~200 bytes) and accumulate in the temp directory. To clean up:
-
-**macOS / Linux:**
-```bash
-find /tmp -name 'super-json-*.html' -mmin +60 -delete
-```
-
-**Windows (PowerShell):**
-```powershell
-Get-ChildItem "$env:TEMP\super-json-*.html" | Where-Object { $_.LastWriteTime -lt (Get-Date).AddHours(-1) } | Remove-Item
-```
-
-These commands delete redirect files older than 1 hour. The agent may run cleanup after opening the browser, or users can run it manually.
-
 ## Important notes
 
 - **macOS/Linux**: uses `gzip`, `base64`, `tr`, `xxd`, `printf` — standard POSIX tools

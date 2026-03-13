@@ -8,12 +8,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
 
 jobs:
   build:
@@ -43,14 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name == 'push'
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout main branch
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -61,39 +50,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build main site
-        run: npm run build
-        env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          path: feature-branch
-
-      - name: Build preview
+      - name: Build for preview
         run: |
-          cd feature-branch
-          npm ci
           BRANCH_NAME=${GITHUB_REF_NAME}
           npm run build -- --base=/super-json/preview/${BRANCH_NAME}/
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
 
-      - name: Merge preview into dist
-        run: |
-          BRANCH_NAME=${GITHUB_REF_NAME}
-          mkdir -p dist/preview/${BRANCH_NAME}
-          cp -r feature-branch/dist/* dist/preview/${BRANCH_NAME}/
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy preview to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: './dist'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: preview/${{ github.ref_name }}
+          keep_files: true

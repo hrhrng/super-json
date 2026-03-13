@@ -6,6 +6,12 @@
     <link rel="apple-touch-icon" href="/super-json/preview/claude/add-json-share-skill-0rPqr/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Super JSON - Your Final ONLINE JSON Editor</title>
+    <script>
+      (function() {
+        var m = window.location.pathname.match(/\/preview\/([^/]+)/);
+        if (m) document.title = 'Preview: ' + m[1] + ' - Super JSON';
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">

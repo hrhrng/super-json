@@ -38,50 +38,29 @@ jobs:
     needs: build
     if: github.event_name == 'push'
     steps:
-      - name: Checkout main branch
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: main
-          path: main-site
-
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          path: feature-branch
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      - name: Build main site
-        run: |
-          cd main-site
-          npm ci
-          npm run build
-        env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Build preview
+      - name: Build for preview
         run: |
-          cd feature-branch
-          npm ci
           BRANCH_NAME=${GITHUB_REF_NAME}
           npm run build -- --base=/super-json/preview/${BRANCH_NAME}/
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
 
-      - name: Assemble deployment
-        run: |
-          mkdir -p deploy
-          cp -r main-site/dist/* deploy/
-          BRANCH_NAME=${GITHUB_REF_NAME}
-          mkdir -p deploy/preview/${BRANCH_NAME}
-          cp -r feature-branch/dist/* deploy/preview/${BRANCH_NAME}/
-
-      - name: Deploy to gh-pages
+      - name: Deploy preview to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./deploy
-          keep_files: false
+          publish_dir: ./dist
+          destination_dir: preview/${{ github.ref_name }}
+          keep_files: true

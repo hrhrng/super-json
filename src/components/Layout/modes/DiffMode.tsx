@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Editor, { DiffEditor } from '@monaco-editor/react'
 import { useDocumentStore } from '@stores/documentStore'
 import { formatJsonBestEffort } from '@utils/jsonFormatter'
+import { showNotification } from '@components/Notification/Notification'
 
 export function DiffMode() {
   const { documents, currentDocId, getCurrentDocument, updateInputContent } = useDocumentStore()
@@ -17,7 +18,18 @@ export function DiffMode() {
     const result = formatJsonBestEffort(content)
     return result.output || content
   }
-  
+
+  const handleFormatInput = () => {
+    if (!currentDoc?.inputContent) return
+    const result = formatJsonBestEffort(currentDoc.inputContent)
+    updateInputContent(currentDoc.id, result.output)
+    if (result.mode === 'strict') {
+      showNotification('Formatted successfully', 'success')
+    } else {
+      showNotification('Best-effort formatting applied', 'warning')
+    }
+  }
+
   return (
     <div className="content" id="diffMode" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="panel-header" style={{
@@ -58,8 +70,16 @@ export function DiffMode() {
           </select>
         </span>
         
-        {compareDoc && (
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            className="tool-btn"
+            onClick={handleFormatInput}
+            title="Format JSON (best-effort)"
+            style={{ fontSize: '10px', padding: '3px 10px' }}
+          >
+            Format
+          </button>
+          {compareDoc && (
             <label style={{
               display: 'flex',
               alignItems: 'center',
@@ -78,8 +98,8 @@ export function DiffMode() {
               />
               Show only differences
             </label>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       
       <div style={{ flex: 1, overflow: 'hidden' }}>

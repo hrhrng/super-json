@@ -4,6 +4,7 @@ import { useDocumentStore } from '@stores/documentStore'
 import { Breadcrumb } from '@components/Breadcrumb/Breadcrumb'
 import { showNotification, useNotification } from '@components/Notification/Notification'
 import { createShareUrl, copyToClipboard } from '@utils/simpleShare'
+import { formatJsonBestEffort } from '@utils/jsonFormatter'
 
 interface LayerModeProps {
   activeLayerIndex: number
@@ -78,7 +79,7 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
 
   const handleCopyJson = async () => {
     if (!currentDoc) return
-    
+
     try {
       await copyToClipboard(currentDoc.inputContent)
       showNotificationHook({
@@ -90,6 +91,31 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
         type: 'error',
         message: 'Failed to copy JSON'
       })
+    }
+  }
+
+  const handleFormatInput = () => {
+    if (!currentDoc?.inputContent) return
+    const result = formatJsonBestEffort(currentDoc.inputContent)
+    updateInputContent(currentDoc.id, result.output)
+    if (result.mode === 'strict') {
+      showNotificationHook({ type: 'success', message: 'Formatted successfully' })
+    } else {
+      showNotificationHook({ type: 'warning', message: 'Best-effort formatting applied' })
+    }
+  }
+
+  const handleFormatLayer = () => {
+    if (!currentDoc || !currentDoc.layers[activeLayerIndex]) return
+    const layer = currentDoc.layers[activeLayerIndex]
+    const content = typeof layer.content === 'string' ? layer.content : JSON.stringify(layer.content, null, 2)
+    const result = formatJsonBestEffort(content)
+    // Trigger through the same path as manual edits so sync works
+    handleLayerChange(result.output)
+    if (result.mode === 'strict') {
+      showNotificationHook({ type: 'success', message: 'Layer formatted successfully' })
+    } else {
+      showNotificationHook({ type: 'warning', message: 'Best-effort formatting applied' })
     }
   }
 
@@ -282,6 +308,13 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
             <button
               className="tool-btn"
+              onClick={handleFormatInput}
+              title="Format JSON (best-effort)"
+            >
+              Format
+            </button>
+            <button
+              className="tool-btn"
               onClick={handleShare}
               disabled={sharingDoc}
               title="Copy share link"
@@ -334,14 +367,21 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
           <span className="panel-info">{currentDoc?.layers.length || 0} layers</span>
           {currentDoc && currentDoc.layers.length > 0 && (
             <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-              <button 
+              <button
+                className="layer-action-btn"
+                onClick={handleFormatLayer}
+                title="Format current layer (best-effort)"
+              >
+                Format
+              </button>
+              <button
                 className="layer-action-btn"
                 onClick={handleSaveLayerAsDoc}
                 title="Save current layer as new document"
               >
                 Save as Doc
               </button>
-              <button 
+              <button
                 className="layer-action-btn"
                 onClick={handleReplaceFromDoc}
                 title="Replace current layer from another document"

@@ -42,7 +42,7 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
 
   const handleCopyJson = async () => {
     if (!currentDoc) return
-    
+
     try {
       await copyToClipboard(currentDoc.inputContent)
       showNotificationHook({
@@ -54,6 +54,17 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
         type: 'error',
         message: 'Failed to copy JSON'
       })
+    }
+  }
+
+  const handleFormatInput = () => {
+    if (!currentDoc?.inputContent) return
+    const result = formatJsonBestEffort(currentDoc.inputContent)
+    updateInputContent(currentDoc.id, result.output)
+    if (result.mode === 'strict') {
+      showNotificationHook({ type: 'success', message: 'Formatted successfully' })
+    } else {
+      showNotificationHook({ type: 'warning', message: 'Best-effort formatting applied' })
     }
   }
 
@@ -233,6 +244,13 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
           INPUT
           <span className="panel-info">JSON</span>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+            <button
+              className="tool-btn"
+              onClick={handleFormatInput}
+              title="Format JSON (best-effort)"
+            >
+              Format
+            </button>
             <button
               className="tool-btn"
               onClick={handleShare}

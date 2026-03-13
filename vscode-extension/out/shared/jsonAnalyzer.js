@@ -1,10 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JSONLayerAnalyzer = void 0;
-exports.formatJson = formatJson;
-exports.minifyJson = minifyJson;
-exports.escapeJson = escapeJson;
-exports.unescapeJson = unescapeJson;
 class JSONLayerAnalyzer {
     constructor(maxDepth = 10) {
         this.maxDepth = maxDepth;
@@ -14,6 +10,7 @@ class JSONLayerAnalyzer {
         this.layers = [];
         try {
             const parsed = JSON.parse(input);
+            // Add root layer
             this.layers.push({
                 depth: 0,
                 content: parsed,
@@ -21,11 +18,13 @@ class JSONLayerAnalyzer {
                 parentField: null,
                 hasChildren: false,
                 parentIndex: -1,
-                childIndices: [],
+                childIndices: []
             });
+            // Scan for escaped JSON strings
             this.scanForEscapedJSON(parsed, 0, 0);
         }
-        catch {
+        catch (error) {
+            // If not valid JSON, treat as raw string
             this.layers.push({
                 depth: 0,
                 content: input,
@@ -33,7 +32,7 @@ class JSONLayerAnalyzer {
                 type: 'string',
                 isEscaped: false,
                 parentIndex: -1,
-                childIndices: [],
+                childIndices: []
             });
         }
         return this.layers;
@@ -88,27 +87,29 @@ class JSONLayerAnalyzer {
                     isEscaped: true,
                     hasChildren: false,
                     parentIndex: parentIndex,
-                    childIndices: [],
+                    childIndices: []
                 });
                 const childIndex = this.layers.length - 1;
-                this.layers[parentIndex].childIndices =
-                    this.layers[parentIndex].childIndices || [];
+                this.layers[parentIndex].childIndices = this.layers[parentIndex].childIndices || [];
                 this.layers[parentIndex].childIndices.push(childIndex);
                 this.layers[parentIndex].hasChildren = true;
                 this.scanForEscapedJSON(parsed, currentDepth + 1, childIndex, '');
             }
         }
-        catch {
+        catch (e) {
             // Not valid JSON
         }
     }
     isLikelyJSON(str) {
         const trimmed = str.trim();
+        // Check for regular JSON
         if ((trimmed.startsWith('{') && trimmed.endsWith('}')) ||
             (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
             return true;
         }
+        // Check for escaped JSON (contains \" sequences)
         if (trimmed.includes('\\"') || trimmed.includes('\\\\')) {
+            // Try to detect escaped JSON pattern
             const unescaped = this.tryUnescape(trimmed);
             if (unescaped &&
                 ((unescaped.startsWith('{') && unescaped.endsWith('}')) ||
@@ -120,8 +121,11 @@ class JSONLayerAnalyzer {
     }
     tryUnescape(str) {
         try {
+            // Try to unescape the string
             let unescaped = str;
+            // Replace escaped quotes
             unescaped = unescaped.replace(/\\"/g, '"');
+            // Replace escaped backslashes
             unescaped = unescaped.replace(/\\\\/g, '\\');
             return unescaped;
         }
@@ -132,22 +136,27 @@ class JSONLayerAnalyzer {
     rebuild(layers) {
         if (layers.length === 0)
             return '{}';
-        const workingLayers = layers.map((l) => ({
+        // Clone layers to avoid mutating original
+        const workingLayers = layers.map(l => ({
             ...l,
-            content: typeof l.content === 'string'
-                ? l.content
-                : JSON.parse(JSON.stringify(l.content)),
+            content: typeof l.content === 'string' ? l.content : JSON.parse(JSON.stringify(l.content))
         }));
+        // Rebuild from deepest to root
         for (let i = workingLayers.length - 1; i > 0; i--) {
             const currentLayer = workingLayers[i];
             const parentLayer = workingLayers[currentLayer.parentIndex];
             if (!parentLayer)
                 continue;
+            // Convert current layer back to string
             const jsonString = JSON.stringify(currentLayer.content);
+            // Special handling for [parsed] field - replace entire parent content
             if (currentLayer.parentField === '[parsed]') {
+                // The entire parent is an escaped JSON string
                 parentLayer.content = currentLayer.content;
             }
             else {
+                // For regular fields, we need to completely replace the field value
+                // not merge it, to avoid keeping old keys when keys are renamed
                 this.setNestedValue(parentLayer.content, currentLayer.parentField, jsonString);
             }
         }
@@ -177,32 +186,4 @@ class JSONLayerAnalyzer {
     }
 }
 exports.JSONLayerAnalyzer = JSONLayerAnalyzer;
-function formatJson(input, indent = 2) {
-    try {
-        return JSON.stringify(JSON.parse(input), null, indent);
-    }
-    catch {
-        return input;
-    }
-}
-function minifyJson(input) {
-    try {
-        return JSON.stringify(JSON.parse(input));
-    }
-    catch {
-        return input;
-    }
-}
-function escapeJson(input) {
-    return JSON.stringify(input);
-}
-function unescapeJson(input) {
-    try {
-        const result = JSON.parse(input);
-        return typeof result === 'string' ? result : input;
-    }
-    catch {
-        return input.replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-    }
-}
 //# sourceMappingURL=jsonAnalyzer.js.map

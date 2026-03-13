@@ -5,12 +5,18 @@
     "outDir": "out",
     "lib": ["ES2020"],
     "sourceMap": true,
-    "rootDir": "src",
+    "rootDir": "..",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../shared/*"],
+      "@shared": ["../shared/index.ts"]
+    }
   },
+  "include": ["src", "../shared"],
   "exclude": ["node_modules", ".vscode-test", "tests"]
 }

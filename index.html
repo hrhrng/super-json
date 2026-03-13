@@ -6,6 +6,15 @@
     <link rel="apple-touch-icon" href="/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Super JSON - Your Final ONLINE JSON Editor</title>
+    <script>
+      (function() {
+        var m = window.location.pathname.match(/\/preview\/(.+?)\/(?:index\.html)?$/);
+        if (m) {
+          var parts = m[1].split('/');
+          document.title = 'Preview: ' + parts[parts.length - 1] + ' - Super JSON';
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">

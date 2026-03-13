@@ -19,121 +19,70 @@ Present JSON to humans in Super JSON Editor — an interactive browser-based vie
 ## Instructions
 
 1. Determine the JSON content:
-   - If `$0` is a file path, read JSON from that file
+   - If `$0` is a file path, pass it directly to the script
    - Otherwise, treat `$ARGUMENTS` as inline JSON or use the JSON from the current context
 2. Determine the tab name:
    - Use `$1` if provided
    - Otherwise, derive a meaningful name from the context (e.g., "API Response", "User Config")
    - Default to "Result" if nothing else fits
-3. Generate the URL, write a redirect HTML file to `/tmp`, and open it in the browser
+3. Run the appropriate script (see below)
 4. Present a brief description of the content to the user
 
-## Generating and opening the link
+## Running the script
 
-**Detect the platform first**, then use the appropriate commands:
+**Detect the platform first**, then run:
 
-### macOS / Linux (bash/zsh)
+### macOS / Linux
 
 ```bash
-url="https://hrhrng.github.io/super-json?c=$(echo -n '<JSON_CONTENT>' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>"
-f="/tmp/super-json-$(head -c 4 /dev/urandom | xxd -p).html"
-printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>location.href="%s"</script></head></html>' "$url" "$url" > "$f"
-open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
+# Inline JSON
+bash scripts/open-json.sh '{"key": "value"}' --tab "My Data"
+
+# From a file
+bash scripts/open-json.sh /path/to/data.json --tab "My Data"
+
+# With Hero mode (rich interactive viewer with tree navigation)
+bash scripts/open-json.sh '{"key": "value"}' --tab "My Data" --hero
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-$json = '<JSON_CONTENT>'
-$bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
-$ms = New-Object System.IO.MemoryStream
-$gz = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionLevel]::Optimal)
-$gz.Write($bytes, 0, $bytes.Length); $gz.Close()
-$encoded = [Convert]::ToBase64String($ms.ToArray()).Replace('+','-').Replace('/','_').TrimEnd('=')
-$url = "https://hrhrng.github.io/super-json?c=$encoded&t=<TAB_NAME>"
-$f = "$env:TEMP\super-json-$([guid]::NewGuid().ToString('N').Substring(0,8)).html"
-"<html><head><meta http-equiv='refresh' content='0;url=$url'><script>location.href='$url'</script></head></html>" | Out-File -Encoding utf8 $f
-Start-Process $f
-Start-Sleep -Seconds 3; Remove-Item $f -ErrorAction SilentlyContinue
+# Inline JSON
+./scripts/open-json.ps1 '{"key": "value"}' -Tab "My Data"
+
+# From a file
+./scripts/open-json.ps1 C:\path\to\data.json -Tab "My Data"
+
+# With Hero mode
+./scripts/open-json.ps1 '{"key": "value"}' -Tab "My Data" -Hero
 ```
-
-### From a file
-
-**macOS / Linux:**
-```bash
-url="https://hrhrng.github.io/super-json?c=$(gzip -9 < /path/to/file.json | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>"
-f="/tmp/super-json-$(head -c 4 /dev/urandom | xxd -p).html"
-printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>location.href="%s"</script></head></html>' "$url" "$url" > "$f"
-open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
-```
-
-**Windows (PowerShell):**
-```powershell
-$bytes = [System.IO.File]::ReadAllBytes("C:\path\to\file.json")
-$ms = New-Object System.IO.MemoryStream
-$gz = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionLevel]::Optimal)
-$gz.Write($bytes, 0, $bytes.Length); $gz.Close()
-$encoded = [Convert]::ToBase64String($ms.ToArray()).Replace('+','-').Replace('/','_').TrimEnd('=')
-$url = "https://hrhrng.github.io/super-json?c=$encoded&t=<TAB_NAME>"
-$f = "$env:TEMP\super-json-$([guid]::NewGuid().ToString('N').Substring(0,8)).html"
-"<html><head><meta http-equiv='refresh' content='0;url=$url'><script>location.href='$url'</script></head></html>" | Out-File -Encoding utf8 $f
-Start-Process $f
-Start-Sleep -Seconds 3; Remove-Item $f -ErrorAction SilentlyContinue
-```
-
-### Notes
-- Replace `<JSON_CONTENT>` with the actual JSON string
-- Replace `<TAB_NAME>` with a URL-encoded tab name (spaces → `%20`)
-- **Always prefer `?c=` (compressed)** — it produces significantly shorter URLs (typically 50-70% smaller for JSON)
-- The redirect HTML uses both `<meta refresh>` and `location.href` for maximum browser compatibility
 
 ### Platform detection
-- **macOS**: `open` command, temp dir `/tmp`
-- **Linux**: `xdg-open` command, temp dir `/tmp`
-- **Windows**: `Start-Process` command, temp dir `$env:TEMP`
-- If the shell is PowerShell (or `$PSVersionTable` exists), use the PowerShell variant
+- **macOS/Linux**: use `open-json.sh`
+- **Windows** (PowerShell / `$PSVersionTable` exists): use `open-json.ps1`
 
-## Hero mode (rich interactive viewer)
+## Batch cleanup
 
-For complex JSON that benefits from tree navigation, type info, and search, add `&h=1` to the URL:
+If temp files accumulate (e.g. the background cleanup was interrupted), use:
 
-**macOS / Linux:**
 ```bash
-url="https://hrhrng.github.io/super-json?c=$(echo -n '<JSON_CONTENT>' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>&h=1"
-f="/tmp/super-json-$(head -c 4 /dev/urandom | xxd -p).html"
-printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>location.href="%s"</script></head></html>' "$url" "$url" > "$f"
-open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
+# Linux/macOS
+bash scripts/cleanup-temp.sh              # remove all from /tmp
+bash scripts/cleanup-temp.sh --dry-run    # preview only
 ```
 
-**Windows (PowerShell):** Same as above, append `&h=1` to the `$url`.
-
-This auto-switches to Hero view and loads the JSON Hero interactive explorer.
-
-## Cleanup temporary files
-
-The skill creates temporary `super-json-*.html` redirect files. Use the bundled cleanup scripts to remove them:
-
-**macOS / Linux:**
-```bash
-bash scripts/cleanup-temp.sh              # remove all temp files from /tmp
-bash scripts/cleanup-temp.sh --dry-run    # preview without deleting
-bash scripts/cleanup-temp.sh --dir /path  # custom directory
-```
-
-**Windows (PowerShell):**
 ```powershell
-./scripts/cleanup-temp.ps1                # remove all temp files from $env:TEMP
-./scripts/cleanup-temp.ps1 -DryRun        # preview without deleting
-./scripts/cleanup-temp.ps1 -Dir C:\path   # custom directory
+# Windows
+./scripts/cleanup-temp.ps1               # remove all from $env:TEMP
+./scripts/cleanup-temp.ps1 -DryRun       # preview only
 ```
 
 ## Important notes
 
-- **macOS/Linux**: uses `gzip`, `base64`, `tr`, `xxd`, `printf` — standard POSIX tools
-- **Windows**: uses .NET `GZipStream` via PowerShell — no extra installs needed
-- Compression typically reduces URL length by 50-70% for JSON data
-- The redirect HTML file uses a `super-json-` prefix with 8-char hex ID for easy identification and cleanup
-- The URL is entirely client-side — no data is sent to any server (except to jsonhero.io when `h=1`)
+- The script handles compression (gzip + base64url), temp file creation, browser opening, and cleanup automatically
+- Temp files are deleted ~5 seconds after opening the browser
+- The URL is entirely client-side — no data is sent to any server (except to jsonhero.io when `--hero`/`-Hero`)
 - For very large JSON (>6KB uncompressed), the URL may still exceed browser limits even with compression
 
 ## URL parameters reference

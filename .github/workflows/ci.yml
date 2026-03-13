@@ -36,7 +36,7 @@ jobs:
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
 
-  test-cleanup:
+  test-scripts:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -48,6 +48,10 @@ jobs:
       - name: Run cleanup tests (Linux/macOS)
         if: runner.os != 'Windows'
         run: bash tests/test-cleanup.sh
+
+      - name: Run open-json tests (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: bash tests/test-open-json.sh
 
       - name: Run cleanup tests (Windows)
         if: runner.os == 'Windows'

@@ -18,7 +18,7 @@
     "test:vitest": "vitest",
     "test:vitest-ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "test:skill": "npx skills add . -y && rm -rf .agents skills-lock.json"
+    "test:skill": "npx skills add . -y && rm -rf .agents .claude/skills skills-lock.json"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",

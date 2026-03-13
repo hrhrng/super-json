@@ -42,4 +42,5 @@ playwright-report/
 
 # Skills install artifacts
 .agents/
+.claude/skills/
 skills-lock.json

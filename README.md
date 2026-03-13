@@ -84,6 +84,14 @@ Share JSON instantly via URL — no server required:
 
 The `skills/present-json/` directory contains a first-class [Claude Code skill](https://docs.anthropic.com/en/docs/claude-code) that lets AI agents present JSON results to humans via interactive browser links.
 
+**Install via [skills.sh](https://skills.sh/docs/faq):**
+
+```bash
+npx skills add hrhrng/super-json
+```
+
+**How it works — agent generates a shareable link from any JSON:**
+
 ```bash
 # Agent generates a shareable link from any JSON
 encoded=$(echo -n '{"status":"ok","data":[1,2,3]}' | base64 | tr '+/' '-_' | tr -d '=\n')

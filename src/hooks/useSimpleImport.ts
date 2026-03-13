@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useDocumentStore } from '@stores/documentStore'
 import { useAppStore } from '@stores/appStore'
-import { importFromUrl, importFromBase64Url } from '@utils/simpleShare'
+import { importFromUrl, importFromBase64Url, importFromCompressedUrl } from '@utils/simpleShare'
 import { useNotification } from '@components/Notification/Notification'
 
 // Track if import has been processed globally to prevent duplicates
@@ -19,11 +19,12 @@ export function useSimpleImport() {
       const urlParams = new URLSearchParams(window.location.search)
       const compressedData = urlParams.get('s') // 's' for share (LZ-String compressed)
       const rawBase64Data = urlParams.get('r') // 'r' for raw (base64url encoded)
+      const gzipBase64Data = urlParams.get('c') // 'c' for compressed (gzip + base64url)
       const tabName = urlParams.get('t') // 't' for tab name
       const heroMode = urlParams.get('h') // 'h' for hero mode (auto load → hero)
 
       // Check both local ref and global flag to prevent duplicates
-      if ((!compressedData && !rawBase64Data) || hasImportedRef.current || isImportProcessed) return
+      if ((!compressedData && !rawBase64Data && !gzipBase64Data) || hasImportedRef.current || isImportProcessed) return
       
       hasImportedRef.current = true
       isImportProcessed = true
@@ -39,7 +40,9 @@ export function useSimpleImport() {
         
         const inputContent = compressedData
           ? importFromUrl(compressedData)
-          : importFromBase64Url(rawBase64Data!)
+          : gzipBase64Data
+            ? await importFromCompressedUrl(gzipBase64Data)
+            : importFromBase64Url(rawBase64Data!)
         
         // Create a new document with the imported content
         const docId = createDocument()
@@ -99,6 +102,7 @@ export function useSimpleImport() {
         const newUrl = new URL(window.location.href)
         newUrl.searchParams.delete('s')
         newUrl.searchParams.delete('r')
+        newUrl.searchParams.delete('c')
         newUrl.searchParams.delete('t')
         newUrl.searchParams.delete('h')
         window.history.replaceState({}, '', newUrl.toString())

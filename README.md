@@ -93,20 +93,21 @@ npx skills add hrhrng/super-json
 **How it works — agent generates a shareable link from any JSON:**
 
 ```bash
-# Agent generates a shareable link from any JSON
-encoded=$(echo -n '{"status":"ok","data":[1,2,3]}' | base64 | tr '+/' '-_' | tr -d '=\n')
-echo "https://hrhrng.github.io/super-json?r=${encoded}&t=API+Response"
+# Agent generates a compressed shareable link from any JSON
+encoded=$(echo -n '{"status":"ok","data":[1,2,3]}' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n')
+echo "https://hrhrng.github.io/super-json?c=${encoded}&t=API+Response"
 
 # With Hero mode for interactive visualization
-echo "https://hrhrng.github.io/super-json?r=${encoded}&t=API+Response&h=1"
+echo "https://hrhrng.github.io/super-json?c=${encoded}&t=API+Response&h=1"
 ```
 
 **URL Parameters:**
 
 | Param | Description | Example |
 |-------|-------------|---------|
+| `c` | Gzip + Base64url compressed JSON (recommended) | `?c=H4sIA...` |
 | `s` | LZ-String compressed JSON (shorter URLs) | `?s=NoIgbg9...` |
-| `r` | Base64url encoded JSON (shell-friendly) | `?r=eyJrZXki...` |
+| `r` | Base64url encoded JSON (uncompressed fallback) | `?r=eyJrZXki...` |
 | `t` | Custom tab name | `&t=My+Results` |
 | `h` | Auto-switch to Hero mode | `&h=1` |
 

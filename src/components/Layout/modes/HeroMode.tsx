@@ -1,10 +1,22 @@
 import Editor from '@monaco-editor/react'
 import { useDocumentStore } from '@stores/documentStore'
 import { showNotification } from '@components/Notification/Notification'
+import { formatJsonBestEffort } from '@utils/jsonFormatter'
 
 export function HeroMode() {
   const { getCurrentDocument, updateInputContent, updateHeroUrl } = useDocumentStore()
   const currentDoc = getCurrentDocument()
+
+  const handleFormatInput = () => {
+    if (!currentDoc?.inputContent) return
+    const result = formatJsonBestEffort(currentDoc.inputContent)
+    updateInputContent(currentDoc.id, result.output)
+    if (result.mode === 'strict') {
+      showNotification('Formatted successfully', 'success')
+    } else {
+      showNotification('Best-effort formatting applied', 'warning')
+    }
+  }
 
   const loadIntoHero = async () => {
     if (!currentDoc?.inputContent) return
@@ -73,10 +85,28 @@ export function HeroMode() {
       <div className="panel" style={{ flex: 0.4, minWidth: 350 }}>
         <div className="panel-header">
           JSON INPUT
-          <button 
-            onClick={loadIntoHero}
+          <button
+            onClick={handleFormatInput}
             style={{
               marginLeft: 'auto',
+              background: 'transparent',
+              border: '1px solid var(--border)',
+              color: 'var(--text-secondary)',
+              padding: '3px 10px',
+              borderRadius: '2px',
+              cursor: 'pointer',
+              fontSize: '10px',
+              fontFamily: 'JetBrains Mono, monospace',
+              textTransform: 'uppercase'
+            }}
+            title="Format JSON (best-effort)"
+          >
+            Format
+          </button>
+          <button
+            onClick={loadIntoHero}
+            style={{
+              marginLeft: '5px',
               background: 'transparent',
               border: '1px solid var(--border)',
               color: 'var(--text-secondary)',
@@ -127,8 +157,8 @@ export function HeroMode() {
                 lineNumbers: 'on',
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
-                formatOnPaste: true,
-                formatOnType: true,
+                formatOnPaste: false,
+                formatOnType: false,
                 folding: true,
                 tabSize: 2,
                 fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",

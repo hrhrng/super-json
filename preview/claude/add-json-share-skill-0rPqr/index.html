@@ -9,7 +9,10 @@
     <script>
       (function() {
         var m = window.location.pathname.match(/\/preview\/(.+?)\/(?:index\.html)?$/);
-        if (m) document.title = 'Preview: ' + m[1] + ' - Super JSON';
+        if (m) {
+          var parts = m[1].split('/');
+          document.title = 'Preview: ' + parts[parts.length - 1] + ' - Super JSON';
+        }
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -8,7 +8,7 @@
     <title>Super JSON - Your Final ONLINE JSON Editor</title>
     <script>
       (function() {
-        var m = window.location.pathname.match(/\/preview\/([^/]+)/);
+        var m = window.location.pathname.match(/\/preview\/(.+?)\/(?:index\.html)?$/);
         if (m) document.title = 'Preview: ' + m[1] + ' - Super JSON';
       })();
     </script>

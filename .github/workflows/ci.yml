@@ -47,12 +47,12 @@ jobs:
 
       - name: Run cleanup tests (Linux/macOS)
         if: runner.os != 'Windows'
-        run: bash skills/present-json/scripts/test-cleanup.sh
+        run: bash tests/test-cleanup.sh
 
       - name: Run cleanup tests (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: ./skills/present-json/scripts/test-cleanup.ps1
+        run: ./tests/test-cleanup.ps1
 
   preview:
     runs-on: ubuntu-latest

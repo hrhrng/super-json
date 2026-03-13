@@ -127,16 +127,6 @@ bash scripts/cleanup-temp.sh --dir /path  # custom directory
 ./scripts/cleanup-temp.ps1 -Dir C:\path   # custom directory
 ```
 
-To verify the cleanup scripts work correctly, run the test harness:
-
-```bash
-# Linux/macOS
-bash scripts/test-cleanup.sh
-
-# Windows
-pwsh scripts/test-cleanup.ps1
-```
-
 ## Important notes
 
 - **macOS/Linux**: uses `gzip`, `base64`, `tr`, `xxd`, `printf` — standard POSIX tools

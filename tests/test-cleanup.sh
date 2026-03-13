@@ -4,7 +4,8 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+CLEANUP_SCRIPT="$REPO_DIR/skills/present-json/scripts/cleanup-temp.sh"
 TEST_DIR=$(mktemp -d)
 PASS=0
 FAIL=0
@@ -21,7 +22,7 @@ echo "Test 1: removes super-json-*.html files"
 touch "$TEST_DIR/super-json-aabbccdd.html"
 touch "$TEST_DIR/super-json-11223344.html"
 
-bash "$SCRIPT_DIR/cleanup-temp.sh" --dir "$TEST_DIR"
+bash "$CLEANUP_SCRIPT" --dir "$TEST_DIR"
 
 if [ ! -e "$TEST_DIR/super-json-aabbccdd.html" ] && [ ! -e "$TEST_DIR/super-json-11223344.html" ]; then
   pass "matching files removed"
@@ -35,7 +36,7 @@ echo "Test 2: preserves non-matching files"
 touch "$TEST_DIR/other-file.html"
 touch "$TEST_DIR/super-json-12345678.txt"
 
-bash "$SCRIPT_DIR/cleanup-temp.sh" --dir "$TEST_DIR"
+bash "$CLEANUP_SCRIPT" --dir "$TEST_DIR"
 
 if [ -e "$TEST_DIR/other-file.html" ] && [ -e "$TEST_DIR/super-json-12345678.txt" ]; then
   pass "non-matching files preserved"
@@ -48,7 +49,7 @@ echo ""
 echo "Test 3: --dry-run preserves files"
 touch "$TEST_DIR/super-json-dryrun01.html"
 
-bash "$SCRIPT_DIR/cleanup-temp.sh" --dry-run --dir "$TEST_DIR"
+bash "$CLEANUP_SCRIPT" --dry-run --dir "$TEST_DIR"
 
 if [ -e "$TEST_DIR/super-json-dryrun01.html" ]; then
   pass "--dry-run preserved files"
@@ -60,7 +61,7 @@ fi
 echo ""
 echo "Test 4: empty directory succeeds"
 rm -f "$TEST_DIR"/super-json-*.html
-bash "$SCRIPT_DIR/cleanup-temp.sh" --dir "$TEST_DIR"
+bash "$CLEANUP_SCRIPT" --dir "$TEST_DIR"
 pass "no error on empty directory"
 
 # --- Cleanup ---

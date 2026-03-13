@@ -64,8 +64,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Extract branch name
+        id: branch
+        run: echo "name=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
       - name: Build for preview
-        run: npm run build -- --base=/super-json/preview/
+        run: npm run build -- --base=/super-json/preview/${{ steps.branch.outputs.name }}/
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
 
@@ -74,5 +78,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          destination_dir: preview
-          keep_files: false
+          destination_dir: preview/${{ steps.branch.outputs.name }}
+          keep_files: true

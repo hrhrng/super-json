@@ -54,6 +54,7 @@ $url = "https://hrhrng.github.io/super-json?c=$encoded&t=<TAB_NAME>"
 $f = "$env:TEMP\super-json-$([guid]::NewGuid().ToString('N').Substring(0,8)).html"
 "<html><head><meta http-equiv='refresh' content='0;url=$url'><script>location.href='$url'</script></head></html>" | Out-File -Encoding utf8 $f
 Start-Process $f
+Start-Sleep -Seconds 3; Remove-Item $f -ErrorAction SilentlyContinue
 ```
 
 ### From a file
@@ -77,6 +78,7 @@ $url = "https://hrhrng.github.io/super-json?c=$encoded&t=<TAB_NAME>"
 $f = "$env:TEMP\super-json-$([guid]::NewGuid().ToString('N').Substring(0,8)).html"
 "<html><head><meta http-equiv='refresh' content='0;url=$url'><script>location.href='$url'</script></head></html>" | Out-File -Encoding utf8 $f
 Start-Process $f
+Start-Sleep -Seconds 3; Remove-Item $f -ErrorAction SilentlyContinue
 ```
 
 ### Notes

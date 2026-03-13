@@ -8,7 +8,7 @@
 
 **The Ultimate Multi-Layer Escaped JSON Editor - Parse, Edit, and Rebuild Complex Nested JSON with Ease! 🎯**
 
-[**Try It Now**](https://hrhrng.github.io/super-json) 
+[**Try It Now**](https://hrhrng.github.io/super-json)
 
 [Report Bug](https://github.com/hrhrng/super-json/issues) | [Request Feature](https://github.com/hrhrng/super-json/issues)
 
@@ -40,23 +40,24 @@ Ever struggled with deeply nested, escaped JSON strings? Like this nightmare:
   <p><em>Navigate through complex nested JSON layers with ease</em></p>
 </div>
 
-## 🔥 Features That Will Blow Your Mind
+## 🔥 Features
 
-### 🎯 Three Powerful Modes
+### 🎯 Four Powerful Modes
 
 #### 🔍 **LAYER Mode** - Multi-Layer JSON Editor
-- **Smart Analysis** - Automatically detects and parses infinite layers of escaped JSON
+- **Smart Analysis** - Automatically detects and parses up to 10 layers of escaped JSON
 - **Interactive Breadcrumb** - Navigate through JSON layers with visual hierarchy
 - **Bidirectional Sync** - Changes in any layer automatically sync across parent/child layers
 - **Real-time Validation** - Instant JSON validation with error notifications
 - **Multi-Document Tabs** - Work on multiple JSON documents simultaneously
 
 #### 🔧 **TOOLS Mode** - JSON Processor
-- **Format & Minify** - Beautiful formatting or compact minification
+- **Format & Minify** - Beautiful formatting or compact minification (with best-effort fallback for invalid JSON)
 - **Escape & Unescape** - Handle escaped JSON strings with ease
 - **Base64 Encode/Decode** - Convert JSON to/from Base64
 - **URL Encode/Decode** - Make JSON URL-safe
 - **Sort Keys** - Alphabetically sort all object keys
+- **Case Conversion** - camelCase ↔ snake_case key conversion
 - **Apply to Input** - Instantly apply processed output back to input
 
 #### 🦸 **HERO Mode** - Visual JSON Explorer
@@ -64,6 +65,50 @@ Ever struggled with deeply nested, escaped JSON strings? Like this nightmare:
 - **Interactive Preview** - Explore your JSON in a beautiful interface
 - **Share & Collaborate** - Generate shareable links for your JSON
 - **Open in New Tab** - Full JSON Hero experience in a new window
+
+#### 📊 **DIFF Mode** - JSON Comparison
+- **Side-by-Side Diff** - Compare two JSON documents with Monaco DiffEditor
+- **Document Selector** - Pick any open document to compare against
+- **Toggle Unchanged** - Show or hide unchanged regions
+
+### 🔗 Share & Import
+
+Share JSON instantly via URL — no server required:
+
+- **Share Button** - One-click share with LZ-String compression (`?s=` parameter)
+- **Custom Tab Names** - Hover "Share" to name your tab before sharing (`?t=` parameter)
+- **Base64url Mode** - Shell-friendly encoding without dependencies (`?r=` parameter)
+- **Hero Direct Link** - Add `?h=1` to auto-open JSON Hero viewer on import
+
+### 🤖 Claude Code Skill: `present-json`
+
+The `skills/present-json/` directory contains a first-class [Claude Code skill](https://docs.anthropic.com/en/docs/claude-code) that lets AI agents present JSON results to humans via interactive browser links.
+
+**Install via [skills.sh](https://skills.sh/docs/faq):**
+
+```bash
+npx skills add hrhrng/super-json
+```
+
+**How it works — agent generates a shareable link from any JSON:**
+
+```bash
+# Agent generates a shareable link from any JSON
+encoded=$(echo -n '{"status":"ok","data":[1,2,3]}' | base64 | tr '+/' '-_' | tr -d '=\n')
+echo "https://hrhrng.github.io/super-json?r=${encoded}&t=API+Response"
+
+# With Hero mode for interactive visualization
+echo "https://hrhrng.github.io/super-json?r=${encoded}&t=API+Response&h=1"
+```
+
+**URL Parameters:**
+
+| Param | Description | Example |
+|-------|-------------|---------|
+| `s` | LZ-String compressed JSON (shorter URLs) | `?s=NoIgbg9...` |
+| `r` | Base64url encoded JSON (shell-friendly) | `?r=eyJrZXki...` |
+| `t` | Custom tab name | `&t=My+Results` |
+| `h` | Auto-switch to Hero mode | `&h=1` |
 
 ## 🎮 Quick Start
 
@@ -98,6 +143,7 @@ Perfect for:
 - 📊 **Data Processing** - Clean and transform multi-layer JSON
 - 🔍 **Debugging** - Understand complex JSON structures
 - 📝 **Configuration Files** - Manage nested config files
+- 🤖 **AI Agent Output** - Agents share JSON results via `present-json` skill for human review
 
 ## 🏗️ How It Works
 
@@ -131,35 +177,77 @@ graph LR
 3. **Explore** your data structure visually
 4. **Open** in new tab for full experience
 
-## 🌟 Why Developers Love It
-
-> "Finally, a tool that understands my pain with escaped JSON!" - **Developer**
-
-> "This saved me hours of manual parsing!" - **Backend Engineer**
-
-> "The bidirectional sync is pure magic!" - **Full Stack Developer**
-
 ## 🛠️ Tech Stack
 
 - **React 18** - Modern reactive UI framework
-- **TypeScript** - Type-safe development
+- **TypeScript** - Type-safe development with strict mode
 - **Monaco Editor** - VS Code's powerful editor in your browser
-- **Zustand** - Lightweight state management
+- **Zustand** - Lightweight state management with Immer middleware
 - **Vite** - Lightning-fast build tool
+- **LZ-String** - URL-safe JSON compression for sharing
+- **Playwright** - E2E snapshot testing
+- **Vitest** - Unit testing
 - **LocalStorage API** - Persistent storage without servers
 - **JSON Hero API** - Visual JSON exploration
+- **GitHub Actions** - CI/CD with preview deployments
+
+## 📁 Project Structure
+
+```
+super-json/
+├── src/
+│   ├── components/
+│   │   ├── Layout/
+│   │   │   ├── MainLayout.tsx          # Core layout with mode routing
+│   │   │   ├── components/             # DocumentTabs, ViewModeButtons
+│   │   │   └── modes/                  # LayerMode, ProcessorMode, HeroMode, DiffMode
+│   │   ├── Breadcrumb/                 # Layer navigation breadcrumb
+│   │   ├── Notification/               # Toast notification system
+│   │   └── ShareButton/                # Share link generator with dropdown
+│   ├── hooks/
+│   │   ├── useKeyboardShortcuts.ts     # Ctrl+Enter, Ctrl+S, Ctrl+T, etc.
+│   │   └── useSimpleImport.ts          # URL parameter import (s, r, t, h)
+│   ├── stores/
+│   │   ├── documentStore.ts            # Document state (Zustand + Immer)
+│   │   └── appStore.ts                 # App settings state
+│   ├── utils/
+│   │   ├── jsonAnalyzer.ts             # Core layer detection engine
+│   │   ├── jsonFormatter.ts            # Format/minify with best-effort fallback
+│   │   ├── jsonDiff.ts                 # Deep diff comparison
+│   │   ├── simpleShare.ts              # URL sharing (LZ-String + base64url)
+│   │   └── monacoTheme.ts             # Custom neon dark theme
+│   └── types/index.ts                  # TypeScript interfaces
+├── skills/
+│   └── present-json/SKILL.md           # Claude Code skill for agent → human JSON sharing
+├── tests/                              # Playwright E2E tests
+├── .github/workflows/                  # CI, deploy, preview cleanup
+└── index.html                          # Entry point (preview branch title detection)
+```
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+Enter` | Analyze/Parse JSON |
+| `Ctrl+S` | Generate Output |
+| `Ctrl+T` | New Document |
+| `Ctrl+W` | Close Current Document |
+| `Ctrl+Tab` | Switch to Next Document |
 
 ## 🌟 Key Features
 
-- ✅ **Multi-layer JSON parsing** - Handle infinite nested escaped JSON
-- ✅ **Three specialized modes** - Layer editing, processing tools, visual exploration
+- ✅ **Multi-layer JSON parsing** - Handle up to 10 layers of nested escaped JSON
+- ✅ **Four specialized modes** - Layer editing, processing tools, visual exploration, diff comparison
 - ✅ **Multi-document support** - Work with multiple JSONs simultaneously
-- ✅ **Auto-save** - Never lose your work
+- ✅ **Shareable links** - Compress and share JSON via URL (LZ-String or base64url)
+- ✅ **Claude Code skill** - AI agents can present JSON to humans interactively
+- ✅ **Auto-save** - Never lose your work (localStorage persistence)
 - ✅ **Real-time validation** - Instant error feedback
 - ✅ **Bidirectional sync** - Smart parent-child layer synchronization
-- ✅ **JSON processing tools** - Format, escape, encode, sort, and more
-- ✅ **JSON Hero integration** - Beautiful visualization
-- ✅ **Modern dark theme** - Neon-styled interface
+- ✅ **JSON processing tools** - Format, minify, escape, encode, sort, case-convert
+- ✅ **JSON Hero integration** - Beautiful interactive visualization
+- ✅ **Preview deployments** - Branch preview URLs with title indicator
+- ✅ **Modern dark theme** - Neon-styled interface with custom Monaco theme
 - ✅ **Responsive design** - Works on all devices
 
 ## 🤝 Contributing
@@ -172,6 +260,9 @@ Contributions are what make the open source community amazing! Any contributions
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+Preview deployments are automatically created for each branch at:
+`https://hrhrng.github.io/super-json/preview/<branch-name>/`
+
 ## 📄 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
@@ -179,6 +270,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## 🙏 Acknowledgments
 
 - Monaco Editor by Microsoft
+- JSON Hero for interactive JSON visualization
+- LZ-String for URL-safe compression
 - Inspired by the pain of debugging nested JSON
 - Built with ❤️ for developers by developers
 

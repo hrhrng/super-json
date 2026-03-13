@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Editor from '@monaco-editor/react'
+import type { editor } from 'monaco-editor'
 import { useDocumentStore } from '@stores/documentStore'
 import { Breadcrumb } from '@components/Breadcrumb/Breadcrumb'
 import { showNotification, useNotification } from '@components/Notification/Notification'
@@ -27,7 +28,9 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
   const [isUpdating, setIsUpdating] = useState(false)
   const [editorValues, setEditorValues] = useState<Record<number, string>>({})
   const [sharingDoc, setSharingDoc] = useState(false)
-  
+  const inputEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
+  const layerEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
+
   const currentDoc = getCurrentDocument()
 
   // Close document selector when clicking outside
@@ -98,6 +101,11 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
     if (!currentDoc?.inputContent) return
     const result = formatJsonBestEffort(currentDoc.inputContent)
     updateInputContent(currentDoc.id, result.output)
+    // Reset scroll position to top-left to avoid blank space on the right
+    if (inputEditorRef.current) {
+      inputEditorRef.current.setScrollPosition({ scrollTop: 0, scrollLeft: 0 })
+      inputEditorRef.current.setPosition({ lineNumber: 1, column: 1 })
+    }
     if (result.mode === 'strict') {
       showNotificationHook({ type: 'success', message: 'Formatted successfully' })
     } else {
@@ -110,8 +118,11 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
     const layer = currentDoc.layers[activeLayerIndex]
     const content = typeof layer.content === 'string' ? layer.content : JSON.stringify(layer.content, null, 2)
     const result = formatJsonBestEffort(content)
-    // Trigger through the same path as manual edits so sync works
     handleLayerChange(result.output)
+    if (layerEditorRef.current) {
+      layerEditorRef.current.setScrollPosition({ scrollTop: 0, scrollLeft: 0 })
+      layerEditorRef.current.setPosition({ lineNumber: 1, column: 1 })
+    }
     if (result.mode === 'strict') {
       showNotificationHook({ type: 'success', message: 'Layer formatted successfully' })
     } else {
@@ -342,6 +353,7 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                   updateInputContent(currentDoc.id, value)
                 }
               }}
+              onMount={(editor) => { inputEditorRef.current = editor }}
               options={{
                 fontSize: 13,
                 minimap: { enabled: false },
@@ -349,8 +361,8 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                 lineNumbers: 'on',
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
-                formatOnPaste: true,
-                formatOnType: true,
+                formatOnPaste: false,
+                formatOnType: false,
                 folding: true,
                 tabSize: 2,
                 fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",
@@ -415,6 +427,7 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                     : JSON.stringify(currentDoc.layers[activeLayerIndex]?.content, null, 2))
                 }
                 onChange={handleLayerChange}
+                onMount={(editor) => { layerEditorRef.current = editor }}
                 options={{
                   fontSize: 13,
                   minimap: { enabled: false },
@@ -422,8 +435,8 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                   lineNumbers: 'on',
                   scrollBeyondLastLine: false,
                   automaticLayout: true,
-                  formatOnPaste: true,
-                  formatOnType: true,
+                  formatOnPaste: false,
+                  formatOnType: false,
                   folding: true,
                   tabSize: 2,
                   fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",

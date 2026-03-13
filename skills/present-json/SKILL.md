@@ -25,47 +25,53 @@ Present JSON to humans in Super JSON Editor — an interactive browser-based vie
    - Use `$1` if provided
    - Otherwise, derive a meaningful name from the context (e.g., "API Response", "User Config")
    - Default to "Result" if nothing else fits
-3. Generate the link using the shell command below
-4. Present the link to the user with a brief description of the content
+3. Generate the URL, write a redirect HTML file to `/tmp`, and open it in the browser
+4. Present a brief description of the content to the user
 
-## Generating the link
+## Generating and opening the link
 
 ### Inline JSON (compressed — recommended)
 
 ```bash
-encoded=$(echo -n '<JSON_CONTENT>' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n') && echo "https://hrhrng.github.io/super-json?c=${encoded}&t=<TAB_NAME>"
+url="https://hrhrng.github.io/super-json?c=$(echo -n '<JSON_CONTENT>' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>"
+f="/tmp/super-json-$(head -c 4 /dev/urandom | xxd -p).html"
+printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>location.href="%s"</script></head></html>' "$url" "$url" > "$f"
+open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
 ```
 
 ### From a file (compressed — recommended)
 
 ```bash
-encoded=$(gzip -9 < /path/to/file.json | base64 | tr '+/' '-_' | tr -d '=\n') && echo "https://hrhrng.github.io/super-json?c=${encoded}&t=<TAB_NAME>"
-```
-
-### Inline JSON (uncompressed fallback)
-
-```bash
-encoded=$(echo -n '<JSON_CONTENT>' | base64 | tr '+/' '-_' | tr -d '=\n') && echo "https://hrhrng.github.io/super-json?r=${encoded}&t=<TAB_NAME>"
+url="https://hrhrng.github.io/super-json?c=$(gzip -9 < /path/to/file.json | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>"
+f="/tmp/super-json-$(head -c 4 /dev/urandom | xxd -p).html"
+printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>location.href="%s"</script></head></html>' "$url" "$url" > "$f"
+open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
 ```
 
 - Replace `<JSON_CONTENT>` with the actual JSON string
 - Replace `<TAB_NAME>` with a URL-encoded tab name (spaces → `%20`)
 - **Always prefer `?c=` (compressed)** — it produces significantly shorter URLs (typically 50-70% smaller for JSON)
+- The redirect HTML uses both `<meta refresh>` and `location.href` for maximum browser compatibility
+- Falls back to printing the URL if neither `open` (macOS) nor `xdg-open` (Linux) is available
 
 ## Hero mode (rich interactive viewer)
 
-For complex JSON that benefits from tree navigation, type info, and search, add `&h=1` to open in JSON Hero's interactive viewer:
+For complex JSON that benefits from tree navigation, type info, and search, add `&h=1`:
 
 ```bash
-encoded=$(echo -n '<JSON_CONTENT>' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n') && echo "https://hrhrng.github.io/super-json?c=${encoded}&t=<TAB_NAME>&h=1"
+url="https://hrhrng.github.io/super-json?c=$(echo -n '<JSON_CONTENT>' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>&h=1"
+f="/tmp/super-json-$(head -c 4 /dev/urandom | xxd -p).html"
+printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>location.href="%s"</script></head></html>' "$url" "$url" > "$f"
+open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
 ```
 
 This auto-switches to Hero view and loads the JSON Hero interactive explorer.
 
 ## Important notes
 
-- Uses only `gzip`, `base64`, and `tr` — works on any POSIX shell, no Node.js required
+- Uses only `gzip`, `base64`, `tr`, `xxd`, and `printf` — works on any POSIX shell, no Node.js required
 - Compression typically reduces URL length by 50-70% for JSON data
+- The redirect HTML file is written to `/tmp` with a `super-json-` prefix and 8-char hex UUID
 - The URL is entirely client-side — no data is sent to any server (except to jsonhero.io when `h=1`)
 - For very large JSON (>6KB uncompressed), the URL may still exceed browser limits even with compression
 

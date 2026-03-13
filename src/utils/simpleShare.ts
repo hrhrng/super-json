@@ -23,14 +23,35 @@ export function importFromUrl(compressedData: string): string {
   try {
     // Decompress the data
     const inputContent = LZString.decompressFromEncodedURIComponent(compressedData)
-    
+
     if (!inputContent) {
       throw new Error('Invalid share link: Unable to decompress data')
     }
-    
+
     return inputContent
   } catch (error) {
     console.error('Error importing from URL:', error)
+    throw new Error('Failed to import shared content. Please check the link and try again.')
+  }
+}
+
+export function importFromBase64Url(base64Data: string): string {
+  try {
+    // Convert base64url to standard base64
+    let base64 = base64Data.replace(/-/g, '+').replace(/_/g, '/')
+    // Add padding if needed
+    while (base64.length % 4 !== 0) {
+      base64 += '='
+    }
+    const inputContent = decodeURIComponent(escape(atob(base64)))
+
+    if (!inputContent) {
+      throw new Error('Invalid share link: Unable to decode data')
+    }
+
+    return inputContent
+  } catch (error) {
+    console.error('Error importing from base64 URL:', error)
     throw new Error('Failed to import shared content. Please check the link and try again.')
   }
 }

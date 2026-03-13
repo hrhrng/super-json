@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDocumentStore } from '@stores/documentStore'
-import { importFromUrl } from '@utils/simpleShare'
+import { importFromUrl, importFromBase64Url } from '@utils/simpleShare'
 import { useNotification } from '@components/Notification/Notification'
 
 // Track if import has been processed globally to prevent duplicates
@@ -13,13 +13,14 @@ export function useSimpleImport() {
 
   useEffect(() => {
     const handleImport = async () => {
-      // Check URL parameters for compressed data
+      // Check URL parameters for shared data
       const urlParams = new URLSearchParams(window.location.search)
-      const compressedData = urlParams.get('s') // 's' for share
+      const compressedData = urlParams.get('s') // 's' for share (LZ-String compressed)
+      const rawBase64Data = urlParams.get('r') // 'r' for raw (base64url encoded)
       const tabName = urlParams.get('t') // 't' for tab name
-      
+
       // Check both local ref and global flag to prevent duplicates
-      if (!compressedData || hasImportedRef.current || isImportProcessed) return
+      if ((!compressedData && !rawBase64Data) || hasImportedRef.current || isImportProcessed) return
       
       hasImportedRef.current = true
       isImportProcessed = true
@@ -33,7 +34,9 @@ export function useSimpleImport() {
           message: 'Importing shared content to new tab...'
         })
         
-        const inputContent = importFromUrl(compressedData)
+        const inputContent = compressedData
+          ? importFromUrl(compressedData)
+          : importFromBase64Url(rawBase64Data!)
         
         // Create a new document with the imported content
         const docId = createDocument()
@@ -67,6 +70,7 @@ export function useSimpleImport() {
         // Clean up the URL
         const newUrl = new URL(window.location.href)
         newUrl.searchParams.delete('s')
+        newUrl.searchParams.delete('r')
         newUrl.searchParams.delete('t')
         window.history.replaceState({}, '', newUrl.toString())
         

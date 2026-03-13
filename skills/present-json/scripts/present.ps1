@@ -42,7 +42,7 @@ $f = Join-Path $env:TEMP "super-json-$([guid]::NewGuid().ToString('N').Substring
 "<html><head><meta http-equiv='refresh' content='0;url=$url'><script>location.href='$url'</script></head></html>" | Out-File -Encoding utf8 $f
 
 # Open in browser
-Start-Process $f
+Start-Process $f -ErrorAction SilentlyContinue
 
 # Cleanup: delete this temp file + any stale super-json-*.html after delay
 Start-Job -ScriptBlock {
@@ -52,4 +52,4 @@ Start-Job -ScriptBlock {
         Remove-Item -Force -ErrorAction SilentlyContinue
 } -ArgumentList $env:TEMP | Out-Null
 
-Write-Host $url
+Write-Output $url

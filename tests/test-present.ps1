@@ -14,7 +14,8 @@ Write-Host "=== Test: present.ps1 ==="
 # --- Test 1: inline JSON produces URL with ?c= ---
 Write-Host ""
 Write-Host "Test 1: inline JSON produces compressed URL"
-$url = & "$Script" '{"hello":"world"}' -Tab "Test" 2>&1 | Select-Object -Last 1
+$output = & "$Script" '{"hello":"world"}' -Tab "Test" 2>$null
+$url = ($output | Select-Object -Last 1).ToString()
 if ($url -match 'hrhrng\.github\.io/super-json\?c=') {
     Pass "URL contains compressed parameter"
 } else {
@@ -26,7 +27,8 @@ Write-Host ""
 Write-Host "Test 2: file input produces URL"
 $tmpJson = Join-Path $env:TEMP "test-input-$(Get-Random).json"
 '{"from":"file"}' | Out-File -Encoding utf8 $tmpJson
-$url = & "$Script" $tmpJson -Tab "FileTest" 2>&1 | Select-Object -Last 1
+$output = & "$Script" $tmpJson -Tab "FileTest" 2>$null
+$url = ($output | Select-Object -Last 1).ToString()
 Remove-Item $tmpJson -Force
 if ($url -match 'hrhrng\.github\.io/super-json\?c=') {
     Pass "file input produced valid URL"
@@ -37,7 +39,8 @@ if ($url -match 'hrhrng\.github\.io/super-json\?c=') {
 # --- Test 3: -Hero appends h=1 ---
 Write-Host ""
 Write-Host "Test 3: -Hero flag"
-$url = & "$Script" '{"hero":true}' -Tab "Hero" -Hero 2>&1 | Select-Object -Last 1
+$output = & "$Script" '{"hero":true}' -Tab "Hero" -Hero 2>$null
+$url = ($output | Select-Object -Last 1).ToString()
 if ($url -match '&h=1') {
     Pass "-Hero appended h=1"
 } else {
@@ -47,7 +50,8 @@ if ($url -match '&h=1') {
 # --- Test 4: tab name encoded ---
 Write-Host ""
 Write-Host "Test 4: tab name in URL"
-$url = & "$Script" '{}' -Tab "My Tab" 2>&1 | Select-Object -Last 1
+$output = & "$Script" '{}' -Tab "My Tab" 2>$null
+$url = ($output | Select-Object -Last 1).ToString()
 if ($url -match 't=My%20Tab') {
     Pass "tab name encoded correctly"
 } else {
@@ -60,7 +64,7 @@ Write-Host "Test 5: temp files cleaned up"
 # Seed a stale temp file
 New-Item -ItemType File -Path (Join-Path $env:TEMP "super-json-stale999.html") -Force | Out-Null
 $before = @(Get-ChildItem -Path $env:TEMP -Filter "super-json-*.html" -File -ErrorAction SilentlyContinue).Count
-& "$Script" '{"cleanup":"test"}' -Tab "Cleanup" 2>&1 | Out-Null
+& "$Script" '{"cleanup":"test"}' -Tab "Cleanup" 2>$null | Out-Null
 Start-Sleep -Seconds 7
 $after = @(Get-ChildItem -Path $env:TEMP -Filter "super-json-*.html" -File -ErrorAction SilentlyContinue).Count
 if ($after -eq 0) {

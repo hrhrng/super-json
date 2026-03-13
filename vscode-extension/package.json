@@ -1,0 +1,85 @@
+{
+  "name": "super-json-editor",
+  "displayName": "Super JSON Editor",
+  "description": "Parse, edit, and reconstruct deeply nested/escaped JSON structures with multi-layer support",
+  "version": "0.1.0",
+  "publisher": "super-json",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Formatters",
+    "Other"
+  ],
+  "keywords": [
+    "json",
+    "nested json",
+    "escaped json",
+    "json editor",
+    "json formatter"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "superJson.openEditor",
+        "title": "Super JSON: Open Editor"
+      },
+      {
+        "command": "superJson.parseSelection",
+        "title": "Super JSON: Parse Selection"
+      },
+      {
+        "command": "superJson.formatJson",
+        "title": "Super JSON: Format JSON"
+      },
+      {
+        "command": "superJson.minifyJson",
+        "title": "Super JSON: Minify JSON"
+      },
+      {
+        "command": "superJson.escapeJson",
+        "title": "Super JSON: Escape JSON"
+      },
+      {
+        "command": "superJson.unescapeJson",
+        "title": "Super JSON: Unescape JSON"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "superJson.parseSelection",
+          "when": "editorHasSelection",
+          "group": "superJson@1"
+        },
+        {
+          "command": "superJson.formatJson",
+          "when": "editorLangId == json || editorLangId == jsonc",
+          "group": "superJson@2"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "superJson.openEditor",
+        "key": "ctrl+shift+j",
+        "mac": "cmd+shift+j"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "npx playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
+}

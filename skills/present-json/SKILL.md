@@ -30,7 +30,9 @@ Present JSON to humans in Super JSON Editor — an interactive browser-based vie
 
 ## Generating and opening the link
 
-### Inline JSON (compressed — recommended)
+**Detect the platform first**, then use the appropriate commands:
+
+### macOS / Linux (bash/zsh)
 
 ```bash
 url="https://hrhrng.github.io/super-json?c=$(echo -n '<JSON_CONTENT>' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>"
@@ -39,8 +41,24 @@ printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>locati
 open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
 ```
 
-### From a file (compressed — recommended)
+### Windows (PowerShell)
 
+```powershell
+$json = '<JSON_CONTENT>'
+$bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+$ms = New-Object System.IO.MemoryStream
+$gz = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionLevel]::Optimal)
+$gz.Write($bytes, 0, $bytes.Length); $gz.Close()
+$encoded = [Convert]::ToBase64String($ms.ToArray()).Replace('+','-').Replace('/','_').TrimEnd('=')
+$url = "https://hrhrng.github.io/super-json?c=$encoded&t=<TAB_NAME>"
+$f = "$env:TEMP\super-json-$([guid]::NewGuid().ToString('N').Substring(0,8)).html"
+"<html><head><meta http-equiv='refresh' content='0;url=$url'><script>location.href='$url'</script></head></html>" | Out-File -Encoding utf8 $f
+Start-Process $f
+```
+
+### From a file
+
+**macOS / Linux:**
 ```bash
 url="https://hrhrng.github.io/super-json?c=$(gzip -9 < /path/to/file.json | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>"
 f="/tmp/super-json-$(head -c 4 /dev/urandom | xxd -p).html"
@@ -48,16 +66,36 @@ printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>locati
 open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
 ```
 
+**Windows (PowerShell):**
+```powershell
+$bytes = [System.IO.File]::ReadAllBytes("C:\path\to\file.json")
+$ms = New-Object System.IO.MemoryStream
+$gz = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionLevel]::Optimal)
+$gz.Write($bytes, 0, $bytes.Length); $gz.Close()
+$encoded = [Convert]::ToBase64String($ms.ToArray()).Replace('+','-').Replace('/','_').TrimEnd('=')
+$url = "https://hrhrng.github.io/super-json?c=$encoded&t=<TAB_NAME>"
+$f = "$env:TEMP\super-json-$([guid]::NewGuid().ToString('N').Substring(0,8)).html"
+"<html><head><meta http-equiv='refresh' content='0;url=$url'><script>location.href='$url'</script></head></html>" | Out-File -Encoding utf8 $f
+Start-Process $f
+```
+
+### Notes
 - Replace `<JSON_CONTENT>` with the actual JSON string
 - Replace `<TAB_NAME>` with a URL-encoded tab name (spaces → `%20`)
 - **Always prefer `?c=` (compressed)** — it produces significantly shorter URLs (typically 50-70% smaller for JSON)
 - The redirect HTML uses both `<meta refresh>` and `location.href` for maximum browser compatibility
-- Falls back to printing the URL if neither `open` (macOS) nor `xdg-open` (Linux) is available
+
+### Platform detection
+- **macOS**: `open` command, temp dir `/tmp`
+- **Linux**: `xdg-open` command, temp dir `/tmp`
+- **Windows**: `Start-Process` command, temp dir `$env:TEMP`
+- If the shell is PowerShell (or `$PSVersionTable` exists), use the PowerShell variant
 
 ## Hero mode (rich interactive viewer)
 
-For complex JSON that benefits from tree navigation, type info, and search, add `&h=1`:
+For complex JSON that benefits from tree navigation, type info, and search, add `&h=1` to the URL:
 
+**macOS / Linux:**
 ```bash
 url="https://hrhrng.github.io/super-json?c=$(echo -n '<JSON_CONTENT>' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n')&t=<TAB_NAME>&h=1"
 f="/tmp/super-json-$(head -c 4 /dev/urandom | xxd -p).html"
@@ -65,13 +103,32 @@ printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>locati
 open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
 ```
 
+**Windows (PowerShell):** Same as above, append `&h=1` to the `$url`.
+
 This auto-switches to Hero view and loads the JSON Hero interactive explorer.
+
+## Temp file cleanup
+
+The redirect HTML files are small (~200 bytes) and accumulate in the temp directory. To clean up:
+
+**macOS / Linux:**
+```bash
+find /tmp -name 'super-json-*.html' -mmin +60 -delete
+```
+
+**Windows (PowerShell):**
+```powershell
+Get-ChildItem "$env:TEMP\super-json-*.html" | Where-Object { $_.LastWriteTime -lt (Get-Date).AddHours(-1) } | Remove-Item
+```
+
+These commands delete redirect files older than 1 hour. The agent may run cleanup after opening the browser, or users can run it manually.
 
 ## Important notes
 
-- Uses only `gzip`, `base64`, `tr`, `xxd`, and `printf` — works on any POSIX shell, no Node.js required
+- **macOS/Linux**: uses `gzip`, `base64`, `tr`, `xxd`, `printf` — standard POSIX tools
+- **Windows**: uses .NET `GZipStream` via PowerShell — no extra installs needed
 - Compression typically reduces URL length by 50-70% for JSON data
-- The redirect HTML file is written to `/tmp` with a `super-json-` prefix and 8-char hex UUID
+- The redirect HTML file uses a `super-json-` prefix with 8-char hex ID for easy identification and cleanup
 - The URL is entirely client-side — no data is sent to any server (except to jsonhero.io when `h=1`)
 - For very large JSON (>6KB uncompressed), the URL may still exceed browser limits even with compression
 

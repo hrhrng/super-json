@@ -1,9 +1,9 @@
-import { useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { useDocumentStore } from '@stores/documentStore'
 import { showNotification, useNotification } from '@components/Notification/Notification'
-import { createShareUrl, copyToClipboard } from '@utils/simpleShare'
+import { copyToClipboard } from '@utils/simpleShare'
 import { formatJsonBestEffort, minifyJsonBestEffort } from '@utils/jsonFormatter'
+import { ShareButton } from '@components/ShareButton/ShareButton'
 
 interface ProcessorModeProps {
   processorOutput: string
@@ -13,32 +13,8 @@ interface ProcessorModeProps {
 export function ProcessorMode({ processorOutput, setProcessorOutput }: ProcessorModeProps) {
   const { getCurrentDocument, updateInputContent } = useDocumentStore()
   const { showNotification: showNotificationHook } = useNotification()
-  const [sharingDoc, setSharingDoc] = useState(false)
-  
-  const currentDoc = getCurrentDocument()
 
-  const handleShare = async () => {
-    if (!currentDoc) return
-    
-    setSharingDoc(true)
-    
-    try {
-      const result = createShareUrl(currentDoc.inputContent)
-      await copyToClipboard(result.url)
-      
-      showNotificationHook({
-        type: 'success',
-        message: `Share link copied! (${result.length} chars)`
-      })
-    } catch (error) {
-      showNotificationHook({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Failed to create share link'
-      })
-    } finally {
-      setSharingDoc(false)
-    }
-  }
+  const currentDoc = getCurrentDocument()
 
   const handleCopyJson = async () => {
     if (!currentDoc) return
@@ -233,14 +209,10 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
           INPUT
           <span className="panel-info">JSON</span>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-            <button
-              className="tool-btn"
-              onClick={handleShare}
-              disabled={sharingDoc}
-              title="Copy share link"
-            >
-              {sharingDoc ? '⏳' : 'Share'}
-            </button>
+            <ShareButton
+              getContent={() => currentDoc?.inputContent}
+              onNotification={(type, message) => showNotificationHook({ type, message })}
+            />
             <button
               className="tool-btn"
               onClick={handleCopyJson}

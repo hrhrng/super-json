@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDocumentStore } from '@stores/documentStore'
+import { useAppStore } from '@stores/appStore'
 import { importFromUrl, importFromBase64Url } from '@utils/simpleShare'
 import { useNotification } from '@components/Notification/Notification'
 
@@ -7,7 +8,8 @@ import { useNotification } from '@components/Notification/Notification'
 let isImportProcessed = false
 
 export function useSimpleImport() {
-  const { createDocument, updateInputContent, updateDocumentTitle, switchDocument } = useDocumentStore()
+  const { createDocument, updateInputContent, updateDocumentTitle, switchDocument, updateHeroUrl } = useDocumentStore()
+  const { setViewMode } = useAppStore()
   const { showNotification } = useNotification()
   const hasImportedRef = useRef(false)
 
@@ -18,6 +20,7 @@ export function useSimpleImport() {
       const compressedData = urlParams.get('s') // 's' for share (LZ-String compressed)
       const rawBase64Data = urlParams.get('r') // 'r' for raw (base64url encoded)
       const tabName = urlParams.get('t') // 't' for tab name
+      const heroMode = urlParams.get('h') // 'h' for hero mode (auto load → hero)
 
       // Check both local ref and global flag to prevent duplicates
       if ((!compressedData && !rawBase64Data) || hasImportedRef.current || isImportProcessed) return
@@ -61,10 +64,35 @@ export function useSimpleImport() {
         
         // Switch to the new document
         switchDocument(docId)
-        
+
+        // Auto-switch to hero mode and load into JSON Hero if h=1
+        if (heroMode === '1') {
+          setViewMode('hero')
+          try {
+            const parsed = JSON.parse(inputContent)
+            const docTitle = tabName ? decodeURIComponent(tabName) : 'JSON Document'
+            const response = await fetch('https://jsonhero.io/api/create.json', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                title: docTitle,
+                content: parsed,
+                readOnly: false,
+                ttl: 86400
+              })
+            })
+            if (response.ok) {
+              const data = await response.json()
+              updateHeroUrl(docId, data.location)
+            }
+          } catch {
+            // Hero loading failed silently, user can manually click Load → Hero
+          }
+        }
+
         showNotification({
           type: 'success',
-          message: 'Shared content imported to new tab'
+          message: heroMode === '1' ? 'Shared content loaded into Hero view' : 'Shared content imported to new tab'
         })
         
         // Clean up the URL
@@ -72,6 +100,7 @@ export function useSimpleImport() {
         newUrl.searchParams.delete('s')
         newUrl.searchParams.delete('r')
         newUrl.searchParams.delete('t')
+        newUrl.searchParams.delete('h')
         window.history.replaceState({}, '', newUrl.toString())
         
         // Reset the global flag after URL is cleaned

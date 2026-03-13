@@ -36,52 +36,36 @@ Present JSON to humans in Super JSON Editor — an interactive browser-based vie
 
 ```bash
 # Inline JSON
-bash scripts/open-json.sh '{"key": "value"}' --tab "My Data"
+bash scripts/present.sh '{"key": "value"}' --tab "My Data"
 
 # From a file
-bash scripts/open-json.sh /path/to/data.json --tab "My Data"
+bash scripts/present.sh /path/to/data.json --tab "My Data"
 
 # With Hero mode (rich interactive viewer with tree navigation)
-bash scripts/open-json.sh '{"key": "value"}' --tab "My Data" --hero
+bash scripts/present.sh '{"key": "value"}' --tab "My Data" --hero
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
 # Inline JSON
-./scripts/open-json.ps1 '{"key": "value"}' -Tab "My Data"
+./scripts/present.ps1 '{"key": "value"}' -Tab "My Data"
 
 # From a file
-./scripts/open-json.ps1 C:\path\to\data.json -Tab "My Data"
+./scripts/present.ps1 C:\path\to\data.json -Tab "My Data"
 
 # With Hero mode
-./scripts/open-json.ps1 '{"key": "value"}' -Tab "My Data" -Hero
+./scripts/present.ps1 '{"key": "value"}' -Tab "My Data" -Hero
 ```
 
 ### Platform detection
-- **macOS/Linux**: use `open-json.sh`
-- **Windows** (PowerShell / `$PSVersionTable` exists): use `open-json.ps1`
-
-## Batch cleanup
-
-If temp files accumulate (e.g. the background cleanup was interrupted), use:
-
-```bash
-# Linux/macOS
-bash scripts/cleanup-temp.sh              # remove all from /tmp
-bash scripts/cleanup-temp.sh --dry-run    # preview only
-```
-
-```powershell
-# Windows
-./scripts/cleanup-temp.ps1               # remove all from $env:TEMP
-./scripts/cleanup-temp.ps1 -DryRun       # preview only
-```
+- **macOS/Linux**: use `present.sh`
+- **Windows** (PowerShell / `$PSVersionTable` exists): use `present.ps1`
 
 ## Important notes
 
-- The script handles compression (gzip + base64url), temp file creation, browser opening, and cleanup automatically
-- Temp files are deleted ~5 seconds after opening the browser
+- The script handles compression, temp file creation, browser opening, and cleanup automatically
+- All stale `super-json-*.html` temp files are cleaned up ~5 seconds after each invocation
 - The URL is entirely client-side — no data is sent to any server (except to jsonhero.io when `--hero`/`-Hero`)
 - For very large JSON (>6KB uncompressed), the URL may still exceed browser limits even with compression
 

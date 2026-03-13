@@ -1,8 +1,8 @@
-# open-json.ps1 — Open JSON in Super JSON Editor browser viewer
-# Usage: open-json.ps1 <json-or-file> [-Tab NAME] [-Hero]
+# present.ps1 — Present JSON in Super JSON Editor browser viewer
+# Usage: present.ps1 <json-string-or-file> [-Tab NAME] [-Hero]
 #
-# Compresses JSON with GZipStream+Base64url, creates a temp redirect HTML,
-# opens in browser, then deletes the temp file after 5 seconds.
+# Compresses JSON with GZipStream+Base64url, opens in browser via temp
+# redirect HTML, and automatically cleans up the temp file plus any stale ones.
 
 param(
     [Parameter(Mandatory=$true, Position=0)]
@@ -44,11 +44,12 @@ $f = Join-Path $env:TEMP "super-json-$([guid]::NewGuid().ToString('N').Substring
 # Open in browser
 Start-Process $f
 
-# Delete temp file after browser has had time to read it
+# Cleanup: delete this temp file + any stale super-json-*.html after delay
 Start-Job -ScriptBlock {
-    param($path)
+    param($dir)
     Start-Sleep -Seconds 5
-    Remove-Item $path -Force -ErrorAction SilentlyContinue
-} -ArgumentList $f | Out-Null
+    Get-ChildItem -Path $dir -Filter "super-json-*.html" -File -ErrorAction SilentlyContinue |
+        Remove-Item -Force -ErrorAction SilentlyContinue
+} -ArgumentList $env:TEMP | Out-Null
 
 Write-Host $url

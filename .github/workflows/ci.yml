@@ -45,18 +45,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run cleanup tests (Linux/macOS)
+      - name: Run present tests (Linux/macOS)
         if: runner.os != 'Windows'
-        run: bash tests/test-cleanup.sh
+        run: bash tests/test-present.sh
 
-      - name: Run open-json tests (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: bash tests/test-open-json.sh
-
-      - name: Run cleanup tests (Windows)
+      - name: Run present tests (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: ./tests/test-cleanup.ps1
+        run: ./tests/test-present.ps1
 
   preview:
     runs-on: ubuntu-latest

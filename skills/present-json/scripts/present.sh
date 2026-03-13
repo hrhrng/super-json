@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# open-json.sh — Open JSON in Super JSON Editor browser viewer
-# Usage: open-json.sh <json-or-file> [tab-name] [--hero]
+# present.sh — Present JSON in Super JSON Editor browser viewer
+# Usage: present.sh <json-string-or-file> [--tab NAME] [--hero]
 #
-# Compresses JSON with gzip+base64url, creates a temp redirect HTML,
-# opens in browser, then deletes the temp file after 5 seconds.
+# Compresses JSON with gzip+base64url, opens in browser via temp redirect
+# HTML, and automatically cleans up the temp file plus any stale ones.
 
 set -euo pipefail
 
@@ -25,7 +25,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ -z "$JSON_INPUT" ]; then
-  echo "Usage: open-json.sh <json-string-or-file> [--tab NAME] [--hero]" >&2
+  echo "Usage: present.sh <json-string-or-file> [--tab NAME] [--hero]" >&2
   exit 1
 fi
 
@@ -48,7 +48,7 @@ printf '<html><head><meta http-equiv="refresh" content="0;url=%s"><script>locati
 # Open in browser
 open "$TMPFILE" 2>/dev/null || xdg-open "$TMPFILE" 2>/dev/null || echo "$URL"
 
-# Delete temp file after browser has had time to read it
-(sleep 5 && rm -f "$TMPFILE") &
+# Cleanup: delete this temp file + any stale super-json-*.html after delay
+(sleep 5 && rm -f /tmp/super-json-*.html) &
 
 echo "$URL"

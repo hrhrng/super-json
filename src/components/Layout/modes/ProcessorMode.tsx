@@ -18,7 +18,7 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
 
   const handleCopyJson = async () => {
     if (!currentDoc) return
-    
+
     try {
       await copyToClipboard(currentDoc.inputContent)
       showNotificationHook({
@@ -30,6 +30,17 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
         type: 'error',
         message: 'Failed to copy JSON'
       })
+    }
+  }
+
+  const handleFormatInput = () => {
+    if (!currentDoc?.inputContent) return
+    const result = formatJsonBestEffort(currentDoc.inputContent)
+    updateInputContent(currentDoc.id, result.output)
+    if (result.mode === 'strict') {
+      showNotificationHook({ type: 'success', message: 'Formatted successfully' })
+    } else {
+      showNotificationHook({ type: 'warning', message: 'Best-effort formatting applied' })
     }
   }
 
@@ -209,6 +220,13 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
           INPUT
           <span className="panel-info">JSON</span>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+            <button
+              className="tool-btn"
+              onClick={handleFormatInput}
+              title="Format JSON (best-effort)"
+            >
+              Format
+            </button>
             <ShareButton
               getContent={() => currentDoc?.inputContent}
               onNotification={(type, message) => showNotificationHook({ type, message })}
@@ -241,8 +259,8 @@ export function ProcessorMode({ processorOutput, setProcessorOutput }: Processor
                 lineNumbers: 'on',
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
-                formatOnPaste: true,
-                formatOnType: true,
+                formatOnPaste: false,
+                formatOnType: false,
                 folding: true,
                 tabSize: 2,
                 fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",

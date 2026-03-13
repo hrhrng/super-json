@@ -1,0 +1,38 @@
+name: Cleanup Preview
+
+on:
+  delete:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    if: github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Remove preview directory
+        run: |
+          BRANCH_NAME="${{ github.event.ref }}"
+          PREVIEW_DIR="preview/${BRANCH_NAME}"
+          if [ -d "${PREVIEW_DIR}" ]; then
+            rm -rf "${PREVIEW_DIR}"
+            echo "Removed ${PREVIEW_DIR}"
+          else
+            echo "No preview found for ${BRANCH_NAME}"
+            exit 0
+          fi
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet && echo "Nothing to commit" && exit 0
+          git commit -m "cleanup: remove preview for ${{ github.event.ref }}"
+          git push

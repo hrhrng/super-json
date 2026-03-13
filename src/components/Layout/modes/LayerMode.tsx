@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Editor from '@monaco-editor/react'
+import type { editor } from 'monaco-editor'
 import { useDocumentStore } from '@stores/documentStore'
 import { Breadcrumb } from '@components/Breadcrumb/Breadcrumb'
 import { showNotification, useNotification } from '@components/Notification/Notification'
 import { copyToClipboard } from '@utils/simpleShare'
+import { formatJsonBestEffort } from '@utils/jsonFormatter'
 import { ShareButton } from '@components/ShareButton/ShareButton'
 
 interface LayerModeProps {
@@ -26,6 +28,8 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
   const [showDocSelector, setShowDocSelector] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [editorValues, setEditorValues] = useState<Record<number, string>>({})
+  const inputEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
+  const layerEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
 
   const currentDoc = getCurrentDocument()
 
@@ -55,7 +59,7 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
 
   const handleCopyJson = async () => {
     if (!currentDoc) return
-    
+
     try {
       await copyToClipboard(currentDoc.inputContent)
       showNotificationHook({
@@ -67,6 +71,39 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
         type: 'error',
         message: 'Failed to copy JSON'
       })
+    }
+  }
+
+  const handleFormatInput = () => {
+    if (!currentDoc?.inputContent) return
+    const result = formatJsonBestEffort(currentDoc.inputContent)
+    updateInputContent(currentDoc.id, result.output)
+    // Reset scroll position to top-left to avoid blank space on the right
+    if (inputEditorRef.current) {
+      inputEditorRef.current.setScrollPosition({ scrollTop: 0, scrollLeft: 0 })
+      inputEditorRef.current.setPosition({ lineNumber: 1, column: 1 })
+    }
+    if (result.mode === 'strict') {
+      showNotificationHook({ type: 'success', message: 'Formatted successfully' })
+    } else {
+      showNotificationHook({ type: 'warning', message: 'Best-effort formatting applied' })
+    }
+  }
+
+  const handleFormatLayer = () => {
+    if (!currentDoc || !currentDoc.layers[activeLayerIndex]) return
+    const layer = currentDoc.layers[activeLayerIndex]
+    const content = typeof layer.content === 'string' ? layer.content : JSON.stringify(layer.content, null, 2)
+    const result = formatJsonBestEffort(content)
+    handleLayerChange(result.output)
+    if (layerEditorRef.current) {
+      layerEditorRef.current.setScrollPosition({ scrollTop: 0, scrollLeft: 0 })
+      layerEditorRef.current.setPosition({ lineNumber: 1, column: 1 })
+    }
+    if (result.mode === 'strict') {
+      showNotificationHook({ type: 'success', message: 'Layer formatted successfully' })
+    } else {
+      showNotificationHook({ type: 'warning', message: 'Best-effort formatting applied' })
     }
   }
 
@@ -257,6 +294,13 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
           INPUT
           <span className="panel-info">JSON</span>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+            <button
+              className="tool-btn"
+              onClick={handleFormatInput}
+              title="Format JSON (best-effort)"
+            >
+              Format
+            </button>
             <ShareButton
               getContent={() => currentDoc?.inputContent}
               onNotification={(type, message) => showNotificationHook({ type, message })}
@@ -282,6 +326,7 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                   updateInputContent(currentDoc.id, value)
                 }
               }}
+              onMount={(editor) => { inputEditorRef.current = editor }}
               options={{
                 fontSize: 13,
                 minimap: { enabled: false },
@@ -289,8 +334,8 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                 lineNumbers: 'on',
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
-                formatOnPaste: true,
-                formatOnType: true,
+                formatOnPaste: false,
+                formatOnType: false,
                 folding: true,
                 tabSize: 2,
                 fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",
@@ -307,14 +352,21 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
           <span className="panel-info">{currentDoc?.layers.length || 0} layers</span>
           {currentDoc && currentDoc.layers.length > 0 && (
             <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-              <button 
+              <button
+                className="layer-action-btn"
+                onClick={handleFormatLayer}
+                title="Format current layer (best-effort)"
+              >
+                Format
+              </button>
+              <button
                 className="layer-action-btn"
                 onClick={handleSaveLayerAsDoc}
                 title="Save current layer as new document"
               >
                 Save as Doc
               </button>
-              <button 
+              <button
                 className="layer-action-btn"
                 onClick={handleReplaceFromDoc}
                 title="Replace current layer from another document"
@@ -348,6 +400,7 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                     : JSON.stringify(currentDoc.layers[activeLayerIndex]?.content, null, 2))
                 }
                 onChange={handleLayerChange}
+                onMount={(editor) => { layerEditorRef.current = editor }}
                 options={{
                   fontSize: 13,
                   minimap: { enabled: false },
@@ -355,8 +408,8 @@ export function LayerMode({ activeLayerIndex, setActiveLayerIndex }: LayerModePr
                   lineNumbers: 'on',
                   scrollBeyondLastLine: false,
                   automaticLayout: true,
-                  formatOnPaste: true,
-                  formatOnType: true,
+                  formatOnPaste: false,
+                  formatOnType: false,
                   folding: true,
                   tabSize: 2,
                   fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Source Han Sans SC', monospace",

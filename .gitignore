@@ -39,3 +39,7 @@ coverage
 test-results/
 playwright-report/
 *.spec.ts.snap
+
+# Skills install artifacts
+.agents/
+skills-lock.json

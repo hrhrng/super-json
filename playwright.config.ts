@@ -19,9 +19,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
+    command: 'npx vite --port 3000 --strictPort --no-open',
+    url: 'http://localhost:3000/super-json/',
+    reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
 })

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Document Management', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/super-json/')
     await page.waitForLoadState('networkidle')
   })
 

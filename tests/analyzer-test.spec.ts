@@ -1,7 +1,7 @@
 import { test } from '@playwright/test'
 
 test('test JSON analyzer directly in browser', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/super-json/')
   await page.waitForLoadState('networkidle')
   
   // Test the analyzer in the browser console

@@ -8,7 +8,7 @@ test('complex nested JSON test', async ({ page }) => {
     logs.push(text)
   })
   
-  await page.goto('/')
+  await page.goto('/super-json/')
   await page.waitForLoadState('networkidle')
   
   // Complex nested JSON

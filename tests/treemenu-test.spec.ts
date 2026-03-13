@@ -1,7 +1,7 @@
 import { test } from '@playwright/test'
 
 test('test TreeMenu with real nested JSON', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/super-json/')
   await page.waitForLoadState('networkidle')
   
   // Real nested JSON with multiple layers

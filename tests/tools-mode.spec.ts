@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Tools Mode', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/super-json/')
     await page.waitForLoadState('networkidle')
     
     // Switch to Tools mode

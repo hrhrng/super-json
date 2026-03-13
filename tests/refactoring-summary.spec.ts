@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Refactoring Summary - All Components Working', () => {
   test('✅ All refactored components are functioning correctly', async ({ page }) => {
-    await page.goto('http://localhost:3000/super-json/')
+    await page.goto('/super-json/')
     await page.waitForLoadState('networkidle')
     
     console.log('\n=== REFACTORING VERIFICATION RESULTS ===\n')

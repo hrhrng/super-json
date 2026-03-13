@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Basic Regression Tests After Refactoring', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000/super-json/')
+    await page.goto('/super-json/')
     await page.waitForLoadState('networkidle')
   })
 

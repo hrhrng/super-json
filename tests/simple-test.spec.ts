@@ -8,7 +8,7 @@ test('simple nested JSON test', async ({ page }) => {
     logs.push(text)
   })
   
-  await page.goto('/')
+  await page.goto('/super-json/')
   await page.waitForLoadState('networkidle')
   
   // Simple nested JSON - config is a JSON string

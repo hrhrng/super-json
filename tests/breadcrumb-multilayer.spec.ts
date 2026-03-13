@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test('test breadcrumb with multiple layers', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/super-json/')
   await page.waitForLoadState('networkidle')
   
   // Multi-layer nested JSON

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Layer Actions', () => {
   test('Save as Doc and Replace from Doc buttons should work', async ({ page }) => {
-    await page.goto('http://localhost:3002/super-json/')
+    await page.goto('/super-json/')
     
     // Add some multi-layer JSON
     const multiLayerJSON = JSON.stringify({

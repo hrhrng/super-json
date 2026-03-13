@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Monaco Editor Scroll Rendering', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/super-json/')
     await page.waitForLoadState('networkidle')
     await page.waitForSelector('.monaco-editor', { timeout: 10000 })
   })

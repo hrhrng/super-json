@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Hero View Document Switching', () => {
   test('hero view should update when switching between documents', async ({ page }) => {
     // Navigate to the app
-    await page.goto('http://localhost:3004/super-json/')
+    await page.goto('/super-json/')
     
     // Wait for the app to load
     await page.waitForSelector('.container')
@@ -72,7 +72,7 @@ test.describe('Hero View Document Switching', () => {
   
   test('hero view should be empty for new documents without loaded JSON', async ({ page }) => {
     // Navigate to the app
-    await page.goto('http://localhost:3004/super-json/')
+    await page.goto('/super-json/')
     
     // Wait for the app to load
     await page.waitForSelector('.container')

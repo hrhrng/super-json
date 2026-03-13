@@ -13,7 +13,7 @@ test('debug analyzer with console output', async ({ page }) => {
     }
   })
   
-  await page.goto('/')
+  await page.goto('/super-json/')
   await page.waitForLoadState('networkidle')
   
   const testJson = {

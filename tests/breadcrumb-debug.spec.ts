@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test('debug breadcrumb dropdown', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/super-json/')
   await page.waitForLoadState('networkidle')
   
   // Simple test JSON

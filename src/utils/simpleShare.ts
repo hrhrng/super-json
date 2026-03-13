@@ -1,13 +1,18 @@
 import LZString from 'lz-string'
 
-export function createShareUrl(inputContent: string): { url: string; length: number } {
+export function createShareUrl(inputContent: string, tabName?: string): { url: string; length: number } {
   // Compress only the input content
   const compressed = LZString.compressToEncodedURIComponent(inputContent)
-  
+
   // Create share URL
   const baseUrl = window.location.origin + window.location.pathname
-  const shareUrl = `${baseUrl}?s=${compressed}`
-  
+  let shareUrl = `${baseUrl}?s=${compressed}`
+
+  // Add tab name parameter if provided
+  if (tabName) {
+    shareUrl += `&t=${encodeURIComponent(tabName)}`
+  }
+
   return {
     url: shareUrl,
     length: shareUrl.length

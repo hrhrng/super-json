@@ -16,6 +16,7 @@ export function useSimpleImport() {
       // Check URL parameters for compressed data
       const urlParams = new URLSearchParams(window.location.search)
       const compressedData = urlParams.get('s') // 's' for share
+      const tabName = urlParams.get('t') // 't' for tab name
       
       // Check both local ref and global flag to prevent duplicates
       if (!compressedData || hasImportedRef.current || isImportProcessed) return
@@ -42,13 +43,17 @@ export function useSimpleImport() {
         
         updateInputContent(docId, inputContent)
         
-        // Try to parse JSON to get a title
-        try {
-          const parsed = JSON.parse(inputContent)
-          const title = parsed.title || parsed.name || 'Shared Document'
-          updateDocumentTitle(docId, title)
-        } catch {
-          updateDocumentTitle(docId, 'Shared Document')
+        // Use custom tab name if provided, otherwise try to parse JSON for a title
+        if (tabName) {
+          updateDocumentTitle(docId, decodeURIComponent(tabName))
+        } else {
+          try {
+            const parsed = JSON.parse(inputContent)
+            const title = parsed.title || parsed.name || 'Shared Document'
+            updateDocumentTitle(docId, title)
+          } catch {
+            updateDocumentTitle(docId, 'Shared Document')
+          }
         }
         
         // Switch to the new document
@@ -62,6 +67,7 @@ export function useSimpleImport() {
         // Clean up the URL
         const newUrl = new URL(window.location.href)
         newUrl.searchParams.delete('s')
+        newUrl.searchParams.delete('t')
         window.history.replaceState({}, '', newUrl.toString())
         
         // Reset the global flag after URL is cleaned

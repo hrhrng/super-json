@@ -14,7 +14,7 @@ import { ProcessorMode, ProcessorModeActions } from './modes/ProcessorMode'
 import { DiffMode } from './modes/DiffMode'
 import { HeroMode } from './modes/HeroMode'
 
-const iconImg = '/super-json/icon.png'
+const iconImg = '/icon.png'
 const analyzer = new JSONLayerAnalyzer()
 
 // Configure Monaco theme

@@ -1,36 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { importFromBase64Url, importFromCompressedUrl } from '../simpleShare'
+import { importFromCompressedUrl } from '../simpleShare'
 import { gzipSync } from 'node:zlib'
 
 describe('simpleShare', () => {
-  describe('importFromBase64Url', () => {
-    it('should decode base64url-encoded JSON', () => {
-      // echo -n '{"name":"test"}' | base64 | tr '+/' '-_' | tr -d '='
-      const encoded = btoa('{"name":"test"}').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-      const result = importFromBase64Url(encoded)
-      expect(result).toBe('{"name":"test"}')
-    })
-
-    it('should handle base64url with padding stripped', () => {
-      // Content that would normally need padding
-      const input = '{"a":1}'
-      const encoded = btoa(input).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-      const result = importFromBase64Url(encoded)
-      expect(result).toBe(input)
-    })
-
-    it('should handle unicode content', () => {
-      const input = '{"message":"hello"}'
-      const encoded = btoa(input).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-      const result = importFromBase64Url(encoded)
-      expect(result).toBe(input)
-    })
-
-    it('should throw on invalid base64 data', () => {
-      expect(() => importFromBase64Url('!!!invalid!!!')).toThrow('Failed to import shared content')
-    })
-  })
-
   describe('importFromCompressedUrl', () => {
     // Helper: gzip + base64url encode (mirrors the shell command)
     function gzipBase64Url(input: string): string {

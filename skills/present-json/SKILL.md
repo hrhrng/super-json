@@ -73,8 +73,6 @@ bash scripts/present.sh '{"key": "value"}' --tab "My Data" --hero
 
 | Parameter | Encoding | Description |
 |-----------|----------|-------------|
-| `c` | Gzip + Base64url | **Recommended** — compressed, shell-friendly, shortest URLs |
-| `s` | LZ-String compressed | Used by the app's built-in Share button |
-| `r` | Base64url | Uncompressed fallback, shell-friendly |
-| `t` | URL-encoded string | Custom tab name (works with `c`, `s`, and `r`) |
+| `c` | Gzip + Base64url | Compressed JSON data |
+| `t` | URL-encoded string | Custom tab name |
 | `h` | `1` to enable | Auto-switch to Hero mode and load JSON Hero viewer |

@@ -75,9 +75,8 @@ Ever struggled with deeply nested, escaped JSON strings? Like this nightmare:
 
 Share JSON instantly via URL — no server required:
 
-- **Share Button** - One-click share with LZ-String compression (`?s=` parameter)
+- **Share Button** - One-click share with gzip compression (`?c=` parameter)
 - **Custom Tab Names** - Hover "Share" to name your tab before sharing (`?t=` parameter)
-- **Base64url Mode** - Shell-friendly encoding without dependencies (`?r=` parameter)
 - **Hero Direct Link** - Add `?h=1` to auto-open JSON Hero viewer on import
 
 ### 🤖 Claude Code Skill: `present-json`
@@ -105,9 +104,7 @@ echo "https://hrhrng.github.io/super-json?c=${encoded}&t=API+Response&h=1"
 
 | Param | Description | Example |
 |-------|-------------|---------|
-| `c` | Gzip + Base64url compressed JSON (recommended) | `?c=H4sIA...` |
-| `s` | LZ-String compressed JSON (shorter URLs) | `?s=NoIgbg9...` |
-| `r` | Base64url encoded JSON (uncompressed fallback) | `?r=eyJrZXki...` |
+| `c` | Gzip + Base64url compressed JSON | `?c=H4sIA...` |
 | `t` | Custom tab name | `&t=My+Results` |
 | `h` | Auto-switch to Hero mode | `&h=1` |
 

@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { createShareUrl, copyToClipboard } from '@utils/simpleShare'
 
 interface ShareButtonProps {
@@ -11,20 +12,32 @@ export function ShareButton({ getContent, onNotification }: ShareButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false)
   const [showNameInput, setShowNameInput] = useState(false)
   const [tabName, setTabName] = useState('')
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 })
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
 
+  const updatePosition = useCallback(() => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setDropdownPos({ top: rect.bottom + 2, left: rect.left })
+    }
+  }, [])
+
   useEffect(() => {
+    if (!showDropdown) return
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (
+        buttonRef.current && !buttonRef.current.contains(target) &&
+        dropdownRef.current && !dropdownRef.current.contains(target)
+      ) {
         setShowDropdown(false)
         setShowNameInput(false)
       }
     }
-    if (showDropdown) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showDropdown])
 
   const handleShare = async (customTabName?: string) => {
@@ -51,10 +64,26 @@ export function ShareButton({ getContent, onNotification }: ShareButtonProps) {
       clearTimeout(hideTimeoutRef.current)
       hideTimeoutRef.current = undefined
     }
+    updatePosition()
     setShowDropdown(true)
   }
 
   const handleMouseLeave = () => {
+    hideTimeoutRef.current = setTimeout(() => {
+      if (!showNameInput) {
+        setShowDropdown(false)
+      }
+    }, 200)
+  }
+
+  const handleDropdownMouseEnter = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current)
+      hideTimeoutRef.current = undefined
+    }
+  }
+
+  const handleDropdownMouseLeave = () => {
     hideTimeoutRef.current = setTimeout(() => {
       if (!showNameInput) {
         setShowDropdown(false)
@@ -69,32 +98,32 @@ export function ShareButton({ getContent, onNotification }: ShareButtonProps) {
   }
 
   return (
-    <div
-      ref={dropdownRef}
-      style={{ position: 'relative', display: 'inline-block' }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <>
       <button
+        ref={buttonRef}
         className="tool-btn"
         onClick={() => handleShare()}
         disabled={sharing}
         title="Copy share link"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {sharing ? '⏳' : 'Share'}
       </button>
-      {showDropdown && !sharing && (
+      {showDropdown && !sharing && createPortal(
         <div
+          ref={dropdownRef}
+          onMouseEnter={handleDropdownMouseEnter}
+          onMouseLeave={handleDropdownMouseLeave}
           style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            marginTop: '2px',
+            position: 'fixed',
+            top: dropdownPos.top,
+            left: dropdownPos.left,
             background: 'var(--bg-panel)',
             border: '1px solid var(--border)',
             borderRadius: '4px',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
-            zIndex: 1000,
+            zIndex: 10000,
             minWidth: showNameInput ? '220px' : '110px',
             padding: '4px',
           }}
@@ -175,8 +204,9 @@ export function ShareButton({ getContent, onNotification }: ShareButtonProps) {
               </button>
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }

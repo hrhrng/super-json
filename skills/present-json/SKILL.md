@@ -109,6 +109,34 @@ open "$f" 2>/dev/null || xdg-open "$f" 2>/dev/null || echo "$url"
 
 This auto-switches to Hero view and loads the JSON Hero interactive explorer.
 
+## Cleanup temporary files
+
+The skill creates temporary `super-json-*.html` redirect files. Use the bundled cleanup scripts to remove them:
+
+**macOS / Linux:**
+```bash
+bash scripts/cleanup-temp.sh              # remove all temp files from /tmp
+bash scripts/cleanup-temp.sh --dry-run    # preview without deleting
+bash scripts/cleanup-temp.sh --dir /path  # custom directory
+```
+
+**Windows (PowerShell):**
+```powershell
+./scripts/cleanup-temp.ps1                # remove all temp files from $env:TEMP
+./scripts/cleanup-temp.ps1 -DryRun        # preview without deleting
+./scripts/cleanup-temp.ps1 -Dir C:\path   # custom directory
+```
+
+To verify the cleanup scripts work correctly, run the test harness:
+
+```bash
+# Linux/macOS
+bash scripts/test-cleanup.sh
+
+# Windows
+pwsh scripts/test-cleanup.ps1
+```
+
 ## Important notes
 
 - **macOS/Linux**: uses `gzip`, `base64`, `tr`, `xxd`, `printf` — standard POSIX tools

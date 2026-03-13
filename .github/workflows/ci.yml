@@ -8,6 +8,12 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-preview-${{ github.ref }}"
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -52,8 +58,10 @@ jobs:
     needs: test
     if: github.event_name == 'push'
     steps:
-      - name: Checkout
+      - name: Checkout main branch
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -64,19 +72,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Extract branch name
-        id: branch
-        run: echo "name=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
-
-      - name: Build for preview
-        run: npm run build -- --base=/super-json/preview/${{ steps.branch.outputs.name }}/
+      - name: Build main site
+        run: npm run build
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
 
-      - name: Deploy preview to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          destination_dir: preview/${{ steps.branch.outputs.name }}
-          keep_files: true
+          path: feature-branch
+
+      - name: Build preview
+        run: |
+          cd feature-branch
+          npm ci
+          BRANCH_NAME=${GITHUB_REF_NAME}
+          npm run build -- --base=/super-json/preview/${BRANCH_NAME}/
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+
+      - name: Merge preview into dist
+        run: |
+          BRANCH_NAME=${GITHUB_REF_NAME}
+          mkdir -p dist/preview/${BRANCH_NAME}
+          cp -r feature-branch/dist/* dist/preview/${BRANCH_NAME}/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

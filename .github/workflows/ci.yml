@@ -28,6 +28,9 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
+      - name: Validate skills
+        run: npx skills add . -y && rm -rf .agents skills-lock.json
+
       - name: Build
         run: npm run build
         env:

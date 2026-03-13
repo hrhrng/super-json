@@ -17,7 +17,8 @@
     "test:report": "playwright show-report",
     "test:vitest": "vitest",
     "test:vitest-ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:skill": "npx skills add . -y && rm -rf .agents skills-lock.json"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",

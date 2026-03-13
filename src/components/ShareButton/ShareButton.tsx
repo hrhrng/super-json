@@ -95,7 +95,7 @@ export function ShareButton({ getContent, onNotification }: ShareButtonProps) {
             borderRadius: '4px',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
             zIndex: 1000,
-            minWidth: showNameInput ? '220px' : '140px',
+            minWidth: showNameInput ? '220px' : '110px',
             padding: '4px',
           }}
         >
@@ -126,7 +126,7 @@ export function ShareButton({ getContent, onNotification }: ShareButtonProps) {
                 e.currentTarget.style.background = 'transparent'
               }}
             >
-              Share with name...
+              with name...
             </button>
           ) : (
             <div style={{ display: 'flex', gap: '4px', padding: '2px' }}>

@@ -2,8 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## deploy guidline
-use playwright to test ui by snapshot.
+## Deploy Guideline
+- Use Playwright to test UI by snapshot.
+- Before creating a PR, run `npm test` locally to ensure all Playwright tests pass.
 
 ## Project Overview
 

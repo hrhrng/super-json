@@ -1,0 +1,69 @@
+# Super JSON Editor
+
+> Parse, edit, and reconstruct deeply nested/escaped JSON structures. Built for agents, designed for humans.
+
+## URL API
+
+Construct a URL to open JSON directly in the interactive editor. All data is encoded in the URL — no server upload, fully client-side.
+
+Base URL: `https://hrhrng.github.io/super-json`
+
+### Parameters
+
+- `r`: JSON content, base64url-encoded (shell-friendly, no dependencies)
+- `s`: JSON content, LZ-String compressed (smaller URLs, used by built-in Share button)
+- `t`: Custom tab name, URL-encoded
+- `h`: Set to `1` to auto-switch to Hero mode (JSON Hero interactive viewer with tree navigation, type info, search)
+
+### Usage (Shell)
+
+```bash
+# Inline JSON → shareable link
+encoded=$(echo -n '{"hello":"world"}' | base64 | tr '+/' '-_' | tr -d '=\n')
+echo "https://hrhrng.github.io/super-json?r=${encoded}&t=My%20Data"
+
+# From a file
+encoded=$(base64 < data.json | tr '+/' '-_' | tr -d '=\n')
+echo "https://hrhrng.github.io/super-json?r=${encoded}&t=File%20Data"
+
+# With Hero mode (interactive tree viewer)
+echo "https://hrhrng.github.io/super-json?r=${encoded}&t=My%20Data&h=1"
+```
+
+## For AI Agents
+
+If you are an AI agent and want to present JSON to a human user:
+
+1. Take the JSON content you want to display
+2. Base64url-encode it: `base64 | tr '+/' '-_' | tr -d '='`
+3. Construct the URL: `https://hrhrng.github.io/super-json?r={encoded}&t={tab_name}`
+4. Present the link to the user — they will see the JSON in a full interactive editor
+
+Privacy: the URL is entirely client-side. No data is sent to any server (unless Hero mode `h=1` is used, which sends to jsonhero.io with 24h TTL).
+
+For large JSON (>6KB encoded), the URL may exceed browser limits.
+
+## Claude Code Skill
+
+Install the `present-json` skill to use Super JSON directly from Claude Code:
+
+```
+claude install-skill https://github.com/hrhrng/super-json/tree/main/skills/present-json
+```
+
+Then use `/present-json [json-or-file] [tab-name]` to present JSON interactively.
+
+## Features
+
+- Multi-layer JSON parsing — handles deeply nested escaped JSON strings
+- Multi-document tabs — work with multiple JSON documents simultaneously
+- Bidirectional sync — real-time synchronization between parent and child layers
+- Hero mode — JSON Hero interactive viewer with tree navigation and search
+- Diff mode — side-by-side JSON comparison
+- Monaco Editor — VS Code's editor with syntax highlighting and validation
+- Auto-save — automatic persistence to localStorage
+
+## Links
+
+- [Source Code](https://github.com/hrhrng/super-json)
+- [Skill: present-json](https://github.com/hrhrng/super-json/tree/main/skills/present-json)

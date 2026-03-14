@@ -1,0 +1,194 @@
+# Super JSON Editor — Full Documentation
+
+> Parse, edit, and reconstruct deeply nested/escaped JSON structures. Built for agents, designed for humans.
+
+## Overview
+
+Super JSON Editor is a standalone web application at `https://hrhrng.github.io/super-json`. It provides a professional IDE-like experience for working with JSON, with special strength in handling multi-layer escaped JSON (JSON strings containing stringified JSON, which in turn contain more stringified JSON, etc.).
+
+The app is entirely client-side. No data leaves the browser unless Hero mode is explicitly used.
+
+## URL API Reference
+
+### Base URL
+
+```
+https://hrhrng.github.io/super-json
+```
+
+### Query Parameters
+
+| Parameter | Required | Encoding | Description |
+|-----------|----------|----------|-------------|
+| `r` | One of `r` or `s` | Base64url | JSON content encoded with base64url (standard base64 with `+/` replaced by `-_`, padding `=` stripped). Recommended for shell/agent use. |
+| `s` | One of `r` or `s` | LZ-String | JSON content compressed with `LZString.compressToEncodedURIComponent()`. Produces shorter URLs. Used by the app's built-in Share button. |
+| `t` | No | URL-encoded string | Custom tab name. Defaults to "Shared Document" or a name derived from the JSON content (`title` or `name` field). |
+| `h` | No | `1` to enable | Auto-switch to Hero mode. Sends the JSON to `jsonhero.io/api/create.json` to create a temporary interactive viewer (24h TTL). |
+
+### Base64url Encoding (parameter `r`)
+
+Standard across all POSIX shells:
+
+```bash
+# Encode
+encoded=$(echo -n "$JSON_CONTENT" | base64 | tr '+/' '-_' | tr -d '=\n')
+
+# Encode from file
+encoded=$(base64 < file.json | tr '+/' '-_' | tr -d '=\n')
+```
+
+Decoding (for reference):
+1. Replace `-` with `+`, `_` with `/`
+2. Add `=` padding to make length a multiple of 4
+3. Standard base64 decode
+
+### LZ-String Encoding (parameter `s`)
+
+Requires the `lz-string` library (npm/browser):
+
+```javascript
+import LZString from 'lz-string'
+const compressed = LZString.compressToEncodedURIComponent(jsonString)
+const url = `https://hrhrng.github.io/super-json?s=${compressed}`
+```
+
+### URL Size Limits
+
+- Most browsers support URLs up to ~8,000 characters
+- Base64 encoding expands data by ~33%
+- For JSON larger than ~6KB, consider:
+  - Using LZ-String compression (`s` parameter) for better compression
+  - Splitting the data into smaller pieces
+  - Having the user paste directly into the editor
+
+## Complete Examples
+
+### Agent Workflow: Present API Response
+
+```bash
+# 1. You have JSON from an API call
+json='{"users":[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]}'
+
+# 2. Encode it
+encoded=$(echo -n "$json" | base64 | tr '+/' '-_' | tr -d '=\n')
+
+# 3. Construct URL
+url="https://hrhrng.github.io/super-json?r=${encoded}&t=API%20Response"
+
+# 4. Present to user
+echo "View the API response interactively: $url"
+```
+
+### Agent Workflow: Present with Hero Mode
+
+```bash
+# Same as above, but add &h=1 for the interactive tree viewer
+url="https://hrhrng.github.io/super-json?r=${encoded}&t=API%20Response&h=1"
+```
+
+### Agent Workflow: Present File Contents
+
+```bash
+encoded=$(base64 < config.json | tr '+/' '-_' | tr -d '=\n')
+echo "https://hrhrng.github.io/super-json?r=${encoded}&t=Config"
+```
+
+## View Modes
+
+The editor has four view modes:
+
+### Layer Mode (default)
+Three-panel layout:
+1. **Input Panel** (left) — paste or edit raw JSON
+2. **Layer Editor** (middle) — tabbed interface showing each detected JSON layer with bidirectional sync
+3. **Output Panel** (right) — reconstructed JSON after edits
+
+User clicks **Parse** to analyze layers, edits in the layer tabs, then clicks **Apply** to generate output.
+
+### Hero Mode
+Two-panel layout:
+1. **JSON Input** (left) — paste JSON
+2. **JSON Hero Viewer** (right) — embedded iframe from jsonhero.io with interactive tree navigation, type info, and search
+
+### Diff Mode
+Side-by-side JSON comparison with highlighted differences.
+
+### Processor Mode
+JSON transformation tools.
+
+## Multi-Layer JSON Parsing
+
+The core feature. Given input like:
+
+```json
+{
+  "config": "{\"database\":\"{\\\"host\\\":\\\"localhost\\\",\\\"port\\\":5432}\"}"
+}
+```
+
+The analyzer detects three layers:
+- **Layer 0**: The outer object
+- **Layer 1**: The `config` field (was an escaped JSON string)
+- **Layer 2**: The `database` field (was a doubly-escaped JSON string)
+
+Each layer gets its own editor tab. Edits in any layer automatically sync to parent and child layers.
+
+## Multi-Document Support
+
+- Multiple JSON documents open simultaneously as tabs
+- Each document has independent state (input, layers, output)
+- Double-click tab to rename
+- Auto-save to localStorage
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+Enter` | Analyze/Parse JSON |
+| `Ctrl+S` | Generate Output |
+| `Ctrl+T` | New Document |
+| `Ctrl+W` | Close Current Document |
+| `Ctrl+Tab` | Switch to Next Document |
+
+## Claude Code Skill: present-json
+
+### Installation
+
+```
+claude install-skill https://github.com/hrhrng/super-json/tree/main/skills/present-json
+```
+
+### Usage
+
+```
+/present-json [json-content-or-file-path] [tab-name]
+```
+
+### When to Use
+
+- You produced JSON output the user needs to review (API responses, query results, configs)
+- The JSON is complex/nested and hard to read as plain text
+- You want the user to explore, edit, search, or navigate the JSON interactively
+
+### What It Does
+
+1. Takes JSON content (inline or from a file)
+2. Base64url-encodes it using shell commands (`base64`, `tr`)
+3. Generates a clickable URL to `https://hrhrng.github.io/super-json?r=...&t=...`
+4. Presents the link to the user
+
+No dependencies required — uses only POSIX shell builtins.
+
+## Technical Details
+
+- **Stack**: React + TypeScript + Vite + Monaco Editor + Zustand
+- **Hosting**: GitHub Pages at `https://hrhrng.github.io/super-json`
+- **Source**: `https://github.com/hrhrng/super-json`
+- **Privacy**: All processing is client-side. No data sent to any server except when Hero mode (`h=1`) creates a temporary jsonhero.io session (24h TTL).
+- **Browser Support**: Chrome, Firefox, Safari, Edge (requires ES6+)
+
+## Links
+
+- [Live App](https://hrhrng.github.io/super-json)
+- [GitHub Repository](https://github.com/hrhrng/super-json)
+- [Skill: present-json](https://github.com/hrhrng/super-json/tree/main/skills/present-json)

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/icon.png" />
     <link rel="apple-touch-icon" href="/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Super JSON - Your Final ONLINE JSON Editor</title>
+    <meta name="description" content="Super JSON Editor: parse, edit, and reconstruct deeply nested/escaped JSON structures. Agent-friendly URL API for presenting JSON to humans." />
+    <link rel="help" type="text/plain" href="/llms.txt" title="LLM-readable site documentation" />
     <script>
       (function() {
         var m = window.location.pathname.match(/\/preview\/(.+?)\/(?:index\.html)?$/);
@@ -18,9 +20,100 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Super JSON Editor",
+      "url": "https://hrhrng.github.io/super-json",
+      "description": "Parse, edit, and reconstruct deeply nested/escaped JSON structures. Supports multi-layer JSON parsing, bidirectional sync, and an agent-friendly URL API.",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any (Web Browser)",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+    </script>
+    <style>
+      /* Agent-readable content: visible before JS loads, hidden after React mounts */
+      #agent-info { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; color: #e0e0e0; background: #1a1a2e; }
+      #agent-info h1 { font-size: 1.5rem; }
+      #agent-info h2 { font-size: 1.2rem; margin-top: 1.5rem; }
+      #agent-info code { background: #2a2a4a; padding: 2px 6px; border-radius: 3px; }
+      #agent-info pre { background: #2a2a4a; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+      #agent-info table { border-collapse: collapse; width: 100%; }
+      #agent-info th, #agent-info td { border: 1px solid #333; padding: 6px 10px; text-align: left; }
+      #root:not(:empty) ~ #agent-info { display: none; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+
+    <!--
+      AGENT-READABLE CONTENT
+      This section is visible to AI agents, web crawlers, and non-JS clients.
+      It is automatically hidden when the React application mounts into #root.
+    -->
+    <div id="agent-info">
+      <h1>Super JSON Editor</h1>
+      <p><strong>Built for agents, designed for humans.</strong> Present JSON results to humans via an interactive browser viewer instead of dumping raw JSON in a terminal.</p>
+
+      <h2>Agent URL API</h2>
+      <p>Construct a URL to open JSON directly in the editor. No server upload — all data is encoded in the URL (client-side only).</p>
+
+      <h3>URL Parameters</h3>
+      <table>
+        <thead><tr><th>Parameter</th><th>Encoding</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>r</code></td><td>Base64url</td><td>JSON content, base64url-encoded. Shell-friendly, no dependencies needed.</td></tr>
+          <tr><td><code>s</code></td><td>LZ-String</td><td>JSON content, LZ-String compressed (used by the app's built-in Share button, smaller URLs).</td></tr>
+          <tr><td><code>t</code></td><td>URL-encoded string</td><td>Custom tab name displayed in the editor.</td></tr>
+          <tr><td><code>h</code></td><td><code>1</code> to enable</td><td>Auto-switch to Hero mode (JSON Hero interactive viewer with tree navigation, type info, search).</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Quick Start (Shell)</h3>
+      <pre><code># Inline JSON
+encoded=$(echo -n '{"hello":"world"}' | base64 | tr '+/' '-_' | tr -d '=\n')
+echo "https://hrhrng.github.io/super-json?r=${encoded}&amp;t=My%20Data"
+
+# From a file
+encoded=$(base64 &lt; data.json | tr '+/' '-_' | tr -d '=\n')
+echo "https://hrhrng.github.io/super-json?r=${encoded}&amp;t=File%20Data"
+
+# With Hero mode (interactive tree viewer)
+echo "https://hrhrng.github.io/super-json?r=${encoded}&amp;t=My%20Data&amp;h=1"</code></pre>
+
+      <h2>Features</h2>
+      <ul>
+        <li><strong>Multi-layer JSON parsing</strong> — handles deeply nested escaped JSON strings</li>
+        <li><strong>Multi-document tabs</strong> — work with multiple JSON documents simultaneously</li>
+        <li><strong>Bidirectional sync</strong> — real-time synchronization between parent and child layers</li>
+        <li><strong>Hero mode</strong> — JSON Hero interactive viewer with tree navigation, type info, and search</li>
+        <li><strong>Diff mode</strong> — side-by-side JSON comparison</li>
+        <li><strong>Auto-save</strong> — automatic persistence to localStorage</li>
+        <li><strong>Monaco Editor</strong> — VS Code's editor with syntax highlighting and validation</li>
+      </ul>
+
+      <h2>For AI Agents</h2>
+      <p>If you are an AI agent and want to present JSON to a human user:</p>
+      <ol>
+        <li>Take the JSON content you want to display</li>
+        <li>Base64url-encode it: <code>base64 | tr '+/' '-_' | tr -d '='</code></li>
+        <li>Construct the URL: <code>https://hrhrng.github.io/super-json?r={encoded}&amp;t={tab_name}</code></li>
+        <li>Present the link to the user — they will see the JSON in a full interactive editor</li>
+      </ol>
+      <p>The URL is entirely client-side. No data is sent to any server (unless Hero mode <code>h=1</code> is used, which sends to jsonhero.io).</p>
+      <p>For very large JSON (&gt;6KB encoded), the URL may exceed browser limits. Consider splitting the data or using the app directly.</p>
+
+      <h2>Claude Code Skill</h2>
+      <p>Install the <code>present-json</code> skill to use Super JSON directly from Claude Code:</p>
+      <pre><code>claude install-skill https://github.com/hrhrng/super-json/tree/main/skills/present-json</code></pre>
+      <p>Then use <code>/present-json [json-or-file] [tab-name]</code> to present JSON to users interactively.</p>
+
+      <noscript>
+        <p><em>This application requires JavaScript to run. The information above describes the URL API that can be used programmatically.</em></p>
+      </noscript>
+    </div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

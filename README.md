@@ -8,7 +8,7 @@
 
 **The Ultimate Multi-Layer Escaped JSON Editor - Parse, Edit, and Rebuild Complex Nested JSON with Ease! 🎯**
 
-[**Try It Now**](https://hrhrng.github.io/super-json)
+[**Try It Now**](https://superjson.org) | [**Documentation**](https://superjson.org/docs/)
 
 [Report Bug](https://github.com/hrhrng/super-json/issues) | [Request Feature](https://github.com/hrhrng/super-json/issues)
 

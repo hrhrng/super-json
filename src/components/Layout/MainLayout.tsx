@@ -195,6 +195,20 @@ export function MainLayout() {
               hrhrng/super-json
             </a>
           </div>
+          <div className="status-item">
+            <a
+              href="/docs/"
+              style={{
+                color: 'inherit',
+                textDecoration: 'none',
+                transition: 'color 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'inherit'}
+            >
+              Docs
+            </a>
+          </div>
           <div className="status-item" style={{ marginLeft: 'auto' }}>
             {viewMode === 'layer' && `${currentDoc?.layers.length || 0} layers`}
             {viewMode === 'processor' && 'Tools Mode'}

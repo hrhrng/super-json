@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Monaco Editor Scroll Rendering', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/super-json/')
     await page.waitForLoadState('networkidle')
     await page.waitForSelector('.monaco-editor', { timeout: 10000 })
   })
@@ -25,18 +25,19 @@ test.describe('Monaco Editor Scroll Rendering', () => {
       }
     }
 
-    // Set JSON content via clipboard
+    // Set JSON content via Monaco API
+    await page.waitForSelector('.monaco-editor')
     await page.evaluate((json) => {
-      navigator.clipboard.writeText(JSON.stringify(json, null, 2))
+      const editors = (window as any).monaco?.editor?.getEditors()
+      if (editors && editors.length > 0) {
+        editors[0].setValue(JSON.stringify(json, null, 2))
+      }
     }, testJson)
-    await page.locator('.panel-input .monaco-editor').click()
-    await page.keyboard.press('Control+A')
-    await page.keyboard.press('Control+V')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(300)
 
     // Parse the JSON
     await page.locator('button:has-text("Parse")').click()
-    await page.waitForSelector('.notification.success', { timeout: 5000 })
+    await expect(page.locator('.panel-layer .panel-info')).toContainText('layers', { timeout: 5000 })
 
     // Wait for layers to be created
     await page.waitForSelector('.breadcrumb-item', { timeout: 5000 })
@@ -134,18 +135,19 @@ test.describe('Monaco Editor Scroll Rendering', () => {
       }
     }
 
-    // Set JSON content via clipboard
+    // Set JSON content via Monaco API
+    await page.waitForSelector('.monaco-editor')
     await page.evaluate((json) => {
-      navigator.clipboard.writeText(JSON.stringify(json, null, 2))
+      const editors = (window as any).monaco?.editor?.getEditors()
+      if (editors && editors.length > 0) {
+        editors[0].setValue(JSON.stringify(json, null, 2))
+      }
     }, testJson)
-    await page.locator('.panel-input .monaco-editor').click()
-    await page.keyboard.press('Control+A')
-    await page.keyboard.press('Control+V')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(300)
 
     // Parse the JSON
     await page.locator('button:has-text("Parse")').click()
-    await page.waitForSelector('.notification.success', { timeout: 5000 })
+    await expect(page.locator('.panel-layer .panel-info')).toContainText('layers', { timeout: 5000 })
 
     // Wait for layers
     await page.waitForSelector('.breadcrumb-item', { timeout: 5000 })

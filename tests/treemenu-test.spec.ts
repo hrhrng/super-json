@@ -1,7 +1,7 @@
-import { test } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
 test('test TreeMenu with real nested JSON', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/super-json/')
   await page.waitForLoadState('networkidle')
   
   // Real nested JSON with multiple layers
@@ -34,22 +34,21 @@ test('test TreeMenu with real nested JSON', async ({ page }) => {
       editors[0].setValue(JSON.stringify(json, null, 2))
     }
   }, nestedJson)
-  
+  await page.waitForTimeout(300)
+
   // Parse
   await page.locator('button:has-text("Parse")').click()
-  await page.waitForTimeout(500)
-  
-  // Get notification
-  const notification = await page.locator('.notification.success').textContent()
-  console.log('Notification:', notification)
-  
+  await expect(page.locator('.panel-layer .panel-info')).toContainText('layers', { timeout: 10000 })
+  await expect(page.locator('.panel-layer .panel-info')).not.toContainText('0 layers')
+
   // Check breadcrumb
-  const breadcrumb = await page.locator('.vscode-breadcrumb').textContent()
+  await expect(page.locator('.breadcrumb-item').first()).toBeVisible()
+  const breadcrumb = await page.locator('.breadcrumb-item').first().textContent()
   console.log('Initial breadcrumb:', breadcrumb)
   
   // Click to open TreeMenu
   await page.locator('.breadcrumb-item').first().click()
-  await page.waitForSelector('.breadcrumb-dropdown')
+  await page.waitForSelector('.tree-row')
   
   // Get all tree rows
   const treeRows = await page.locator('.tree-row').all()
@@ -67,7 +66,7 @@ test('test TreeMenu with real nested JSON', async ({ page }) => {
     await treeRows[2].click()
     await page.waitForTimeout(200)
     
-    const newBreadcrumb = await page.locator('.vscode-breadcrumb').textContent()
+    const newBreadcrumb = await page.locator('.breadcrumb-item').first().textContent()
     console.log('Breadcrumb after navigation:', newBreadcrumb)
   }
 })

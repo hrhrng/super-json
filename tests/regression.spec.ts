@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Super JSON Editor Regression Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000/super-json/')
+    await page.goto('/super-json/')
     await page.waitForLoadState('networkidle')
   })
 
@@ -218,7 +218,7 @@ test.describe('Super JSON Editor Regression Tests', () => {
 
 test.describe('Advanced Features', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000/super-json/')
+    await page.goto('/super-json/')
     await page.waitForLoadState('networkidle')
   })
 

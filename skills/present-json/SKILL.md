@@ -19,53 +19,60 @@ Present JSON to humans in Super JSON Editor — an interactive browser-based vie
 ## Instructions
 
 1. Determine the JSON content:
-   - If `$0` is a file path, read JSON from that file
+   - If `$0` is a file path, pass it directly to the script
    - Otherwise, treat `$ARGUMENTS` as inline JSON or use the JSON from the current context
 2. Determine the tab name:
    - Use `$1` if provided
    - Otherwise, derive a meaningful name from the context (e.g., "API Response", "User Config")
    - Default to "Result" if nothing else fits
-3. Generate the link using the shell command below
-4. Present the link to the user with a brief description of the content
+3. Run the appropriate script (see below)
+4. Present a brief description of the content to the user
 
-## Generating the link
+## Running the script
 
-### Inline JSON
+**Detect the platform first**, then run:
 
-```bash
-encoded=$(echo -n '<JSON_CONTENT>' | base64 | tr '+/' '-_' | tr -d '=\n') && echo "https://hrhrng.github.io/super-json?r=${encoded}&t=<TAB_NAME>"
-```
-
-### From a file
+### macOS / Linux
 
 ```bash
-encoded=$(base64 < /path/to/file.json | tr '+/' '-_' | tr -d '=\n') && echo "https://hrhrng.github.io/super-json?r=${encoded}&t=<TAB_NAME>"
+# Inline JSON
+bash scripts/present.sh '{"key": "value"}' --tab "My Data"
+
+# From a file
+bash scripts/present.sh /path/to/data.json --tab "My Data"
+
+# With Hero mode (rich interactive viewer with tree navigation)
+bash scripts/present.sh '{"key": "value"}' --tab "My Data" --hero
 ```
 
-- Replace `<JSON_CONTENT>` with the actual JSON string
-- Replace `<TAB_NAME>` with a URL-encoded tab name (spaces → `%20`)
+### Windows (PowerShell)
 
-## Hero mode (rich interactive viewer)
+```powershell
+# Inline JSON
+./scripts/present.ps1 '{"key": "value"}' -Tab "My Data"
 
-For complex JSON that benefits from tree navigation, type info, and search, add `&h=1` to open in JSON Hero's interactive viewer:
+# From a file
+./scripts/present.ps1 C:\path\to\data.json -Tab "My Data"
 
-```bash
-encoded=$(echo -n '<JSON_CONTENT>' | base64 | tr '+/' '-_' | tr -d '=\n') && echo "https://hrhrng.github.io/super-json?r=${encoded}&t=<TAB_NAME>&h=1"
+# With Hero mode
+./scripts/present.ps1 '{"key": "value"}' -Tab "My Data" -Hero
 ```
 
-This auto-switches to Hero view and loads the JSON Hero interactive explorer.
+### Platform detection
+- **macOS/Linux**: use `present.sh`
+- **Windows** (PowerShell / `$PSVersionTable` exists): use `present.ps1`
 
 ## Important notes
 
-- Uses only `base64` and `tr` — works on any POSIX shell, no Node.js required
-- The URL is entirely client-side — no data is sent to any server (except to jsonhero.io when `h=1`)
-- For very large JSON (>6KB), the URL may exceed browser limits
+- The script handles compression, temp file creation, browser opening, and cleanup automatically
+- All stale `super-json-*.html` temp files are cleaned up ~5 seconds after each invocation
+- The URL is entirely client-side — no data is sent to any server (except to jsonhero.io when `--hero`/`-Hero`)
+- For very large JSON (>6KB uncompressed), the URL may still exceed browser limits even with compression
 
 ## URL parameters reference
 
 | Parameter | Encoding | Description |
 |-----------|----------|-------------|
-| `s` | LZ-String compressed | Used by the app's built-in Share button (smaller URLs) |
-| `r` | Base64url | Shell-friendly, no dependencies needed |
-| `t` | URL-encoded string | Custom tab name (works with both `s` and `r`) |
+| `c` | Gzip + Base64url | Compressed JSON data |
+| `t` | URL-encoded string | Custom tab name |
 | `h` | `1` to enable | Auto-switch to Hero mode and load JSON Hero viewer |

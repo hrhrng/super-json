@@ -8,7 +8,7 @@
 
 **The Ultimate Multi-Layer Escaped JSON Editor - Parse, Edit, and Rebuild Complex Nested JSON with Ease! 🎯**
 
-[**Try It Now**](https://hrhrng.github.io/super-json)
+[**Try It Now**](https://superjson.org) | [**Documentation**](https://superjson.org/docs/)
 
 [Report Bug](https://github.com/hrhrng/super-json/issues) | [Request Feature](https://github.com/hrhrng/super-json/issues)
 
@@ -75,9 +75,8 @@ Ever struggled with deeply nested, escaped JSON strings? Like this nightmare:
 
 Share JSON instantly via URL — no server required:
 
-- **Share Button** - One-click share with LZ-String compression (`?s=` parameter)
+- **Share Button** - One-click share with gzip compression (`?c=` parameter)
 - **Custom Tab Names** - Hover "Share" to name your tab before sharing (`?t=` parameter)
-- **Base64url Mode** - Shell-friendly encoding without dependencies (`?r=` parameter)
 - **Hero Direct Link** - Add `?h=1` to auto-open JSON Hero viewer on import
 
 ### 🤖 Claude Code Skill: `present-json`
@@ -93,20 +92,19 @@ npx skills add hrhrng/super-json
 **How it works — agent generates a shareable link from any JSON:**
 
 ```bash
-# Agent generates a shareable link from any JSON
-encoded=$(echo -n '{"status":"ok","data":[1,2,3]}' | base64 | tr '+/' '-_' | tr -d '=\n')
-echo "https://hrhrng.github.io/super-json?r=${encoded}&t=API+Response"
+# Agent generates a compressed shareable link from any JSON
+encoded=$(echo -n '{"status":"ok","data":[1,2,3]}' | gzip -9 | base64 | tr '+/' '-_' | tr -d '=\n')
+echo "https://hrhrng.github.io/super-json?c=${encoded}&t=API+Response"
 
 # With Hero mode for interactive visualization
-echo "https://hrhrng.github.io/super-json?r=${encoded}&t=API+Response&h=1"
+echo "https://hrhrng.github.io/super-json?c=${encoded}&t=API+Response&h=1"
 ```
 
 **URL Parameters:**
 
 | Param | Description | Example |
 |-------|-------------|---------|
-| `s` | LZ-String compressed JSON (shorter URLs) | `?s=NoIgbg9...` |
-| `r` | Base64url encoded JSON (shell-friendly) | `?r=eyJrZXki...` |
+| `c` | Gzip + Base64url compressed JSON | `?c=H4sIA...` |
 | `t` | Custom tab name | `&t=My+Results` |
 | `h` | Auto-switch to Hero mode | `&h=1` |
 

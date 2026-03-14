@@ -14,7 +14,7 @@ import { ProcessorMode, ProcessorModeActions } from './modes/ProcessorMode'
 import { DiffMode } from './modes/DiffMode'
 import { HeroMode } from './modes/HeroMode'
 
-const iconImg = '/super-json/icon.png'
+const iconImg = '/icon.png'
 const analyzer = new JSONLayerAnalyzer()
 
 // Configure Monaco theme
@@ -193,6 +193,20 @@ export function MainLayout() {
               onMouseLeave={(e) => e.currentTarget.style.color = 'inherit'}
             >
               hrhrng/super-json
+            </a>
+          </div>
+          <div className="status-item">
+            <a
+              href="/docs/"
+              style={{
+                color: 'inherit',
+                textDecoration: 'none',
+                transition: 'color 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'inherit'}
+            >
+              Docs
             </a>
           </div>
           <div className="status-item" style={{ marginLeft: 'auto' }}>

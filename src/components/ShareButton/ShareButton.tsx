@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { createShareUrl, copyToClipboard } from '@utils/simpleShare'
 
+
 interface ShareButtonProps {
   getContent: () => string | undefined
   onNotification: (type: 'success' | 'error', message: string) => void
@@ -46,7 +47,7 @@ export function ShareButton({ getContent, onNotification }: ShareButtonProps) {
 
     setSharing(true)
     try {
-      const result = createShareUrl(content, customTabName || undefined)
+      const result = await createShareUrl(content, customTabName || undefined)
       await copyToClipboard(result.url)
       onNotification('success', `Share link copied! (${result.length} chars)`)
     } catch (error) {

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test('key renaming in layer mode should not duplicate keys', async ({ page }) => {
-  await page.goto('http://localhost:3000/super-json/')
+  await page.goto('/super-json/')
   
   // Switch to layer mode
   await page.getByRole('button', { name: 'Layer' }).click()
@@ -75,7 +75,7 @@ test('key renaming in layer mode should not duplicate keys', async ({ page }) =>
 })
 
 test('camelCase to snake_case conversion works', async ({ page }) => {
-  await page.goto('http://localhost:3000/super-json/')
+  await page.goto('/super-json/')
   
   // Switch to processor mode
   await page.getByRole('button', { name: 'Tools' }).click()
@@ -120,7 +120,7 @@ test('camelCase to snake_case conversion works', async ({ page }) => {
 })
 
 test('eager formatting in processor mode works', async ({ page }) => {
-  await page.goto('http://localhost:3000/super-json/')
+  await page.goto('/super-json/')
   
   // Switch to processor mode
   await page.getByRole('button', { name: 'Tools' }).click()
